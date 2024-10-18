@@ -1,21 +1,40 @@
 //
 //  ContentView.swift
-//  passkeys-webview-embedded
+//  Webview Test
 //
-//  Created by Jan on 11.10.24.
+//  Created by Jan on 02.10.24.
 //
-
+import WebKit
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+    @Environment(\.embeddedWalletUrl) var embeddedWalletUrl: String
+
+       
+   var body: some View {
+       let delegate = WebviewDelegate()
+       
+       Webview(url: URL(string: embeddedWalletUrl)!, uiDelegate: delegate)
+           .ignoresSafeArea()
+           .navigationTitle("Passkeys")
+           .navigationBarTitleDisplayMode(.inline)
+   }
+}
+
+class WebviewDelegate: NSObject, WKUIDelegate {
+
+    func webView(
+        _ webView: WKWebView,
+        createWebViewWith configuration: WKWebViewConfiguration,
+        for navigationAction: WKNavigationAction,
+        windowFeatures: WKWindowFeatures
+    ) -> WKWebView? {
+        // this is called on window.open
+        if let url = navigationAction.request.url {
+            UIApplication.shared.open(url)
         }
-        .padding()
+        
+        return nil
     }
 }
 
