@@ -1,3 +1,9 @@
+//
+//  ContentView.swift
+//  Webview Test
+//
+//  Created by Jan on 02.10.24.
+//
 import AuthenticationServices
 import WebKit
 import SwiftUI
@@ -28,7 +34,8 @@ class AuthSessionCoordinator: NSObject, ASWebAuthenticationPresentationContextPr
     private var authSession: ASWebAuthenticationSession?
 
     func startAuthSession(url: URL) {
-        authSession = ASWebAuthenticationSession(url: url, callbackURLScheme: nil) { callbackURL, error in
+        // todo switch over to https://developer.apple.com/documentation/authenticationservices/aswebauthenticationsession/init(url:callback:completionhandler:)
+        authSession = ASWebAuthenticationSession(url: url, callbackURLScheme: "passkeys") { callbackURL, error in
             if let error = error {
                 print("Authentication failed with error: \(error.localizedDescription)")
             } else if let callbackURL = callbackURL {
