@@ -1,22 +1,18 @@
-//
-//  ContentView.swift
-//  Webview Test
-//
-//  Created by Jan on 02.10.24.
-//
-import SafariServices
+import AuthenticationServices
 import WebKit
 import SwiftUI
 
 struct ContentView: View {
     @Environment(\.embeddedWalletUrl) var embeddedWalletUrl: String
-    @State private var showSafariView = false
+    @State private var showAuthSession = false
     @State private var urlToOpen: URL?
+    private let authSessionCoordinator = AuthSessionCoordinator()
 
     var body: some View {
         let delegate = WebviewDelegate(openURLHandler: { url in
             self.urlToOpen = url
-            self.showSafariView = true
+            self.showAuthSession = true
+            authSessionCoordinator.startAuthSession(url: url)
         })
 
         ZStack {
@@ -24,24 +20,28 @@ struct ContentView: View {
                 .ignoresSafeArea()
                 .navigationTitle("Passkeys")
                 .navigationBarTitleDisplayMode(.inline)
-
-            if let url = urlToOpen, showSafariView {
-                SafariView(url: url)
-                    .onDisappear { showSafariView = false }
-            }
         }
     }
 }
 
-struct SafariView: UIViewControllerRepresentable {
-    let url: URL
+class AuthSessionCoordinator: NSObject, ASWebAuthenticationPresentationContextProviding {
+    private var authSession: ASWebAuthenticationSession?
 
-    func makeUIViewController(context: UIViewControllerRepresentableContext<SafariView>) -> SFSafariViewController {
-        let safariVC = SFSafariViewController(url: url)
-        return safariVC
+    func startAuthSession(url: URL) {
+        authSession = ASWebAuthenticationSession(url: url, callbackURLScheme: nil) { callbackURL, error in
+            if let error = error {
+                print("Authentication failed with error: \(error.localizedDescription)")
+            } else if let callbackURL = callbackURL {
+                print("Authentication succeeded with callback URL: \(callbackURL)")
+            }
+        }
+        authSession?.presentationContextProvider = self
+        authSession?.start()
     }
 
-    func updateUIViewController(_ uiViewController: SFSafariViewController, context: UIViewControllerRepresentableContext<SafariView>) {}
+    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        return UIApplication.shared.windows.first { $0.isKeyWindow }!
+    }
 }
 
 class WebviewDelegate: NSObject, WKUIDelegate {
