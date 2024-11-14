@@ -8,6 +8,7 @@ struct Webview: UIViewRepresentable {
 
     func makeUIView(context: Context) -> WKWebView {
         let webview = WKWebView()
+        webview.isInspectable = true
         webview.navigationDelegate = navigationDelegate
         webview.uiDelegate = uiDelegate
         
