@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         val webView: WebView = findViewById(R.id.webView)
         setupWebView(webView)
 
-        webView.loadUrl("https://wallet-d.passkeys.foundation?relay&returnTo=passkeys%3A%2F%2F%0A")
+        webView.loadUrl("https://passkeys.foundation/playground?relay&returnTo=passkeys%3A%2F%2F%0A")
     }
 
     override fun onNewIntent(intent: Intent?) {
