@@ -26,8 +26,7 @@ struct ContentView: View {
                 .navigationBarTitleDisplayMode(.inline)
 
             if let url = urlToOpen, showSafariView {
-                SafariView(url: url)
-                    .onDisappear { showSafariView = false }
+                SafariView(url: url, showSafariView: $showSafariView)
             }
         }
     }
@@ -35,13 +34,31 @@ struct ContentView: View {
 
 struct SafariView: UIViewControllerRepresentable {
     let url: URL
+    @Binding var showSafariView: Bool
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
 
     func makeUIViewController(context: UIViewControllerRepresentableContext<SafariView>) -> SFSafariViewController {
         let safariVC = SFSafariViewController(url: url)
+        safariVC.delegate = context.coordinator // Set the delegate
         return safariVC
     }
 
     func updateUIViewController(_ uiViewController: SFSafariViewController, context: UIViewControllerRepresentableContext<SafariView>) {}
+
+    class Coordinator: NSObject, SFSafariViewControllerDelegate {
+        var parent: SafariView
+
+        init(_ parent: SafariView) {
+            self.parent = parent
+        }
+
+        func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+            parent.showSafariView = false // Close SafariView when "Done" is pressed
+        }
+    }
 }
 
 class WebviewDelegate: NSObject, WKUIDelegate {
