@@ -58,7 +58,9 @@ class WebviewDelegate: NSObject, WKUIDelegate {
         windowFeatures: WKWindowFeatures
     ) -> WKWebView? {
         if let url = navigationAction.request.url {
-            openURLHandler(url)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.openURLHandler(url)
+            }
         }
         
         return nil
