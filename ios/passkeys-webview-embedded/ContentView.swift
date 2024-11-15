@@ -12,6 +12,7 @@ struct ContentView: View {
     @Environment(\.embeddedWalletUrl) var embeddedWalletUrl: String
     @State private var showSafariView = false
     @State private var urlToOpen: URL?
+    @State private var refreshID = UUID()
 
     var body: some View {
         let delegate = WebviewDelegate(openURLHandler: { url in
@@ -20,13 +21,17 @@ struct ContentView: View {
         })
 
         ZStack {
+            // Update Webview to depend on refreshID to reload when it changes
             Webview(url: URL(string: embeddedWalletUrl)!, uiDelegate: delegate)
+                .id(refreshID)
                 .ignoresSafeArea()
                 .navigationTitle("Passkeys")
                 .navigationBarTitleDisplayMode(.inline)
 
             if let url = urlToOpen, showSafariView {
-                SafariView(url: url, showSafariView: $showSafariView)
+                SafariView(url: url, showSafariView: $showSafariView, onDismiss: {
+                    self.refreshID = UUID()
+                })
             }
         }
     }
@@ -35,6 +40,7 @@ struct ContentView: View {
 struct SafariView: UIViewControllerRepresentable {
     let url: URL
     @Binding var showSafariView: Bool
+    var onDismiss: () -> Void
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -42,7 +48,7 @@ struct SafariView: UIViewControllerRepresentable {
 
     func makeUIViewController(context: UIViewControllerRepresentableContext<SafariView>) -> SFSafariViewController {
         let safariVC = SFSafariViewController(url: url)
-        safariVC.delegate = context.coordinator // Set the delegate
+        safariVC.delegate = context.coordinator
         return safariVC
     }
 
@@ -56,7 +62,8 @@ struct SafariView: UIViewControllerRepresentable {
         }
 
         func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-            parent.showSafariView = false // Close SafariView when "Done" is pressed
+            parent.showSafariView = false
+            parent.onDismiss()
         }
     }
 }
