@@ -1,22 +1,20 @@
-import SwiftUI
 import WebKit
+import SwiftUI
 
 struct Webview: UIViewRepresentable {
     let url: URL
-    var navigationDelegate: WKNavigationDelegate?
-    var uiDelegate: WKUIDelegate?
+    let uiDelegate: WebviewDelegate
 
     func makeUIView(context: Context) -> WKWebView {
-        let webview = WKWebView()
-        webview.isInspectable = true
-        webview.navigationDelegate = navigationDelegate
-        webview.uiDelegate = uiDelegate
-        
-        return webview
+        let configuration = WKWebViewConfiguration()
+        configuration.websiteDataStore = WKWebsiteDataStore.default()
+
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        webView.uiDelegate = uiDelegate
+        webView.load(URLRequest(url: url))
+
+        return webView
     }
-    
-    func updateUIView(_ webView: WKWebView, context: Context) {
-        let request = URLRequest(url: url)
-        webView.load(request)
-    }
+
+    func updateUIView(_ webView: WKWebView, context: Context) {}
 }
