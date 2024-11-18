@@ -9,11 +9,23 @@ import SwiftUI
 
 @main
 struct passkeys_webview_embeddedApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
+    @StateObject private var safariViewManager = SafariViewManager()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(safariViewManager)
+                .onOpenURL { url in
+                    handleIncomingURL(url)
+                }
+        }
+    }
+
+    private func handleIncomingURL(_ url: URL) {
+        if url.scheme == "passkeys" {
+            // Handle the URL
+            print("Handling passkeys URL: \(url)")
+            safariViewManager.isSafariViewVisible = false // Dismiss SafariView
         }
     }
 }
