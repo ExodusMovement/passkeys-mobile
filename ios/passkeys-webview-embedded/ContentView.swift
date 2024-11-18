@@ -4,32 +4,33 @@
 //
 //  Created by Jan on 02.10.24.
 //
+
 import SafariServices
 import WebKit
 import SwiftUI
 
 struct ContentView: View {
     @Environment(\.embeddedWalletUrl) var embeddedWalletUrl: String
-    @State private var showSafariView = false
+    @EnvironmentObject var safariViewManager: SafariViewManager
     @State private var urlToOpen: URL?
     @State private var refreshID = UUID()
 
     var body: some View {
         let delegate = WebviewDelegate(openURLHandler: { url in
             self.urlToOpen = url
-            self.showSafariView = true
+            self.safariViewManager.isSafariViewVisible = true
         })
 
         ZStack {
             // Update Webview to depend on refreshID to reload when it changes
-            Webview(url: URL(string: embeddedWalletUrl)!, uiDelegate: delegate)
+            CustomWebview(url: URL(string: embeddedWalletUrl)!, uiDelegate: delegate)
                 .id(refreshID)
                 .ignoresSafeArea()
                 .navigationTitle("Passkeys")
                 .navigationBarTitleDisplayMode(.inline)
 
-            if let url = urlToOpen, showSafariView {
-                SafariView(url: url, showSafariView: $showSafariView, onDismiss: {
+            if let url = urlToOpen, safariViewManager.isSafariViewVisible {
+                SafariView(url: url, showSafariView: $safariViewManager.isSafariViewVisible, onDismiss: {
                     self.refreshID = UUID()
                 })
             }
@@ -68,6 +69,27 @@ struct SafariView: UIViewControllerRepresentable {
     }
 }
 
+struct CustomWebview: UIViewRepresentable {
+    let url: URL
+    let uiDelegate: WebviewDelegate
+
+    func makeUIView(context: Context) -> WKWebView {
+        // Create a custom configuration with persistent storage
+        let configuration = WKWebViewConfiguration()
+        configuration.websiteDataStore = WKWebsiteDataStore.default()
+
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        webView.uiDelegate = uiDelegate
+        webView.load(URLRequest(url: url))
+
+        return webView
+    }
+
+    func updateUIView(_ webView: WKWebView, context: Context) {
+        // Optional: Handle updates to the view if needed
+    }
+}
+
 class WebviewDelegate: NSObject, WKUIDelegate {
     private var openURLHandler: (URL) -> Void
 
@@ -86,7 +108,6 @@ class WebviewDelegate: NSObject, WKUIDelegate {
                 self.openURLHandler(url)
             }
         }
-        
         return nil
     }
 }
