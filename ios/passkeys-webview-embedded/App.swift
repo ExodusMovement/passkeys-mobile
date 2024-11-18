@@ -23,9 +23,7 @@ struct passkeys_webview_embeddedApp: App {
 
     private func handleIncomingURL(_ url: URL) {
         if url.scheme == "passkeys" {
-            // Handle the URL
-            print("Handling passkeys URL: \(url)")
-            safariViewManager.isSafariViewVisible = false // Dismiss SafariView
+            safariViewManager.isSafariViewVisible = false
         }
     }
 }
