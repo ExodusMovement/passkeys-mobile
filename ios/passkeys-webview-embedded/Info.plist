@@ -5,10 +5,6 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>passkeys</string>
-			</array>
 			<key>CFBundleURLName</key>
 			<string>passkey.network</string>
 		</dict>
