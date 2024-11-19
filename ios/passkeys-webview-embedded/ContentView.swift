@@ -18,7 +18,7 @@ struct ContentView: View {
         let delegate = WebviewDelegate(openURLHandler: { url in
             self.urlToOpen = url
             self.safariViewManager.isSafariViewVisible = true
-        })
+        }, safariViewManager: safariViewManager)
 
         ZStack {
             Webview(url: URL(string: embeddedWalletUrl)!, uiDelegate: delegate)
@@ -66,9 +66,15 @@ struct SafariView: UIViewControllerRepresentable {
 
 class WebviewDelegate: NSObject, WKUIDelegate {
     private var openURLHandler: (URL) -> Void
+    private var safariViewManager: SafariViewManager
 
-    init(openURLHandler: @escaping (URL) -> Void) {
+    init(openURLHandler: @escaping (URL) -> Void, safariViewManager: SafariViewManager) {
         self.openURLHandler = openURLHandler
+        self.safariViewManager = safariViewManager
+    }
+
+    func closeSafariViewManager() -> Void {
+        safariViewManager.isSafariViewVisible = false
     }
 
     func webView(

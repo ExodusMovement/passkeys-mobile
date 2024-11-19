@@ -1,7 +1,7 @@
-// MainActivity.kt
 package com.passkeysandroid
 
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -9,12 +9,12 @@ import android.os.Bundle
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.webkit.WebSettings
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 
 class MainActivity : AppCompatActivity() {
 
+    private var closeCustomTabIntent: PendingIntent? = null
     private lateinit var webView: WebView
     private val CUSTOM_TAB_REQUEST_CODE = 100
 
@@ -25,21 +25,29 @@ class MainActivity : AppCompatActivity() {
         webView = findViewById(R.id.webView)
         setupWebView(webView)
 
-        webView.loadUrl("https://dev.passkeys.foundation/playground?relay&returnTo=passkeys%3A%2F%2F%0A")
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        intent?.data?.let { uri ->
-            if (uri.scheme == "passkeys") {
-                webView.reload()
+        webView.loadUrl("https://dev.passkeys.foundation/playground?relay")
+        webView.evaluateJavascript("""
+            if (!window.uiControl) {
+                window.uiControl = {};
             }
-        }
+            window.uiControl.closeSigner = function() {
+                AndroidBridge.closeSigner();
+            };
+        """) { }
+
+        this.closeCustomTabIntent = PendingIntent.getActivity(
+            this,
+            0,
+            Intent(this, MainActivity::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
     private fun setupWebView(webView: WebView) {
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
+        webView.addJavascriptInterface(JavaScriptBridge(this), "AndroidBridge")
+
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 openInCustomTab(this@MainActivity, request.url.toString())
@@ -63,6 +71,21 @@ class MainActivity : AppCompatActivity() {
             if (resultCode == Activity.RESULT_CANCELED) {
                 webView.reload()
             }
+        }
+    }
+
+    fun onCloseSigner() {
+        closeCustomTabIntent?.send()
+    }
+}
+
+// JavaScript Bridge class for communication
+class JavaScriptBridge(private val activity: MainActivity) {
+
+    @android.webkit.JavascriptInterface
+    fun closeSigner() {
+        activity.runOnUiThread {
+            activity.onCloseSigner()
         }
     }
 }
