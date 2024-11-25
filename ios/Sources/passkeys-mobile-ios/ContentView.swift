@@ -9,8 +9,9 @@ struct ContentView: View {
 
     var body: some View {
         let delegate = WebviewDelegate(openURLHandler: { url in
+            self.urlToOpen = url
+
             Task { @MainActor in
-                self.urlToOpen = url
                 self.safariViewManager.isSafariViewVisible = true
             }
         }, safariViewManager: safariViewManager)
@@ -22,20 +23,20 @@ struct ContentView: View {
                 .navigationBarTitleDisplayMode(.inline)
 
             if let url = urlToOpen, safariViewManager.isSafariViewVisible {
-                SafariView(url: url, showSafariView: $safariViewManager.isSafariViewVisible, onDismiss: {})
+                SafariView(url: url, safariViewManager: safariViewManager, onDismiss: {})
             }
         }
     }
 }
 
-final class SafariView: UIViewControllerRepresentable {
+struct SafariView: UIViewControllerRepresentable {
     let url: URL
-    @Binding var showSafariView: Bool
+    private var safariViewManager: SafariViewManager
     var onDismiss: () -> Void
 
-    init(url: URL, showSafariView: Binding<Bool>, onDismiss: @escaping () -> Void) {
+    init(url: URL, safariViewManager: SafariViewManager, onDismiss: @escaping () -> Void) {
         self.url = url
-        self._showSafariView = showSafariView
+        self.safariViewManager = safariViewManager
         self.onDismiss = onDismiss
     }
 
@@ -52,7 +53,7 @@ final class SafariView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
 
     final class Coordinator: NSObject, SFSafariViewControllerDelegate {
-        weak var parent: SafariView?
+        var parent: SafariView?
 
         init(_ parent: SafariView) {
             self.parent = parent
@@ -61,8 +62,8 @@ final class SafariView: UIViewControllerRepresentable {
         func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
             guard let parent = parent else { return }
 
-            DispatchQueue.main.async {
-                parent.showSafariView = false
+            Task { @MainActor in
+                parent.safariViewManager.isSafariViewVisible = false
                 parent.onDismiss()
             }
         }
