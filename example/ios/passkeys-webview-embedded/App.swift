@@ -13,6 +13,7 @@ struct passkeys_webview_embeddedApp: App {
     var body: some Scene {
         WindowGroup {
             PasskeysMobile()
+                .environment(\.embeddedWalletUrl, "https://wallet-d.passkeys.foundation/playground?relay")
         }
     }
 }
