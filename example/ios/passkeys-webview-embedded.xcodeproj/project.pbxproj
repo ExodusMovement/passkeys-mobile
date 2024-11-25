@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3A0716F72CF4B1C200880AD4 /* PasskeysMobile in Frameworks */ = {isa = PBXBuildFile; productRef = 3A0716F62CF4B1C200880AD4 /* PasskeysMobile */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		203E28B52CB9086E00E14D44 /* passkeys-webview-embedded.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "passkeys-webview-embedded.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A0716F72CF4B1C200880AD4 /* PasskeysMobile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = "passkeys-webview-embedded";
 			packageProductDependencies = (
+				3A0716F62CF4B1C200880AD4 /* PasskeysMobile */,
 			);
 			productName = "passkeys-webview-embedded";
 			productReference = 203E28B52CB9086E00E14D44 /* passkeys-webview-embedded.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = 203E28AC2CB9086E00E14D44;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				3A0716F52CF4B1C200880AD4 /* XCLocalSwiftPackageReference "../../ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 203E28B62CB9086E00E14D44 /* Products */;
 			projectDirPath = "";
@@ -339,6 +348,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		3A0716F52CF4B1C200880AD4 /* XCLocalSwiftPackageReference "../../ios" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../ios;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3A0716F62CF4B1C200880AD4 /* PasskeysMobile */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PasskeysMobile;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 203E28AD2CB9086E00E14D44 /* Project object */;
 }
