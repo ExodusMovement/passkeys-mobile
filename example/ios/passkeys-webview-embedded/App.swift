@@ -6,15 +6,13 @@
 //
 
 import SwiftUI
+import PasskeysMobile
 
 @main
 struct passkeys_webview_embeddedApp: App {
-    @StateObject private var safariViewManager = SafariViewManager()
-
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(safariViewManager)
+            PasskeysMobile()
         }
     }
 }
