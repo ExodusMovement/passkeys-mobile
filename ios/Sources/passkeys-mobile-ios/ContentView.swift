@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  Webview Test
-//
-//  Created by Jan on 02.10.24.
-//
-
 import SafariServices
 import WebKit
 import SwiftUI
@@ -16,8 +9,10 @@ struct ContentView: View {
 
     var body: some View {
         let delegate = WebviewDelegate(openURLHandler: { url in
-            self.urlToOpen = url
-            self.safariViewManager.isSafariViewVisible = true
+            Task { @MainActor in
+                self.urlToOpen = url
+                self.safariViewManager.isSafariViewVisible = true
+            }
         }, safariViewManager: safariViewManager)
 
         ZStack {
@@ -33,33 +28,43 @@ struct ContentView: View {
     }
 }
 
-struct SafariView: UIViewControllerRepresentable {
+final class SafariView: UIViewControllerRepresentable {
     let url: URL
     @Binding var showSafariView: Bool
     var onDismiss: () -> Void
+
+    init(url: URL, showSafariView: Binding<Bool>, onDismiss: @escaping () -> Void) {
+        self.url = url
+        self._showSafariView = showSafariView
+        self.onDismiss = onDismiss
+    }
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
 
-    func makeUIViewController(context: UIViewControllerRepresentableContext<SafariView>) -> SFSafariViewController {
+    func makeUIViewController(context: Context) -> SFSafariViewController {
         let safariVC = SFSafariViewController(url: url)
         safariVC.delegate = context.coordinator
         return safariVC
     }
 
-    func updateUIViewController(_ uiViewController: SFSafariViewController, context: UIViewControllerRepresentableContext<SafariView>) {}
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
 
-    class Coordinator: NSObject, SFSafariViewControllerDelegate {
-        var parent: SafariView
+    final class Coordinator: NSObject, SFSafariViewControllerDelegate {
+        weak var parent: SafariView?
 
         init(_ parent: SafariView) {
             self.parent = parent
         }
 
         func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-            parent.showSafariView = false
-            parent.onDismiss()
+            guard let parent = parent else { return }
+
+            DispatchQueue.main.async {
+                parent.showSafariView = false
+                parent.onDismiss()
+            }
         }
     }
 }
@@ -73,8 +78,10 @@ class WebviewDelegate: NSObject, WKUIDelegate {
         self.safariViewManager = safariViewManager
     }
 
-    func closeSafariViewManager() -> Void {
-        safariViewManager.isSafariViewVisible = false
+    func closeSafariViewManager() {
+        Task { @MainActor in
+            safariViewManager.isSafariViewVisible = false
+        }
     }
 
     func webView(
