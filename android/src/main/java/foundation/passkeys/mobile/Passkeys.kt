@@ -12,12 +12,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.lifecycle.LifecycleOwner
 
 class Passkeys @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
+    private val initialUrl: String = "https://dev.passkeys.foundation/playground?relay"
 ) : WebView(context, attrs, defStyleAttr) {
 
     private var customTabResultLauncher: ActivityResultLauncher<Intent>? = null
@@ -30,6 +30,8 @@ class Passkeys @JvmOverloads constructor(
     init {
         setupWebView()
         setupDefaultLauncherIfNeeded()
+
+        loadUrlWithBridge(initialUrl)
     }
 
     private fun setupWebView() {
@@ -59,7 +61,7 @@ class Passkeys @JvmOverloads constructor(
         }
     }
 
-    fun loadUrlWithBridge(url: String = "https://dev.passkeys.foundation/playground?relay") {
+    private fun loadUrlWithBridge(url: String) {
         loadUrl(url)
         injectJavaScript()
     }
