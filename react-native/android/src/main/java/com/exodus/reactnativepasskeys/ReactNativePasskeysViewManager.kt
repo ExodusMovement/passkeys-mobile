@@ -10,7 +10,7 @@ class ReactNativePasskeysViewManager : SimpleViewManager<View>() {
   override fun getName() = "ReactNativePasskeysView"
 
   override fun createViewInstance(reactContext: ThemedReactContext): View {
-    return View(reactContext)
+    return Passkeys(reactContext)
   }
 
   @ReactProp(name = "color")
