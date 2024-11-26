@@ -1,11 +1,15 @@
 package foundation.passkeys.mobile
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.util.AttributeSet
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.browser.customtabs.CustomTabsIntent
 
 class Passkeys @JvmOverloads constructor(
@@ -15,6 +19,11 @@ class Passkeys @JvmOverloads constructor(
 ) : WebView(context, attrs, defStyleAttr) {
 
     private var customTabCallback: (() -> Unit)? = null
+    private var onActivityResultCallback: ((requestCode: Int, resultCode: Int, data: Intent?) -> Unit)? = null
+
+    companion object {
+        const val CUSTOM_TAB_REQUEST_CODE = 100
+    }
 
     init {
         setupWebView()
@@ -52,12 +61,6 @@ class Passkeys @JvmOverloads constructor(
         ) { }
     }
 
-    private fun openInCustomTab(url: String) {
-        val uri = Uri.parse(url)
-        val customTabsIntent = CustomTabsIntent.Builder().build()
-        customTabsIntent.launchUrl(context, uri)
-    }
-
     private fun onCloseSigner() {
         customTabCallback?.invoke()
     }
@@ -65,11 +68,28 @@ class Passkeys @JvmOverloads constructor(
     fun setOnCloseSignerCallback(callback: () -> Unit) {
         this.customTabCallback = callback
     }
+
+    fun openInCustomTab(url: String) {
+        val uri = Uri.parse(url)
+        val customTabsIntent = CustomTabsIntent.Builder().build()
+        val intent = customTabsIntent.intent
+        intent.data = uri
+
+        if (context is Activity) {
+            (context as Activity).startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
+        }
+    }
+
+    fun handleActivityResult(requestCode: Int, resultCode: Int) {
+        if (requestCode == CUSTOM_TAB_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                reload()
+            }
+        }
+    }
 }
 
-// JavaScript Bridge class for communication
 class JavaScriptBridge(private val onClose: () -> Unit) {
-
     @android.webkit.JavascriptInterface
     fun closeSigner() {
         onClose()

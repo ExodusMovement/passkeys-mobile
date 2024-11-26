@@ -2,7 +2,6 @@ package com.passkeysandroid
 
 import foundation.passkeys.mobile.Passkeys
 
-//import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
@@ -12,7 +11,6 @@ class MainActivity : AppCompatActivity() {
 
     private var reopenMainActivityIntent: PendingIntent? = null
     private lateinit var passkeys: Passkeys
-    // private val CUSTOM_TAB_REQUEST_CODE = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,15 +30,10 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-
-    // override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    //     super.onActivityResult(requestCode, resultCode, data)
-    //     if (requestCode == CUSTOM_TAB_REQUEST_CODE) {
-    //         if (resultCode == Activity.RESULT_CANCELED) {
-    //             webView.reload()
-    //         }
-    //     }
-    // }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        passkeys.handleActivityResult(requestCode, resultCode)
+    }
 
     fun reopenMainActivity() {
         reopenMainActivityIntent?.send()
