@@ -1,4 +1,3 @@
-// todo dedupe this file
 package com.exodus.reactnativepasskeys
 
 import android.app.Activity
@@ -9,9 +8,7 @@ import android.util.AttributeSet
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.activity.result.ActivityResultLauncher
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.app.ActivityCompat.startActivityForResult
 
 class Passkeys @JvmOverloads constructor(
     context: ThemedReactContext,
@@ -21,17 +18,27 @@ class Passkeys @JvmOverloads constructor(
     private val initialUrl: String = "https://dev.passkeys.foundation/playground?relay"
 ) : WebView(context, attrs, defStyleAttr) {
 
-    private var customTabResultLauncher: ActivityResultLauncher<Intent>? = null
-    private var customTabCallback: (() -> Unit)? = null
-
     companion object {
         const val CUSTOM_TAB_REQUEST_CODE = 100
+
+        private var instance: Passkeys? = null
+
+        fun getInstance(): Passkeys? {
+            return instance
+        }
+
+        private var customTabCallback: (() -> Unit)? = null
+
+        fun setOnCloseSignerCallback(callback: () -> Unit) {
+            customTabCallback = callback
+        }
     }
 
     init {
-        setupWebView()
-        // setupDefaultLauncherIfNeeded() // todo
+        // if (instance != null) throw IllegalStateException("Only one instance if Passkeys is allowed") // todo
+        instance = this
 
+        setupWebView()
         loadUrlWithBridge(initialUrl)
     }
 
@@ -48,19 +55,6 @@ class Passkeys @JvmOverloads constructor(
             }
         }
     }
-
-    // private fun setupDefaultLauncherIfNeeded() {
-    //     if (context is ComponentActivity) {
-    //         val activity = context as ComponentActivity
-    //         customTabResultLauncher = activity.registerForActivityResult(
-    //             ActivityResultContracts.StartActivityForResult()
-    //         ) { result ->
-    //             if (result.resultCode == Activity.RESULT_CANCELED) {
-    //                 reload()
-    //             }
-    //         }
-    //     }
-    // }
 
     private fun loadUrlWithBridge(url: String) {
         loadUrl(url)
@@ -84,26 +78,21 @@ class Passkeys @JvmOverloads constructor(
         customTabCallback?.invoke()
     }
 
-    fun setOnCloseSignerCallback(callback: () -> Unit) {
-        this.customTabCallback = callback
+    fun handleActivityResult(requestCode: Int, resultCode: Int) {
+        if (requestCode == CUSTOM_TAB_REQUEST_CODE) {
+            reload()
+        }
     }
 
-    fun registerCustomTabResultLauncher(launcher: ActivityResultLauncher<Intent>) {
-        customTabResultLauncher = launcher
-    }
-
-    // Open a Custom Tab and launch it using the result launcher
     fun openInCustomTab(url: String) {
-      // Ensure the current Activity is available
-      val uri = Uri.parse(url)
-      val customTabsIntent = CustomTabsIntent.Builder().build()
-      val intent = customTabsIntent.intent
-      intent.data = uri
+        val uri = Uri.parse(url)
+        val customTabsIntent = CustomTabsIntent.Builder().build()
+        val intent = customTabsIntent.intent
+        intent.data = uri
 
-      activity.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
+        activity.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
     }
 }
-
 
 class JavaScriptBridge(private val onClose: () -> Unit) {
     @android.webkit.JavascriptInterface
