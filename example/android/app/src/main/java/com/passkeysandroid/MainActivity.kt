@@ -5,6 +5,7 @@ import foundation.passkeys.mobile.Passkeys
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
@@ -16,11 +17,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        passkeys = findViewById(R.id.passkeys)
-        passkeys.loadUrlWithBridge("https://wallet-d.passkeys.foundation/playground?relay")
+        val rootLayout = findViewById<RelativeLayout>(R.id.root_layout)
+        passkeys = Passkeys(this)
         passkeys.setOnCloseSignerCallback {
             reopenMainActivity()
         }
+
+        val layoutParams = RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.MATCH_PARENT,
+            RelativeLayout.LayoutParams.MATCH_PARENT
+        )
+        passkeys.layoutParams = layoutParams
+
+        rootLayout.addView(passkeys)
 
         this.reopenMainActivityIntent = PendingIntent.getActivity(
             this,
@@ -34,4 +43,3 @@ class MainActivity : AppCompatActivity() {
         reopenMainActivityIntent?.send()
     }
 }
-
