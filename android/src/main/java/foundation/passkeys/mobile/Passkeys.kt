@@ -28,6 +28,7 @@ class Passkeys @JvmOverloads constructor(
     }
 
     init {
+
         setupWebView()
         setupDefaultLauncherIfNeeded()
 
