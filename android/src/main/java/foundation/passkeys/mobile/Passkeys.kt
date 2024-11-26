@@ -8,9 +8,11 @@ import android.util.AttributeSet
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.lifecycle.LifecycleOwner
 
 class Passkeys @JvmOverloads constructor(
     context: Context,
@@ -18,8 +20,8 @@ class Passkeys @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : WebView(context, attrs, defStyleAttr) {
 
+    private var customTabResultLauncher: ActivityResultLauncher<Intent>? = null
     private var customTabCallback: (() -> Unit)? = null
-    private var onActivityResultCallback: ((requestCode: Int, resultCode: Int, data: Intent?) -> Unit)? = null
 
     companion object {
         const val CUSTOM_TAB_REQUEST_CODE = 100
@@ -27,6 +29,7 @@ class Passkeys @JvmOverloads constructor(
 
     init {
         setupWebView()
+        setupDefaultLauncherIfNeeded()
     }
 
     private fun setupWebView() {
@@ -39,6 +42,19 @@ class Passkeys @JvmOverloads constructor(
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 openInCustomTab(request.url.toString())
                 return true // We handle the URL ourselves
+            }
+        }
+    }
+
+    private fun setupDefaultLauncherIfNeeded() {
+        if (context is ComponentActivity) {
+            val activity = context as ComponentActivity
+            customTabResultLauncher = activity.registerForActivityResult(
+                ActivityResultContracts.StartActivityForResult()
+            ) { result ->
+                if (result.resultCode == Activity.RESULT_CANCELED) {
+                    reload()
+                }
             }
         }
     }
@@ -69,25 +85,23 @@ class Passkeys @JvmOverloads constructor(
         this.customTabCallback = callback
     }
 
+    fun registerCustomTabResultLauncher(launcher: ActivityResultLauncher<Intent>) {
+        customTabResultLauncher = launcher
+    }
+
+    // Open a Custom Tab and launch it using the result launcher
     fun openInCustomTab(url: String) {
         val uri = Uri.parse(url)
         val customTabsIntent = CustomTabsIntent.Builder().build()
         val intent = customTabsIntent.intent
         intent.data = uri
 
-        if (context is Activity) {
-            (context as Activity).startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
-        }
-    }
-
-    fun handleActivityResult(requestCode: Int, resultCode: Int) {
-        if (requestCode == CUSTOM_TAB_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_CANCELED) {
-                reload()
-            }
-        }
+        // Use the launcher (default or custom) to handle the intent
+        customTabResultLauncher?.launch(intent)
+            ?: throw IllegalStateException("No ActivityResultLauncher registered. Ensure you're using a ComponentActivity or register a custom launcher.")
     }
 }
+
 
 class JavaScriptBridge(private val onClose: () -> Unit) {
     @android.webkit.JavascriptInterface
