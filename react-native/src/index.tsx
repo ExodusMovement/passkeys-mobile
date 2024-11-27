@@ -12,8 +12,8 @@ const LINKING_ERROR =
   '- You are not using Expo Go\n';
 
 type ReactNativePasskeysProps = {
-  color: string;
-  style: ViewStyle;
+  color?: string;
+  style?: ViewStyle;
 };
 
 const ComponentName = 'ReactNativePasskeysView';

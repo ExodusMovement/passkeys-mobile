@@ -4,7 +4,7 @@ import { ReactNativePasskeysView } from '@exodus/react-native-passkeys';
 export default function App() {
   return (
     <View style={styles.container}>
-      <ReactNativePasskeysView color="#32a852" style={styles.box} />
+      <ReactNativePasskeysView style={styles.box} />
     </View>
   );
 }
