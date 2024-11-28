@@ -4,27 +4,18 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.embeddedWalletUrl) var embeddedWalletUrl: String
-    @State private var urlToOpen: URL?
 
     var body: some View {
-        let delegate = WebviewDelegate(openURLHandler: { url in
-            self.urlToOpen = url
-
+        var delegate: WebviewDelegate!
+        delegate = WebviewDelegate(openURLHandler: { url in
             if let ctrl = RCTPresentedViewController() {
-                let safariView = SafariView(
-                    url: URL(string: embeddedWalletUrl)!,
-                    onDismiss: {
-                        ctrl.dismiss(animated: true)
-                    }
-                )
-                let hostingController = UIHostingController(rootView: safariView)
-                ctrl.present(hostingController, animated: true)
+                delegate.presentSafariView(from: ctrl, url: url)
             } else {
                 print("Failed to retrieve presented view controller.")
             }
         })
 
-        ZStack {
+        return ZStack {
             Webview(url: URL(string: embeddedWalletUrl)!, uiDelegate: delegate)
                 .ignoresSafeArea()
                 .navigationTitle("Passkeys")
@@ -64,12 +55,30 @@ struct SafariView: UIViewControllerRepresentable {
 
 class WebviewDelegate: NSObject, WKUIDelegate {
     private var openURLHandler: (URL) -> Void
+    private weak var hostingController: UIViewController?
 
     init(openURLHandler: @escaping (URL) -> Void) {
         self.openURLHandler = openURLHandler
     }
 
-    func closeSafariView() {}
+    func presentSafariView(from ctrl: UIViewController, url: URL) {
+        let safariView = SafariView(
+            url: url,
+            onDismiss: {
+                ctrl.dismiss(animated: true)
+                self.hostingController = nil
+            }
+        )
+        let hostingController = UIHostingController(rootView: safariView)
+        self.hostingController = hostingController
+        ctrl.present(hostingController, animated: true)
+    }
+
+    func closeSafariView() {
+        hostingController?.dismiss(animated: true, completion: {
+            self.hostingController = nil
+        })
+    }
 
     func webView(
         _ webView: WKWebView,
