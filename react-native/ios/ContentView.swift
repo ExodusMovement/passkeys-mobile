@@ -4,7 +4,6 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.embeddedWalletUrl) var embeddedWalletUrl: String
-    @EnvironmentObject var safariViewManager: SafariViewManager
     @State private var urlToOpen: URL?
 
     var body: some View {
@@ -14,14 +13,16 @@ struct ContentView: View {
             if let ctrl = RCTPresentedViewController() {
                 let safariView = SafariView(
                     url: URL(string: embeddedWalletUrl)!,
-                    safariViewManager: safariViewManager,
+                    onDismiss: {
+                        ctrl.dismiss(animated: true)
+                    }
                 )
                 let hostingController = UIHostingController(rootView: safariView)
                 ctrl.present(hostingController, animated: true)
             } else {
                 print("Failed to retrieve presented view controller.")
             }
-        }, safariViewManager: safariViewManager)
+        })
 
         ZStack {
             Webview(url: URL(string: embeddedWalletUrl)!, uiDelegate: delegate)
@@ -34,12 +35,7 @@ struct ContentView: View {
 
 struct SafariView: UIViewControllerRepresentable {
     let url: URL
-    private var safariViewManager: SafariViewManager
-
-    init(url: URL, safariViewManager: SafariViewManager, onDismiss: @escaping () -> Void) {
-        self.url = url
-        self.safariViewManager = safariViewManager
-    }
+    let onDismiss: () -> Void
 
     func makeUIViewController(context: Context) -> SFSafariViewController {
         let safariVC = SFSafariViewController(url: url)
@@ -48,22 +44,32 @@ struct SafariView: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onDismiss: onDismiss)
+    }
+
+    class Coordinator: NSObject, SFSafariViewControllerDelegate {
+        let onDismiss: () -> Void
+
+        init(onDismiss: @escaping () -> Void) {
+            self.onDismiss = onDismiss
+        }
+
+        func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+            onDismiss()
+        }
+    }
 }
 
 class WebviewDelegate: NSObject, WKUIDelegate {
     private var openURLHandler: (URL) -> Void
-    private var safariViewManager: SafariViewManager
 
-    init(openURLHandler: @escaping (URL) -> Void, safariViewManager: SafariViewManager) {
+    init(openURLHandler: @escaping (URL) -> Void) {
         self.openURLHandler = openURLHandler
-        self.safariViewManager = safariViewManager
     }
 
-    func closeSafariViewManager() {
-        Task { @MainActor in
-            safariViewManager.isSafariViewVisible = false
-        }
-    }
+    func closeSafariView() {}
 
     func webView(
         _ webView: WKWebView,

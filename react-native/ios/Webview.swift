@@ -46,7 +46,7 @@ struct Webview: UIViewRepresentable {
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
             if message.name == "closeSigner" {
                 DispatchQueue.main.async {
-                    self.parent.uiDelegate.closeSafariViewManager()
+                    self.parent.uiDelegate.closeSafariView()
                 }
             }
         }
