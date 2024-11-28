@@ -4,7 +4,9 @@ import SwiftUI
 class ReactNativePasskeysViewManager: RCTViewManager {
 
   override func view() -> (UIView) {
-    let passkeysView = PasskeysMobile()
+    let webViewModel = WebViewModel()
+    let passkeysView = PasskeysMobile(viewModel: webViewModel)
+
     let hostingController = UIHostingController(rootView: passkeysView)
     return hostingController.view
   }
