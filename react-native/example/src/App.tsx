@@ -1,11 +1,12 @@
-import { StyleSheet, View } from 'react-native';
+import { SafeAreaView, StyleSheet } from 'react-native';
+
 import { ReactNativePasskeysView } from '@exodus/react-native-passkeys';
 
 export default function App() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ReactNativePasskeysView style={styles.box} />
-    </View>
+    </SafeAreaView>
   );
 }
 
