@@ -11,8 +11,15 @@ struct ContentView: View {
         let delegate = WebviewDelegate(openURLHandler: { url in
             self.urlToOpen = url
 
-            Task { @MainActor in
-                self.safariViewManager.isSafariViewVisible = true
+            if let ctrl = RCTPresentedViewController() {
+                let safariView = SafariView(
+                    url: URL(string: embeddedWalletUrl)!,
+                    safariViewManager: safariViewManager,
+                )
+                let hostingController = UIHostingController(rootView: safariView)
+                ctrl.present(hostingController, animated: true)
+            } else {
+                print("Failed to retrieve presented view controller.")
             }
         }, safariViewManager: safariViewManager)
 
@@ -21,10 +28,6 @@ struct ContentView: View {
                 .ignoresSafeArea()
                 .navigationTitle("Passkeys")
                 .navigationBarTitleDisplayMode(.inline)
-
-            if let url = urlToOpen, safariViewManager.isSafariViewVisible {
-                SafariView(url: url, safariViewManager: safariViewManager, onDismiss: {})
-            }
         }
     }
 }
@@ -32,16 +35,10 @@ struct ContentView: View {
 struct SafariView: UIViewControllerRepresentable {
     let url: URL
     private var safariViewManager: SafariViewManager
-    var onDismiss: () -> Void
 
     init(url: URL, safariViewManager: SafariViewManager, onDismiss: @escaping () -> Void) {
         self.url = url
         self.safariViewManager = safariViewManager
-        self.onDismiss = onDismiss
-    }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
     }
 
     func makeUIViewController(context: Context) -> SFSafariViewController {
@@ -51,23 +48,6 @@ struct SafariView: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
-
-    final class Coordinator: NSObject, SFSafariViewControllerDelegate {
-        var parent: SafariView?
-
-        init(_ parent: SafariView) {
-            self.parent = parent
-        }
-
-        func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-            guard let parent = parent else { return }
-
-            Task { @MainActor in
-                parent.safariViewManager.isSafariViewVisible = false
-                parent.onDismiss()
-            }
-        }
-    }
 }
 
 class WebviewDelegate: NSObject, WKUIDelegate {
