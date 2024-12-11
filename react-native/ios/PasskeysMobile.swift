@@ -148,6 +148,14 @@ class WebviewDelegate: NSObject, WKUIDelegate {
         })
     }
 
+    func openSafariView(url: String) {
+        if let ctrl = RCTPresentedViewController() {
+            presentSafariView(from: ctrl, url: URL(string: url)!)
+        } else {
+            print("Failed to retrieve presented view controller.")
+        }
+    }
+
     func webView(
         _ webView: WKWebView,
         createWebViewWith configuration: WKWebViewConfiguration,

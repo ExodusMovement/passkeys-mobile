@@ -16,6 +16,7 @@ struct Webview: UIViewRepresentable {
 
         let contentController = WKUserContentController()
         contentController.add(context.coordinator, name: "closeSigner")
+        contentController.add(context.coordinator, name: "openSigner")
         configuration.userContentController = contentController
 
         let js = """
@@ -25,16 +26,17 @@ struct Webview: UIViewRepresentable {
         window.uiControl.closeSigner = function() {
             window.webkit.messageHandlers.closeSigner.postMessage(null);
         };
-        const readyEvent = new Event('wallet-standard:app-ready')
-        readyEvent.detail = { register: (gui) => window.gui = gui }
-
-        const emitAppReady = () => window.dispatchEvent(readyEvent)
-        setTimeout(() => emitAppReady(), 3000)
+        window.uiControl.openSigner = function(url) {
+            window.webkit.messageHandlers.openSigner.postMessage(url);
+        }
         """
         contentController.addUserScript(WKUserScript(source: js, injectionTime: .atDocumentEnd, forMainFrameOnly: false))
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.uiDelegate = uiDelegate
+        if #available(iOS 16.4, *) {
+            webView.isInspectable = true
+        }
 
         webView.load(URLRequest(url: url))
 
@@ -62,6 +64,15 @@ struct Webview: UIViewRepresentable {
             if message.name == "closeSigner" {
                 DispatchQueue.main.async {
                     self.parent.uiDelegate.closeSafariView()
+                }
+            }
+            if message.name == "openSigner" {
+                if let url = message.body as? String {
+                    DispatchQueue.main.async {
+                        self.parent.uiDelegate.openSafariView(url: url)
+                    }
+                } else {
+                    print("url is not a String")
                 }
             }
         }
