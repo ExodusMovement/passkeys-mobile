@@ -4,6 +4,7 @@ import {
   findNodeHandle,
   UIManager,
   Platform,
+  NativeModules,
   type ViewStyle,
 } from 'react-native';
 
@@ -37,16 +38,20 @@ export const ReactNativePasskeysView = (props) => {
 };
 
 export const connect = () =>
-  new Promise((resolve, reject) => {
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(componentRef.current),
-      UIManager.getViewManagerConfig(ComponentName).Commands.callMethod,
-      ['connect', {}]
-    );
-  });
+  NativeModules.ReactNativePasskeysViewManager.callMethod(
+    findNodeHandle(componentRef.current),
+    'connect',
+    {}
+  );
 
 setTimeout(async () => {
-  console.log('test here');
+  try {
+    console.log('test here', findNodeHandle(componentRef.current));
   const result = await connect();
   console.log('test result', result);
+  }
+  catch (e) {
+    console.warn(e)
+  }
+  
 }, 3000);

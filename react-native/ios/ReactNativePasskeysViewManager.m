@@ -3,10 +3,10 @@
 
 @interface RCT_EXTERN_MODULE(ReactNativePasskeysViewManager, RCTViewManager)
 
-RCT_EXTERN_METHOD(
-  callMethod:(NSNumber)view
-  (NSString *)method
-  data:(NSDictionary *)data
-)
+RCT_EXTERN_METHOD(callMethod:(nonnull NSNumber *)reactTag
+                  method:(nonnull NSString *)method
+                  data:(nonnull NSDictionary *)data
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 
 @end
