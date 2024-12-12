@@ -46,7 +46,13 @@ class Passkeys @JvmOverloads constructor(
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
 
-        addJavascriptInterface(JavaScriptBridge { onCloseSigner() }, "AndroidBridge")
+        addJavascriptInterface(
+            JavaScriptBridge(
+                onClose = { onCloseSigner() },
+                onOpen = { url -> onOpenSigner(url) }
+            ),
+            "AndroidBridge"
+        )
 
         webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
@@ -70,12 +76,19 @@ class Passkeys @JvmOverloads constructor(
             window.uiControl.closeSigner = function() {
                 AndroidBridge.closeSigner();
             };
+            window.uiControl.openSigner = function(url) {
+                AndroidBridge.openSigner(url);
+            };
         """
         ) { }
     }
 
     private fun onCloseSigner() {
         customTabCallback?.invoke()
+    }
+
+    private fun onOpenSigner(url: String) {
+        openInCustomTab(url)
     }
 
     fun handleActivityResult(requestCode: Int, resultCode: Int) {
@@ -94,9 +107,14 @@ class Passkeys @JvmOverloads constructor(
     }
 }
 
-class JavaScriptBridge(private val onClose: () -> Unit) {
+class JavaScriptBridge(private val onClose: () -> Unit, private val onOpen: (String) -> Unit) {
     @android.webkit.JavascriptInterface
     fun closeSigner() {
         onClose()
+    }
+
+    @android.webkit.JavascriptInterface
+    fun openSigner(url: String) {
+        onOpen(url)
     }
 }
