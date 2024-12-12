@@ -17,6 +17,7 @@ const LINKING_ERROR =
 type ReactNativePasskeysProps = {
   color?: string;
   style?: ViewStyle;
+  ref?: any;
 };
 
 const ComponentName = 'ReactNativePasskeysView';
@@ -28,8 +29,8 @@ const _ReactNativePasskeysView =
         throw new Error(LINKING_ERROR);
       };
 
-let componentRef;
-export const ReactNativePasskeysView = (props) => {
+let componentRef: any;
+export const ReactNativePasskeysView = (props: ReactNativePasskeysProps) => {
   const ref = useRef();
   useEffect(() => {
     componentRef = ref;
@@ -37,21 +38,11 @@ export const ReactNativePasskeysView = (props) => {
   return <_ReactNativePasskeysView {...props} ref={ref} />;
 };
 
-export const connect = () =>
-  NativeModules.ReactNativePasskeysViewManager.callMethod(
+export const connect = () => {
+  if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
+  return NativeModules.ReactNativePasskeysViewManager.callMethod(
     findNodeHandle(componentRef.current),
     'connect',
     {}
   );
-
-setTimeout(async () => {
-  try {
-    console.log('test here', findNodeHandle(componentRef.current));
-  const result = await connect();
-  console.log('test result', result);
-  }
-  catch (e) {
-    console.warn(e)
-  }
-  
-}, 3000);
+};
