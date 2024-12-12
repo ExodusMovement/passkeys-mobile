@@ -52,7 +52,7 @@ export const signTransaction = (data) => {
   return NativeModules.ReactNativePasskeysViewManager.callMethod(
     findNodeHandle(componentRef.current),
     'signTransaction',
-    data
+    JSON.parse(JSON.stringify(data))
   );
 };
 
@@ -61,6 +61,6 @@ export const signMessage = (data) => {
   return NativeModules.ReactNativePasskeysViewManager.callMethod(
     findNodeHandle(componentRef.current),
     'signMessage',
-    data
+    JSON.parse(JSON.stringify(data))
   );
 };
