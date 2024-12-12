@@ -46,3 +46,21 @@ export const connect = () => {
     {}
   );
 };
+
+export const signTransaction = (data) => {
+  if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
+  return NativeModules.ReactNativePasskeysViewManager.callMethod(
+    findNodeHandle(componentRef.current),
+    'signTransaction',
+    data
+  );
+};
+
+export const signMessage = (data) => {
+  if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
+  return NativeModules.ReactNativePasskeysViewManager.callMethod(
+    findNodeHandle(componentRef.current),
+    'signMessage',
+    data
+  );
+};
