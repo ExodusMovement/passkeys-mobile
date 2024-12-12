@@ -28,46 +28,41 @@ class ReactNativePasskeysViewManager: RCTViewManager {
 
   @objc(callMethod:method:data:resolver:rejecter:)
   func callMethod(_ reactTag: NSNumber, _ method: String, data: [String: Any], resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
-    print("test here 1")
     DispatchQueue.main.async {
       guard let view = self.bridge.uiManager.view(forReactTag: reactTag) as? HostingAwareView<PasskeysMobile> else {
-          // Notify JavaScript about the error
           rejecter("INVALID_VIEW", "Didn't find view from reference", nil)
           return
       }
-      print("test here 3", self.webViewModel)
-      
+
       let hostingController :UIHostingController<PasskeysMobile> = view.hostingController!
       let passkeys = hostingController.rootView
       let dataJSON: String
-        if let jsonData = try? JSONSerialization.data(withJSONObject: data),
-          let jsonString = String(data: jsonData, encoding: .utf8) {
-            dataJSON = jsonString
-        } else {
-            rejecter("INVALID_JSON", "Failed to serialize data to JSON", nil)
-            return
-        }
+      if let jsonData = try? JSONSerialization.data(withJSONObject: data),
+        let jsonString = String(data: jsonData, encoding: .utf8) {
+          dataJSON = jsonString
+      } else {
+          rejecter("INVALID_JSON", "Failed to serialize data to JSON", nil)
+          return
+      }
 
-        let script = """
-        const result = window.\(method)(\(dataJSON));
-        if (result instanceof Promise) {
-            return result
-                .then(resolved => resolved)
-                .catch(error => { throw error; });
-        } else {
-            return result;
+      let script = """
+      const result = window.\(method)(\(dataJSON));
+      if (result instanceof Promise) {
+          return result
+              .then(resolved => resolved)
+              .catch(error => { throw error; });
+      } else {
+          return result;
+      }
+      """
+      passkeys.callMethod(method, data: data) { result in
+        switch result {
+          case .success(let value):
+              resolver(value)
+          case .failure(let error):
+              rejecter("EXECUTION_ERROR", error.localizedDescription, nil)
         }
-        """
-        passkeys.callMethod(method, data: data) { result in
-          switch result {
-            case .success(let value):
-                resolver(value)
-            case .failure(let error):
-                rejecter("EXECUTION_ERROR", error.localizedDescription, nil)
-          }
-        }
-
-        
+      }
     }
   }
 }
