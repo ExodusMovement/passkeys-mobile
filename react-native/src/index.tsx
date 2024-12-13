@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import traverse from 'traverse';
 import {
   requireNativeComponent,
   findNodeHandle,
@@ -61,6 +62,26 @@ interface SignMessageParams extends SignRequestParams {
   address?: string;
 }
 
+// mutating
+const bufferize = (object: object) => {
+  if (!object) return;
+  if (object.type === 'Buffer' && object.data) return Buffer.from(object.data);
+
+  traverse(object).forEach(function (node: any) {
+    if (
+      Object.hasOwn(node, 'type') &&
+      node.type === 'Buffer' &&
+      Object.hasOwn(node, 'data')
+    ) {
+      this.update(Buffer.from(node.data));
+    }
+  });
+
+  return object;
+};
+
+export default bufferize;
+
 const ComponentName = 'ReactNativePasskeysView';
 
 const _ReactNativePasskeysView =
@@ -79,16 +100,18 @@ export const ReactNativePasskeysView = (props: ReactNativePasskeysProps) => {
   return <_ReactNativePasskeysView {...props} ref={ref} />;
 };
 
-export const connect = () => {
+export const connect = async () => {
   if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
   const args = Platform.select({
     ios: [findNodeHandle(componentRef.current), 'connect', {}],
     default: ['connect', {}],
   });
-  return NativeModules.ReactNativePasskeysViewManager.callMethod(...args);
+  return bufferize(
+    await NativeModules.ReactNativePasskeysViewManager.callMethod(...args)
+  );
 };
 
-export const signTransaction = (data: SignTransactionParams) => {
+export const signTransaction = async (data: SignTransactionParams) => {
   if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
   const args = Platform.select({
     ios: [
@@ -98,10 +121,12 @@ export const signTransaction = (data: SignTransactionParams) => {
     ],
     default: ['signTransaction', JSON.parse(JSON.stringify(data))],
   });
-  return NativeModules.ReactNativePasskeysViewManager.callMethod(...args);
+  return bufferize(
+    await NativeModules.ReactNativePasskeysViewManager.callMethod(...args)
+  );
 };
 
-export const signMessage = (data: SignMessageParams) => {
+export const signMessage = async (data: SignMessageParams) => {
   if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
   const args = Platform.select({
     ios: [
@@ -111,5 +136,7 @@ export const signMessage = (data: SignMessageParams) => {
     ],
     default: ['signMessage', JSON.parse(JSON.stringify(data))],
   });
-  return NativeModules.ReactNativePasskeysViewManager.callMethod(...args);
+  return bufferize(
+    await NativeModules.ReactNativePasskeysViewManager.callMethod(...args)
+  );
 };

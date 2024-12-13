@@ -150,12 +150,6 @@ class Passkeys @JvmOverloads constructor(
         }
     }
 
-    fun handleActivityResult(requestCode: Int, resultCode: Int) {
-        if (requestCode == CUSTOM_TAB_REQUEST_CODE) {
-            reload()
-        }
-    }
-
     fun openInCustomTab(url: String) {
         val uri = Uri.parse(url)
         val customTabsIntent = CustomTabsIntent.Builder().build()
