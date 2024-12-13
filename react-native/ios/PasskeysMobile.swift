@@ -6,6 +6,10 @@ class WebViewModel: ObservableObject {
     @Published var webView: WKWebView? = nil
 }
 
+enum CustomError: Error {
+    case message(String)
+}
+
 struct PasskeysMobile: View {
     @Environment(\.embeddedWalletUrl) var embeddedWalletUrl: String
     @ObservedObject var viewModel: WebViewModel
@@ -37,7 +41,7 @@ struct PasskeysMobile: View {
         }
     }
 
-    public func callAsyncJavaScript(_ script: String, completion: @escaping (Result<Any, Error>) -> Void) {
+    public func callAsyncJavaScript(_ script: String, completion: @escaping (Result<Any?, Error>) -> Void) {
         guard let webviewInstance = viewModel.webView else {
             print("test evaluating JS missing webview instance", viewModel.webView)
             return
@@ -51,16 +55,35 @@ struct PasskeysMobile: View {
                     contentWorld: .page
                 )
 
-                completion(.success(jsResult))
+                do {
+                    if let jsResult = jsResult as? String {
+                        // Handle "null" or "undefined" string cases
+                        if jsResult == "null" || jsResult == "undefined" {
+                            completion(.success(nil))
+                            return
+                        }
+
+                        // Convert the string to Data for JSON parsing
+                        if let jsonData = jsResult.data(using: .utf8) {
+                            let jsonObject = try JSONSerialization.jsonObject(with: jsonData)
+                            completion(.success(jsonObject))
+                        } else {
+                            completion(.failure(CustomError.message("invalid format")))
+                        }
+                    } else {
+                        completion(.failure(CustomError.message("invalid format")))
+                    }
+                } catch {
+                    completion(.failure(error))
+                }
             } catch {
-                // Handle errors and propagate them to the completion handler
                 print("JavaScript execution failed:", error.localizedDescription)
                 completion(.failure(error))
             }
         }
     }
 
-    public func callMethod(_ method: String, data: [String: Any]?, completion: @escaping (Result<Any, Error>) -> Void) {
+    public func callMethod(_ method: String, data: [String: Any]?, completion: @escaping (Result<Any?, Error>) -> Void) {
         let dataJSON: String
         if let data = data,
            let dataString = try? JSONSerialization.data(withJSONObject: data),
@@ -76,7 +99,7 @@ struct PasskeysMobile: View {
             return result
                 .then(resolved => {
                     console.log('Async Promise resolved:', resolved);
-                    return resolved; // Return resolved value directly
+                    return JSON.stringify(resolved); // Return resolved value directly
                 })
                 .catch(error => {
                     console.error('Async Promise rejected:', error);
@@ -84,7 +107,7 @@ struct PasskeysMobile: View {
                 });
         } else {
             console.log('Sync result:', result);
-            return result; // Return sync result directly
+            return JSON.stringify(resolved); // Return sync result directly
         }
         """
         callAsyncJavaScript(script, completion: completion)
