@@ -70,13 +70,13 @@ class Passkeys @JvmOverloads constructor(
     private fun injectJavaScript() {
         evaluateJavascript(
             """
-            if (!window.uiControl) {
-                window.uiControl = {};
+            if (!window.nativeBridge) {
+                window.nativeBridge = {};
             }
-            window.uiControl.closeSigner = function() {
+            window.nativeBridge.closeSigner = function() {
                 AndroidBridge.closeSigner();
             };
-            window.uiControl.openSigner = function(url) {
+            window.nativeBridge.openSigner = function(url) {
                 AndroidBridge.openSigner(url);
             };
         """

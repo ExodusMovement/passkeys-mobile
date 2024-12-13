@@ -20,13 +20,13 @@ struct Webview: UIViewRepresentable {
         configuration.userContentController = contentController
 
         let js = """
-        if (!window.uiControl) {
-            window.uiControl = {};
+        if (!window.nativeBridge) {
+            window.nativeBridge = {};
         }
-        window.uiControl.closeSigner = function() {
+        window.nativeBridge.closeSigner = function() {
             window.webkit.messageHandlers.closeSigner.postMessage(null);
         };
-        window.uiControl.openSigner = function(url) {
+        window.nativeBridge.openSigner = function(url) {
             window.webkit.messageHandlers.openSigner.postMessage(url);
         }
         """
