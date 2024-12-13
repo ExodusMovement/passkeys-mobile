@@ -92,7 +92,7 @@ const _ReactNativePasskeysView =
       };
 
 let componentRef: any;
-export const ReactNativePasskeysView = (props: ReactNativePasskeysProps) => {
+export const Passkeys = (props: ReactNativePasskeysProps) => {
   const ref = useRef();
   useEffect(() => {
     componentRef = ref;
@@ -101,7 +101,7 @@ export const ReactNativePasskeysView = (props: ReactNativePasskeysProps) => {
 };
 
 export const connect = async () => {
-  if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
+  if (!componentRef) throw new Error('Passkeys is not rendered');
   const args = Platform.select({
     ios: [findNodeHandle(componentRef.current), 'connect', {}],
     default: ['connect', {}],
@@ -112,7 +112,7 @@ export const connect = async () => {
 };
 
 export const signTransaction = async (data: SignTransactionParams) => {
-  if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
+  if (!componentRef) throw new Error('Passkeys is not rendered');
   const args = Platform.select({
     ios: [
       findNodeHandle(componentRef.current),
@@ -127,7 +127,7 @@ export const signTransaction = async (data: SignTransactionParams) => {
 };
 
 export const signMessage = async (data: SignMessageParams) => {
-  if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
+  if (!componentRef) throw new Error('Passkeys is not rendered');
   const args = Platform.select({
     ios: [
       findNodeHandle(componentRef.current),

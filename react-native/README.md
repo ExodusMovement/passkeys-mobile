@@ -10,15 +10,13 @@ npm install @exodus/react-native-passkeys
 
 ## Usage
 
-
 ```js
-import { ReactNativePasskeysView } from "@exodus/react-native-passkeys";
+import { Passkeys } from '@exodus/react-native-passkeys';
 
 // ...
 
-<ReactNativePasskeysView color="tomato" />
+<Passkeys color="tomato" />;
 ```
-
 
 ## Contributing
 

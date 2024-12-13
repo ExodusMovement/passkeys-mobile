@@ -54,7 +54,7 @@ export default function App() {
         </TouchableOpacity>
       )}
 
-      <ReactNativePasskeysView style={styles.passkeys} />
+      <Passkeys style={styles.passkeys} />
     </SafeAreaView>
   );
 }
