@@ -10,7 +10,6 @@ import {
   type ViewStyle,
 } from 'react-native';
 
-// @ts-ignore
 if (!global.Buffer) global.Buffer = Buffer;
 
 const LINKING_ERROR =
@@ -57,7 +56,10 @@ interface SignRequestParams extends AuthenticatedRequestParams {
 }
 
 interface SignTransactionParams extends SignRequestParams {
-  transaction: any;
+  transaction: {
+    txData: { transactionBuffer: Buffer };
+    txMeta: object;
+  };
   expiresAt?: number;
 }
 
@@ -104,18 +106,25 @@ export const Passkeys = (props: ReactNativePasskeysProps) => {
   return <_ReactNativePasskeysView {...props} ref={ref} />;
 };
 
-export const connect = async () => {
+export const connect = async (): Promise<{
+  addresses: any;
+  publicKeys: any;
+  credentialId: String;
+}> => {
   if (!componentRef) throw new Error('Passkeys is not rendered');
   const args = Platform.select({
     ios: [findNodeHandle(componentRef.current), 'connect', {}],
     default: ['connect', {}],
   });
+  // @ts-ignore
   return bufferize(
     await NativeModules.ReactNativePasskeysViewManager.callMethod(...args)
   );
 };
 
-export const signTransaction = async (data: SignTransactionParams) => {
+export const signTransaction = async (
+  data: SignTransactionParams
+): Promise<{ rawTx: String; txId: String }> => {
   if (!componentRef) throw new Error('Passkeys is not rendered');
   const args = Platform.select({
     ios: [
@@ -125,12 +134,13 @@ export const signTransaction = async (data: SignTransactionParams) => {
     ],
     default: ['signTransaction', JSON.parse(JSON.stringify(data))],
   });
+  // @ts-ignore
   return bufferize(
     await NativeModules.ReactNativePasskeysViewManager.callMethod(...args)
   );
 };
 
-export const signMessage = async (data: SignMessageParams) => {
+export const signMessage = async (data: SignMessageParams): Promise<Buffer> => {
   if (!componentRef) throw new Error('Passkeys is not rendered');
   const args = Platform.select({
     ios: [
@@ -140,6 +150,7 @@ export const signMessage = async (data: SignMessageParams) => {
     ],
     default: ['signMessage', JSON.parse(JSON.stringify(data))],
   });
+  // @ts-ignore
   return bufferize(
     await NativeModules.ReactNativePasskeysViewManager.callMethod(...args)
   );

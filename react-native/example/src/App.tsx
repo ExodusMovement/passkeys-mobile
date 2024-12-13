@@ -5,6 +5,7 @@ import {
   Passkeys,
   connect,
   signMessage,
+  signTransaction,
 } from '@exodus/react-native-passkeys-sdk';
 import { Buffer } from 'buffer';
 
@@ -51,6 +52,33 @@ export default function App() {
           }}
         >
           <Text>Sign Message</Text>
+        </TouchableOpacity>
+      )}
+      {credentialId && (
+        <TouchableOpacity
+          onPress={async () => {
+            try {
+              const signTransactionResponse = await signTransaction({
+                transaction: {
+                  txData: {
+                    transactionBuffer: Buffer.from(
+                      'AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEDlQMu5tnOGTuT6craZOCkndrjA9o2EJb1rBw/ohlcpypy8Z7Z8rsF8SRaO8FE7vKMoIjCMnrsYrINFR5JNNf2tAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCppgV9A6KWVpt6hEMng2GqzikT9gsGmsvUzYWZIQ6KoPcBAgMBAQAJA0BCDwAAAAAA',
+                      'base64'
+                    ),
+                  },
+                  txMeta: Object.create(null),
+                },
+                baseAssetName: 'solana',
+                credentialId,
+                metadata: { title: 'Sign Transaction' },
+              });
+              console.log('signTransactionResponse', signTransactionResponse);
+            } catch (error) {
+              console.error(error);
+            }
+          }}
+        >
+          <Text>Sign Transaction</Text>
         </TouchableOpacity>
       )}
 
