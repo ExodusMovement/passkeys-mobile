@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SafeAreaView, StyleSheet, TouchableOpacity, Text } from 'react-native';
 
 import {
-  ReactNativePasskeysView,
+  Passkeys,
   connect,
   signMessage,
 } from '@exodus/react-native-passkeys-sdk';
