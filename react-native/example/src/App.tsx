@@ -7,9 +7,6 @@ import {
   signMessage,
   signTransaction,
 } from '@exodus/react-native-passkeys-sdk';
-import { Buffer } from 'buffer';
-
-global.Buffer = Buffer;
 
 export default function App() {
   const [_, setAddresses] = useState();
