@@ -8,7 +8,7 @@ import com.facebook.react.uimanager.ViewManager
 
 class ReactNativePasskeysPackage : ReactPackage {
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
-    return emptyList()
+    return listOf(ReactNativePasskeysModule(reactContext))
   }
 
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {

@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   passkeys: {
-    width: 0,
-    height: 0,
+    width: 1,
+    height: 1,
+    opacity: 0,
   },
 });

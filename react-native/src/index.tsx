@@ -81,27 +81,35 @@ export const ReactNativePasskeysView = (props: ReactNativePasskeysProps) => {
 
 export const connect = () => {
   if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
-  return NativeModules.ReactNativePasskeysViewManager.callMethod(
-    findNodeHandle(componentRef.current),
-    'connect',
-    {}
-  );
+  const args = Platform.select({
+    ios: [findNodeHandle(componentRef.current), 'connect', {}],
+    default: ['connect', {}],
+  });
+  return NativeModules.ReactNativePasskeysViewManager.callMethod(...args);
 };
 
 export const signTransaction = (data: SignTransactionParams) => {
   if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
-  return NativeModules.ReactNativePasskeysViewManager.callMethod(
-    findNodeHandle(componentRef.current),
-    'signTransaction',
-    JSON.parse(JSON.stringify(data))
-  );
+  const args = Platform.select({
+    ios: [
+      findNodeHandle(componentRef.current),
+      'signTransaction',
+      JSON.parse(JSON.stringify(data)),
+    ],
+    default: ['signTransaction', JSON.parse(JSON.stringify(data))],
+  });
+  return NativeModules.ReactNativePasskeysViewManager.callMethod(...args);
 };
 
 export const signMessage = (data: SignMessageParams) => {
   if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
-  return NativeModules.ReactNativePasskeysViewManager.callMethod(
-    findNodeHandle(componentRef.current),
-    'signMessage',
-    JSON.parse(JSON.stringify(data))
-  );
+  const args = Platform.select({
+    ios: [
+      findNodeHandle(componentRef.current),
+      'signMessage',
+      JSON.parse(JSON.stringify(data)),
+    ],
+    default: ['signMessage', JSON.parse(JSON.stringify(data))],
+  });
+  return NativeModules.ReactNativePasskeysViewManager.callMethod(...args);
 };
