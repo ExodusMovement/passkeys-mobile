@@ -2,6 +2,7 @@ package com.exodus.reactnativepasskeys
 
 import android.app.Activity
 import com.facebook.react.uimanager.ThemedReactContext
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import android.content.Intent
 import android.net.Uri
@@ -13,6 +14,36 @@ import androidx.browser.customtabs.CustomTabsIntent
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+
+private fun org.json.JSONObject.toMap(): Map<String, Any?> {
+    val map = mutableMapOf<String, Any?>()
+    val keys = keys()
+    while (keys.hasNext()) {
+        val key = keys.next()
+        val value = this[key]
+        map[key] = when (value) {
+            is org.json.JSONObject -> value.toMap()
+            is org.json.JSONArray -> value.toList()
+            else -> value
+        }
+    }
+    return map
+}
+
+private fun org.json.JSONArray.toList(): List<Any?> {
+    val list = mutableListOf<Any?>()
+    for (i in 0 until length()) {
+        val value = this[i]
+        list.add(
+            when (value) {
+                is org.json.JSONObject -> value.toMap()
+                is org.json.JSONArray -> value.toList()
+                else -> value
+            }
+        )
+    }
+    return list
+}
 
 class Passkeys @JvmOverloads constructor(
     context: ThemedReactContext,
@@ -39,6 +70,7 @@ class Passkeys @JvmOverloads constructor(
     }
 
     private val coroutineScope = MainScope()
+    private val deferredResults = mutableMapOf<String, CompletableDeferred<ReadableMap?>>()
 
     init {
         // if (instance != null) throw IllegalStateException("Only one instance if Passkeys is allowed") // todo
@@ -55,7 +87,8 @@ class Passkeys @JvmOverloads constructor(
         addJavascriptInterface(
             JavaScriptBridge(
                 onClose = { onCloseSigner() },
-                onOpen = { url -> onOpenSigner(url) }
+                onOpen = { url -> onOpenSigner(url) },
+                onResult = { id, result -> onJavaScriptResult(id, result) }
             ),
             "AndroidBridge"
         )
@@ -63,7 +96,7 @@ class Passkeys @JvmOverloads constructor(
         webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 openInCustomTab(request.url.toString())
-                return true // We handle the URL ourselves
+                return true
             }
         }
     }
@@ -85,6 +118,9 @@ class Passkeys @JvmOverloads constructor(
             window.nativeBridge.openSigner = function(url) {
                 AndroidBridge.openSigner(url);
             };
+            window.nativeBridge.resolveResult = function(id, result) {
+                AndroidBridge.resolveResult(id, result);
+            };
         """
         ) { }
     }
@@ -95,6 +131,22 @@ class Passkeys @JvmOverloads constructor(
 
     private fun onOpenSigner(url: String) {
         openInCustomTab(url)
+    }
+
+    private fun onJavaScriptResult(id: String, result: String?) {
+        try {
+            val readableMap: ReadableMap? = if (result.isNullOrBlank() || result == "undefined" || result == "null") {
+                null
+            } else {
+                val jsonObject = org.json.JSONObject(result)
+                Arguments.makeNativeMap(jsonObject.toMap())
+            }
+            deferredResults[id]?.complete(readableMap)
+        } catch (e: Exception) {
+            deferredResults[id]?.completeExceptionally(e)
+        } finally {
+            deferredResults.remove(id)
+        }
     }
 
     fun handleActivityResult(requestCode: Int, resultCode: Int) {
@@ -112,19 +164,31 @@ class Passkeys @JvmOverloads constructor(
         activity.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
     }
 
-    fun callAsyncJavaScript(script: String): CompletableDeferred<String?> {
-        val deferredResult = CompletableDeferred<String?>()
+    fun callAsyncJavaScriptWithId(script: String): CompletableDeferred<ReadableMap?> {
+        val deferredResult = CompletableDeferred<ReadableMap?>()
+        val uniqueId = System.currentTimeMillis().toString()
+        deferredResults[uniqueId] = deferredResult
 
         coroutineScope.launch {
-            evaluateJavascript(script) { result ->
-                deferredResult.complete(result)
-            }
+            evaluateJavascript(
+                """
+                (async function() {
+                    try {
+                        const result = await (function() { $script })();
+                        window.nativeBridge.resolveResult('$uniqueId', JSON.stringify(result));
+                    } catch (e) {
+                        window.nativeBridge.resolveResult('$uniqueId', null);
+                    }
+                })();
+                """
+            ) { }
         }
 
         return deferredResult
     }
 
-    fun callMethod(method: String, data: ReadableMap?, completion: (Result<String?>) -> Unit) {
+    fun callMethod(method: String, data: ReadableMap?, completion: (Result<ReadableMap?>) -> Unit) {
+        injectJavaScript()
         val dataJSON = try {
             data?.toHashMap()?.let { hashMap ->
                 org.json.JSONObject(hashMap as Map<String, Any>).toString()
@@ -134,20 +198,11 @@ class Passkeys @JvmOverloads constructor(
             return
         }
 
-        val script = """
-        const result = window.$method($dataJSON);
-        if (result instanceof Promise) {
-            result
-                .then(resolved => resolved)
-                .catch(error => { throw error; });
-        } else {
-            result;
-        }
-        """
+        val script = "return window.$method($dataJSON);"
 
         coroutineScope.launch {
             try {
-                val result = callAsyncJavaScript(script).await()
+                val result = callAsyncJavaScriptWithId(script).await()
                 completion(Result.success(result))
             } catch (e: Exception) {
                 completion(Result.failure(e))
@@ -156,7 +211,11 @@ class Passkeys @JvmOverloads constructor(
     }
 }
 
-class JavaScriptBridge(private val onClose: () -> Unit, private val onOpen: (String) -> Unit) {
+class JavaScriptBridge(
+    private val onClose: () -> Unit,
+    private val onOpen: (String) -> Unit,
+    private val onResult: (String, String?) -> Unit
+) {
     @android.webkit.JavascriptInterface
     fun closeSigner() {
         onClose()
@@ -165,5 +224,10 @@ class JavaScriptBridge(private val onClose: () -> Unit, private val onOpen: (Str
     @android.webkit.JavascriptInterface
     fun openSigner(url: String) {
         onOpen(url)
+    }
+
+    @android.webkit.JavascriptInterface
+    fun resolveResult(id: String, result: String?) {
+        onResult(id, result)
     }
 }
