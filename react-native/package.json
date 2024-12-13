@@ -1,7 +1,7 @@
 {
-  "name": "@exodus/react-native-passkeys",
+  "name": "@exodus/react-native-passkeys-sdk",
   "version": "0.1.0",
-  "description": "react-native-passkeys",
+  "description": "react-native-passkeys-sdk",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
