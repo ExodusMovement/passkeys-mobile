@@ -183,6 +183,7 @@
     "version": "0.44.2"
   },
   "dependencies": {
+    "buffer": "^6.0.3",
     "traverse": "^0.6.10"
   }
 }

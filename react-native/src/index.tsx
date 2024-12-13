@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import traverse from 'traverse';
+import { Buffer } from 'buffer';
 import {
   requireNativeComponent,
   findNodeHandle,
@@ -8,6 +9,9 @@ import {
   NativeModules,
   type ViewStyle,
 } from 'react-native';
+
+// @ts-ignore
+if (!global.Buffer) global.Buffer = Buffer;
 
 const LINKING_ERROR =
   `The package '@exodus/react-native-passkeys-sdk' doesn't seem to be linked. Make sure: \n\n` +
