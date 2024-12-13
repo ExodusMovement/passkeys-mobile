@@ -20,6 +20,47 @@ type ReactNativePasskeysProps = {
   ref?: any;
 };
 
+interface Metadata {
+  title: string;
+}
+
+// Simplified version of the EIP-712 message type.
+// See: https://eips.ethereum.org/EIPS/eip-712.
+interface EIP712Message {
+  domain: EIP712Domain;
+  message: Record<string, unknown>;
+}
+
+interface EIP712Domain {
+  name?: string;
+}
+
+interface Message {
+  rawMessage?: Buffer;
+  EIP712Message?: EIP712Message;
+}
+
+interface RequestParams {}
+
+interface AuthenticatedRequestParams extends RequestParams {
+  credentialId: string | Uint8Array;
+}
+
+interface SignRequestParams extends AuthenticatedRequestParams {
+  metadata: Metadata;
+  baseAssetName: string;
+}
+
+interface SignTransactionParams extends SignRequestParams {
+  transaction: any;
+  expiresAt?: number;
+}
+
+interface SignMessageParams extends SignRequestParams {
+  message: Message;
+  address?: string;
+}
+
 const ComponentName = 'ReactNativePasskeysView';
 
 const _ReactNativePasskeysView =
@@ -47,7 +88,7 @@ export const connect = () => {
   );
 };
 
-export const signTransaction = (data) => {
+export const signTransaction = (data: SignTransactionParams) => {
   if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
   return NativeModules.ReactNativePasskeysViewManager.callMethod(
     findNodeHandle(componentRef.current),
@@ -56,7 +97,7 @@ export const signTransaction = (data) => {
   );
 };
 
-export const signMessage = (data) => {
+export const signMessage = (data: SignMessageParams) => {
   if (!componentRef) throw new Error('ReactNativePasskeysView is not rendered');
   return NativeModules.ReactNativePasskeysViewManager.callMethod(
     findNodeHandle(componentRef.current),

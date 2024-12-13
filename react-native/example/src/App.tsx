@@ -11,7 +11,7 @@ import { Buffer } from 'buffer';
 global.Buffer = Buffer;
 
 export default function App() {
-  const [addresses, setAddresses] = useState();
+  const [_, setAddresses] = useState();
   const [credentialId, setCredentialId] = useState();
 
   return (
@@ -42,6 +42,7 @@ export default function App() {
                 },
                 baseAssetName: 'ethereum',
                 credentialId,
+                metadata: { title: 'Sign Message' },
               });
               console.log('signedMessageResponse', signedMessageResponse);
             } catch (error) {
