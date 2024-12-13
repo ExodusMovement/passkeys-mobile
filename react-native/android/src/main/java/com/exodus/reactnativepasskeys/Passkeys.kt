@@ -19,7 +19,7 @@ class Passkeys @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     private val activity: Activity,
-    private val initialUrl: String = "https://localhost:5172?relay"
+    private val initialUrl: String = "https://wallet-d.passkeys.foundation?relay"
 ) : WebView(context, attrs, defStyleAttr) {
 
     companion object {
