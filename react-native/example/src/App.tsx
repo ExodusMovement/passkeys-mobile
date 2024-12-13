@@ -5,7 +5,7 @@ import {
   ReactNativePasskeysView,
   connect,
   signMessage,
-} from '@exodus/react-native-passkeys';
+} from '@exodus/react-native-passkeys-sdk';
 import { Buffer } from 'buffer';
 
 global.Buffer = Buffer;
