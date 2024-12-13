@@ -14,6 +14,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 private fun org.json.JSONObject.toMap(): Map<String, Any?> {
     val map = mutableMapOf<String, Any?>()
@@ -166,7 +167,7 @@ class Passkeys @JvmOverloads constructor(
 
     fun callAsyncJavaScriptWithId(script: String): CompletableDeferred<ReadableMap?> {
         val deferredResult = CompletableDeferred<ReadableMap?>()
-        val uniqueId = System.currentTimeMillis().toString()
+        val uniqueId = java.util.UUID.randomUUID().toString()
         deferredResults[uniqueId] = deferredResult
 
         coroutineScope.launch {
