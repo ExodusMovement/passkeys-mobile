@@ -1,17 +1,17 @@
-# @exodus/react-native-passkeys-sdk
+# @passkeys/react-native
 
-react-native-passkeys-sdk
+@passkeys/react-native
 
 ## Installation
 
 ```sh
-npm install @exodus/react-native-passkeys-sdk
+npm install @passkeys/react-native
 ```
 
 ## Usage
 
 ```js
-import { Passkeys } from '@exodus/react-native-passkeys-sdk';
+import { Passkeys } from '@passkeys/react-native';
 
 // ...
 

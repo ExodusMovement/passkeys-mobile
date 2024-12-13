@@ -13,7 +13,7 @@ import {
 if (!global.Buffer) global.Buffer = Buffer;
 
 const LINKING_ERROR =
-  `The package '@exodus/react-native-passkeys-sdk' doesn't seem to be linked. Make sure: \n\n` +
+  `The package '@passkeys/react-native' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';

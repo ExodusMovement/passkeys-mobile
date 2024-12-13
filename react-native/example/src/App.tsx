@@ -6,7 +6,7 @@ import {
   connect,
   signMessage,
   signTransaction,
-} from '@exodus/react-native-passkeys-sdk';
+} from '@passkeys/react-native';
 
 export default function App() {
   const [_, setAddresses] = useState();
