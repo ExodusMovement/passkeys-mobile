@@ -26,16 +26,6 @@ class MainActivity : ReactActivity() {
   override fun createReactActivityDelegate(): ReactActivityDelegate =
       DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
 
-  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    super.onActivityResult(requestCode, resultCode, data)
-
-    // Pass the result to Passkeys
-    if (requestCode == Passkeys.CUSTOM_TAB_REQUEST_CODE) {
-        // Assuming you have a reference to the Passkeys instance
-        Passkeys.getInstance()?.handleActivityResult(requestCode, resultCode)
-    }
-  }
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 

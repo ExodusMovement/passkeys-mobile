@@ -1,7 +1,7 @@
 {
-  "name": "@exodus/react-native-passkeys",
+  "name": "@passkeys/react-native",
   "version": "0.1.0",
-  "description": "react-native-passkeys",
+  "description": "@passkeys/react-native",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
@@ -71,6 +71,7 @@
     "@release-it/conventional-changelog": "^9.0.2",
     "@types/jest": "^29.5.5",
     "@types/react": "^18.2.44",
+    "@types/traverse": "^0.6.37",
     "commitlint": "^17.0.2",
     "del-cli": "^5.1.0",
     "eslint": "^8.51.0",
@@ -118,11 +119,6 @@
     },
     "github": {
       "release": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      }
     }
   },
   "eslintConfig": {
@@ -185,5 +181,9 @@
     "type": "view-legacy",
     "languages": "kotlin-swift",
     "version": "0.44.2"
+  },
+  "dependencies": {
+    "buffer": "^6.0.3",
+    "traverse": "^0.6.10"
   }
 }
