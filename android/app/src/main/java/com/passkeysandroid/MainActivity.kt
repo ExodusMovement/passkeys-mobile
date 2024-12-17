@@ -1,6 +1,7 @@
 // MainActivity.kt
 package com.passkeysandroid
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -14,21 +15,23 @@ import androidx.browser.customtabs.CustomTabsIntent
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var webView: WebView
+    private val CUSTOM_TAB_REQUEST_CODE = 100
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val webView: WebView = findViewById(R.id.webView)
+        webView = findViewById(R.id.webView)
         setupWebView(webView)
 
-        webView.loadUrl("https://wallet-d.passkeys.foundation?relay&returnTo=passkeys%3A%2F%2F%0A")
+        webView.loadUrl("https://dev.passkeys.foundation/playground?relay&returnTo=passkeys%3A%2F%2F%0A")
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.data?.let { uri ->
             if (uri.scheme == "passkeys") {
-                val webView: WebView = findViewById(R.id.webView)
                 webView.reload()
             }
         }
@@ -48,6 +51,18 @@ class MainActivity : AppCompatActivity() {
     private fun openInCustomTab(context: Context, url: String) {
         val uri = Uri.parse(url)
         val customTabsIntent = CustomTabsIntent.Builder().build()
-        customTabsIntent.launchUrl(context, uri)
+
+        val intent = customTabsIntent.intent
+        intent.data = uri
+        startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == CUSTOM_TAB_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                webView.reload()
+            }
+        }
     }
 }

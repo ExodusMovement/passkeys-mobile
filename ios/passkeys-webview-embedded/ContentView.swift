@@ -4,21 +4,20 @@
 //
 //  Created by Jan on 02.10.24.
 //
-import AuthenticationServices
+
+import SafariServices
 import WebKit
 import SwiftUI
 
 struct ContentView: View {
     @Environment(\.embeddedWalletUrl) var embeddedWalletUrl: String
-    @State private var showAuthSession = false
+    @EnvironmentObject var safariViewManager: SafariViewManager
     @State private var urlToOpen: URL?
-    private let authSessionCoordinator = AuthSessionCoordinator()
 
     var body: some View {
         let delegate = WebviewDelegate(openURLHandler: { url in
             self.urlToOpen = url
-            self.showAuthSession = true
-            authSessionCoordinator.startAuthSession(url: url)
+            self.safariViewManager.isSafariViewVisible = true
         })
 
         ZStack {
@@ -26,28 +25,42 @@ struct ContentView: View {
                 .ignoresSafeArea()
                 .navigationTitle("Passkeys")
                 .navigationBarTitleDisplayMode(.inline)
+
+            if let url = urlToOpen, safariViewManager.isSafariViewVisible {
+                SafariView(url: url, showSafariView: $safariViewManager.isSafariViewVisible, onDismiss: {})
+            }
         }
     }
 }
 
-class AuthSessionCoordinator: NSObject, ASWebAuthenticationPresentationContextProviding {
-    private var authSession: ASWebAuthenticationSession?
+struct SafariView: UIViewControllerRepresentable {
+    let url: URL
+    @Binding var showSafariView: Bool
+    var onDismiss: () -> Void
 
-    func startAuthSession(url: URL) {
-        // todo switch over to https://developer.apple.com/documentation/authenticationservices/aswebauthenticationsession/init(url:callback:completionhandler:)
-        authSession = ASWebAuthenticationSession(url: url, callbackURLScheme: "passkeys") { callbackURL, error in
-            if let error = error {
-                print("Authentication failed with error: \(error.localizedDescription)")
-            } else if let callbackURL = callbackURL {
-                print("Authentication succeeded with callback URL: \(callbackURL)")
-            }
-        }
-        authSession?.presentationContextProvider = self
-        authSession?.start()
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
     }
 
-    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        return UIApplication.shared.windows.first { $0.isKeyWindow }!
+    func makeUIViewController(context: UIViewControllerRepresentableContext<SafariView>) -> SFSafariViewController {
+        let safariVC = SFSafariViewController(url: url)
+        safariVC.delegate = context.coordinator
+        return safariVC
+    }
+
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: UIViewControllerRepresentableContext<SafariView>) {}
+
+    class Coordinator: NSObject, SFSafariViewControllerDelegate {
+        var parent: SafariView
+
+        init(_ parent: SafariView) {
+            self.parent = parent
+        }
+
+        func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+            parent.showSafariView = false
+            parent.onDismiss()
+        }
     }
 }
 
@@ -65,9 +78,10 @@ class WebviewDelegate: NSObject, WKUIDelegate {
         windowFeatures: WKWindowFeatures
     ) -> WKWebView? {
         if let url = navigationAction.request.url {
-            openURLHandler(url)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.openURLHandler(url)
+            }
         }
-        
         return nil
     }
 }
