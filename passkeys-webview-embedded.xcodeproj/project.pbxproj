@@ -10,9 +10,22 @@
 		203E28B52CB9086E00E14D44 /* passkeys-webview-embedded.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "passkeys-webview-embedded.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		20DD6A502CC2A31D00599ECC /* Exceptions for "passkeys-webview-embedded" folder in "passkeys-webview-embedded" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 203E28B42CB9086E00E14D44 /* passkeys-webview-embedded */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		203E28B72CB9086E00E14D44 /* passkeys-webview-embedded */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				20DD6A502CC2A31D00599ECC /* Exceptions for "passkeys-webview-embedded" folder in "passkeys-webview-embedded" target */,
+			);
 			path = "passkeys-webview-embedded";
 			sourceTree = "<group>";
 		};
@@ -255,6 +268,7 @@
 				DEVELOPMENT_TEAM = ZBR5M69CYH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "passkeys-webview-embedded/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -284,6 +298,7 @@
 				DEVELOPMENT_TEAM = ZBR5M69CYH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "passkeys-webview-embedded/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

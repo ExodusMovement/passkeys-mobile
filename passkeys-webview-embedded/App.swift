@@ -9,6 +9,8 @@ import SwiftUI
 
 @main
 struct passkeys_webview_embeddedApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
