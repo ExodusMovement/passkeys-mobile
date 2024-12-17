@@ -37,7 +37,7 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace @exodus/react-native-passkeys-example",
+    "example": "yarn workspace @passkeys/react-native-example",
     "test": "jest",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",

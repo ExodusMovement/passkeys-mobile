@@ -4,8 +4,8 @@ class HostingAwareView<T: View>: UIView {
     var hostingController: UIHostingController<T>?
 }
 
-@objc(ReactNativePasskeysViewManager)
-class ReactNativePasskeysViewManager: RCTViewManager {
+@objc(PasskeysViewManager)
+class PasskeysViewManager: RCTViewManager {
     private var webViewModel: WebViewModel?
 
     override func view() -> (UIView) {

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "ReactNativePasskeysExample.app"
-               BlueprintName = "ReactNativePasskeysExample"
-               ReferencedContainer = "container:ReactNativePasskeysExample.xcodeproj">
+               BuildableName = "PasskeysReactNativeExample.app"
+               BlueprintName = "PasskeysReactNativeExample"
+               ReferencedContainer = "container:PasskeysReactNativeExample.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "ReactNativePasskeysExampleTests.xctest"
-               BlueprintName = "ReactNativePasskeysExampleTests"
-               ReferencedContainer = "container:ReactNativePasskeysExample.xcodeproj">
+               BuildableName = "PasskeysReactNativeExampleTests.xctest"
+               BlueprintName = "PasskeysReactNativeExampleTests"
+               ReferencedContainer = "container:PasskeysReactNativeExample.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ReactNativePasskeysExample.app"
-            BlueprintName = "ReactNativePasskeysExample"
-            ReferencedContainer = "container:ReactNativePasskeysExample.xcodeproj">
+            BuildableName = "PasskeysReactNativeExample.app"
+            BlueprintName = "PasskeysReactNativeExample"
+            ReferencedContainer = "container:PasskeysReactNativeExample.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ReactNativePasskeysExample.app"
-            BlueprintName = "ReactNativePasskeysExample"
-            ReferencedContainer = "container:ReactNativePasskeysExample.xcodeproj">
+            BuildableName = "PasskeysReactNativeExample.app"
+            BlueprintName = "PasskeysReactNativeExample"
+            ReferencedContainer = "container:PasskeysReactNativeExample.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

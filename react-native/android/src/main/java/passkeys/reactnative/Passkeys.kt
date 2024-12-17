@@ -1,4 +1,4 @@
-package com.exodus.reactnativepasskeys
+package passkeys.reactnative
 
 import android.app.Activity
 import com.facebook.react.uimanager.ThemedReactContext

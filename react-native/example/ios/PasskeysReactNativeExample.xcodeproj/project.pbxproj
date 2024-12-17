@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* ReactNativePasskeysExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* ReactNativePasskeysExampleTests.m */; };
-		0C80B921A6F3F58F76C31292 /* libPods-ReactNativePasskeysExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-ReactNativePasskeysExample.a */; };
+		00E356F31AD99517003FC87E /* PasskeysReactNativeExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* PasskeysReactNativeExampleTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1E55B4A3FBB9AE50DD421BA8 /* libPods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68FE9118137752749A82056B /* libPods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.a */; };
+		3282F2E8ED66DDB157486B38 /* libPods-PasskeysReactNativeExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4183428366E03D69F48AF714 /* libPods-PasskeysReactNativeExample.a */; };
 		7603C92A1CCEB16AE13F1E11 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
-		7699B88040F8A987B510C191 /* libPods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -23,28 +23,28 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = ReactNativePasskeysExample;
+			remoteInfo = PasskeysReactNativeExample;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00E356EE1AD99517003FC87E /* ReactNativePasskeysExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReactNativePasskeysExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* PasskeysReactNativeExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PasskeysReactNativeExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* ReactNativePasskeysExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactNativePasskeysExampleTests.m; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* ReactNativePasskeysExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReactNativePasskeysExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ReactNativePasskeysExample/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = ReactNativePasskeysExample/AppDelegate.mm; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ReactNativePasskeysExample/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ReactNativePasskeysExample/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ReactNativePasskeysExample/main.m; sourceTree = "<group>"; };
-		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = ReactNativePasskeysExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		19F6CBCC0A4E27FBF8BF4A61 /* libPods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B4392A12AC88292D35C810B /* Pods-ReactNativePasskeysExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativePasskeysExample.debug.xcconfig"; path = "Target Support Files/Pods-ReactNativePasskeysExample/Pods-ReactNativePasskeysExample.debug.xcconfig"; sourceTree = "<group>"; };
-		5709B34CF0A7D63546082F79 /* Pods-ReactNativePasskeysExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativePasskeysExample.release.xcconfig"; path = "Target Support Files/Pods-ReactNativePasskeysExample/Pods-ReactNativePasskeysExample.release.xcconfig"; sourceTree = "<group>"; };
-		5B7EB9410499542E8C5724F5 /* Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
-		5DCACB8F33CDC322A6C60F78 /* libPods-ReactNativePasskeysExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ReactNativePasskeysExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = ReactNativePasskeysExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		89C6BE57DB24E9ADA2F236DE /* Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.release.xcconfig"; path = "Target Support Files/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.release.xcconfig"; sourceTree = "<group>"; };
+		00E356F21AD99517003FC87E /* PasskeysReactNativeExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PasskeysReactNativeExampleTests.m; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* PasskeysReactNativeExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PasskeysReactNativeExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = PasskeysReactNativeExample/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = PasskeysReactNativeExample/AppDelegate.mm; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = PasskeysReactNativeExample/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PasskeysReactNativeExample/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = PasskeysReactNativeExample/main.m; sourceTree = "<group>"; };
+		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = PasskeysReactNativeExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		145E34B90FDB84064CD8A096 /* Pods-PasskeysReactNativeExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PasskeysReactNativeExample.debug.xcconfig"; path = "Target Support Files/Pods-PasskeysReactNativeExample/Pods-PasskeysReactNativeExample.debug.xcconfig"; sourceTree = "<group>"; };
+		4183428366E03D69F48AF714 /* libPods-PasskeysReactNativeExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PasskeysReactNativeExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E2DCA43A7AEB6D15DF31E0F /* Pods-PasskeysReactNativeExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PasskeysReactNativeExample.release.xcconfig"; path = "Target Support Files/Pods-PasskeysReactNativeExample/Pods-PasskeysReactNativeExample.release.xcconfig"; sourceTree = "<group>"; };
+		68FE9118137752749A82056B /* libPods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = PasskeysReactNativeExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		99DA85154C1834076BA28D93 /* Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
+		E2A42BCCC6599357986B2DA4 /* Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.release.xcconfig"; path = "Target Support Files/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -53,7 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7699B88040F8A987B510C191 /* libPods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.a in Frameworks */,
+				1E55B4A3FBB9AE50DD421BA8 /* libPods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,20 +61,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C80B921A6F3F58F76C31292 /* libPods-ReactNativePasskeysExample.a in Frameworks */,
+				3282F2E8ED66DDB157486B38 /* libPods-PasskeysReactNativeExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* ReactNativePasskeysExampleTests */ = {
+		00E356EF1AD99517003FC87E /* PasskeysReactNativeExampleTests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* ReactNativePasskeysExampleTests.m */,
+				00E356F21AD99517003FC87E /* PasskeysReactNativeExampleTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = ReactNativePasskeysExampleTests;
+			path = PasskeysReactNativeExampleTests;
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -85,7 +85,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* ReactNativePasskeysExample */ = {
+		13B07FAE1A68108700A75B9A /* PasskeysReactNativeExample */ = {
 			isa = PBXGroup;
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -96,15 +96,15 @@
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 			);
-			name = ReactNativePasskeysExample;
+			name = PasskeysReactNativeExample;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				5DCACB8F33CDC322A6C60F78 /* libPods-ReactNativePasskeysExample.a */,
-				19F6CBCC0A4E27FBF8BF4A61 /* libPods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.a */,
+				4183428366E03D69F48AF714 /* libPods-PasskeysReactNativeExample.a */,
+				68FE9118137752749A82056B /* libPods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -119,9 +119,9 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* ReactNativePasskeysExample */,
+				13B07FAE1A68108700A75B9A /* PasskeysReactNativeExample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* ReactNativePasskeysExampleTests */,
+				00E356EF1AD99517003FC87E /* PasskeysReactNativeExampleTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
@@ -134,8 +134,8 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* ReactNativePasskeysExample.app */,
-				00E356EE1AD99517003FC87E /* ReactNativePasskeysExampleTests.xctest */,
+				13B07F961A680F5B00A75B9A /* PasskeysReactNativeExample.app */,
+				00E356EE1AD99517003FC87E /* PasskeysReactNativeExampleTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -143,10 +143,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3B4392A12AC88292D35C810B /* Pods-ReactNativePasskeysExample.debug.xcconfig */,
-				5709B34CF0A7D63546082F79 /* Pods-ReactNativePasskeysExample.release.xcconfig */,
-				5B7EB9410499542E8C5724F5 /* Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.debug.xcconfig */,
-				89C6BE57DB24E9ADA2F236DE /* Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.release.xcconfig */,
+				145E34B90FDB84064CD8A096 /* Pods-PasskeysReactNativeExample.debug.xcconfig */,
+				4E2DCA43A7AEB6D15DF31E0F /* Pods-PasskeysReactNativeExample.release.xcconfig */,
+				99DA85154C1834076BA28D93 /* Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.debug.xcconfig */,
+				E2A42BCCC6599357986B2DA4 /* Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -154,46 +154,46 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* ReactNativePasskeysExampleTests */ = {
+		00E356ED1AD99517003FC87E /* PasskeysReactNativeExampleTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "ReactNativePasskeysExampleTests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "PasskeysReactNativeExampleTests" */;
 			buildPhases = (
-				A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */,
+				E251D66C9A9F4556DF5941A6 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				C59DA0FBD6956966B86A3779 /* [CP] Embed Pods Frameworks */,
-				F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */,
+				6AD1EBED79A9C0D4C1297F17 /* [CP] Embed Pods Frameworks */,
+				A9E44131264E638C2DC85FED /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = ReactNativePasskeysExampleTests;
-			productName = ReactNativePasskeysExampleTests;
-			productReference = 00E356EE1AD99517003FC87E /* ReactNativePasskeysExampleTests.xctest */;
+			name = PasskeysReactNativeExampleTests;
+			productName = PasskeysReactNativeExampleTests;
+			productReference = 00E356EE1AD99517003FC87E /* PasskeysReactNativeExampleTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* ReactNativePasskeysExample */ = {
+		13B07F861A680F5B00A75B9A /* PasskeysReactNativeExample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ReactNativePasskeysExample" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "PasskeysReactNativeExample" */;
 			buildPhases = (
-				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
+				5C0356906B747C53F3832429 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
-				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
+				5AFA55D4D653E1AF8534FE15 /* [CP] Embed Pods Frameworks */,
+				0274C254E7CDE517848E5E67 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = ReactNativePasskeysExample;
-			productName = ReactNativePasskeysExample;
-			productReference = 13B07F961A680F5B00A75B9A /* ReactNativePasskeysExample.app */;
+			name = PasskeysReactNativeExample;
+			productName = PasskeysReactNativeExample;
+			productReference = 13B07F961A680F5B00A75B9A /* PasskeysReactNativeExample.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -213,7 +213,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "ReactNativePasskeysExample" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "PasskeysReactNativeExample" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -226,8 +226,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* ReactNativePasskeysExample */,
-				00E356ED1AD99517003FC87E /* ReactNativePasskeysExampleTests */,
+				13B07F861A680F5B00A75B9A /* PasskeysReactNativeExample */,
+				00E356ED1AD99517003FC87E /* PasskeysReactNativeExampleTests */,
 			);
 		};
 /* End PBXProject section */
@@ -269,24 +269,41 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
+		0274C254E7CDE517848E5E67 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ReactNativePasskeysExample/Pods-ReactNativePasskeysExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-PasskeysReactNativeExample/Pods-PasskeysReactNativeExample-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ReactNativePasskeysExample/Pods-ReactNativePasskeysExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-PasskeysReactNativeExample/Pods-PasskeysReactNativeExample-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ReactNativePasskeysExample/Pods-ReactNativePasskeysExample-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PasskeysReactNativeExample/Pods-PasskeysReactNativeExample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */ = {
+		5AFA55D4D653E1AF8534FE15 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PasskeysReactNativeExample/Pods-PasskeysReactNativeExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PasskeysReactNativeExample/Pods-PasskeysReactNativeExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PasskeysReactNativeExample/Pods-PasskeysReactNativeExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5C0356906B747C53F3832429 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -301,14 +318,48 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-PasskeysReactNativeExample-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */ = {
+		6AD1EBED79A9C0D4C1297F17 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A9E44131264E638C2DC85FED /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E251D66C9A9F4556DF5941A6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -323,62 +374,11 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ReactNativePasskeysExample-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C59DA0FBD6956966B86A3779 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E235C05ADACE081382539298 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ReactNativePasskeysExample/Pods-ReactNativePasskeysExample-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ReactNativePasskeysExample/Pods-ReactNativePasskeysExample-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ReactNativePasskeysExample/Pods-ReactNativePasskeysExample-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests/Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -388,7 +388,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* ReactNativePasskeysExampleTests.m in Sources */,
+				00E356F31AD99517003FC87E /* PasskeysReactNativeExampleTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,7 +406,7 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* ReactNativePasskeysExample */;
+			target = 13B07F861A680F5B00A75B9A /* PasskeysReactNativeExample */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -414,14 +414,14 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.debug.xcconfig */;
+			baseConfigurationReference = 99DA85154C1834076BA28D93 /* Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = ReactNativePasskeysExampleTests/Info.plist;
+				INFOPLIST_FILE = PasskeysReactNativeExampleTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -433,19 +433,19 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = exodus.reactnativepasskeys.example;
+				PRODUCT_BUNDLE_IDENTIFIER = passkeys.reactnative.example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReactNativePasskeysExample.app/ReactNativePasskeysExample";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PasskeysReactNativeExample.app/PasskeysReactNativeExample";
 			};
 			name = Debug;
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-ReactNativePasskeysExample-ReactNativePasskeysExampleTests.release.xcconfig */;
+			baseConfigurationReference = E2A42BCCC6599357986B2DA4 /* Pods-PasskeysReactNativeExample-PasskeysReactNativeExampleTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = ReactNativePasskeysExampleTests/Info.plist;
+				INFOPLIST_FILE = PasskeysReactNativeExampleTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -457,21 +457,21 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = exodus.reactnativepasskeys.example;
+				PRODUCT_BUNDLE_IDENTIFIER = passkeys.reactnative.example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReactNativePasskeysExample.app/ReactNativePasskeysExample";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PasskeysReactNativeExample.app/PasskeysReactNativeExample";
 			};
 			name = Release;
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-ReactNativePasskeysExample.debug.xcconfig */;
+			baseConfigurationReference = 145E34B90FDB84064CD8A096 /* Pods-PasskeysReactNativeExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = ReactNativePasskeysExample/Info.plist;
+				INFOPLIST_FILE = PasskeysReactNativeExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -483,8 +483,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = exodus.reactnativepasskeys.example;
-				PRODUCT_NAME = ReactNativePasskeysExample;
+				PRODUCT_BUNDLE_IDENTIFIER = passkeys.reactnative.example;
+				PRODUCT_NAME = PasskeysReactNativeExample;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -493,12 +493,12 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-ReactNativePasskeysExample.release.xcconfig */;
+			baseConfigurationReference = 4E2DCA43A7AEB6D15DF31E0F /* Pods-PasskeysReactNativeExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = ReactNativePasskeysExample/Info.plist;
+				INFOPLIST_FILE = PasskeysReactNativeExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -510,8 +510,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = exodus.reactnativepasskeys.example;
-				PRODUCT_NAME = ReactNativePasskeysExample;
+				PRODUCT_BUNDLE_IDENTIFIER = passkeys.reactnative.example;
+				PRODUCT_NAME = PasskeysReactNativeExample;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -672,7 +672,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "ReactNativePasskeysExampleTests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "PasskeysReactNativeExampleTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -681,7 +681,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ReactNativePasskeysExample" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "PasskeysReactNativeExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -690,7 +690,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "ReactNativePasskeysExample" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "PasskeysReactNativeExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
