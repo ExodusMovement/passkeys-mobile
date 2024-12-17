@@ -1,3 +1,5 @@
 xcuserdata/
 .DS_Store
 .vscode
+.idea/
+local.properties

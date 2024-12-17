@@ -1,0 +1,20 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+include ':foundation.passkeys.mobile'
+project(':foundation.passkeys.mobile').projectDir = new File('../../android')
+
+rootProject.name = "PasskeysAndroid"
+include ':app'

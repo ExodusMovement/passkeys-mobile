@@ -1,6 +1,93 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-    id 'com.android.application' version '7.3.1' apply false
-    id 'com.android.library' version '7.3.1' apply false
-    id 'org.jetbrains.kotlin.android' version '1.7.20' apply false
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'maven-publish'
+    id 'signing'
+}
+
+android {
+    namespace 'foundation.passkeys.mobile'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 29
+        targetSdk 34
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation "androidx.browser:browser:1.5.0"
+}
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            from components.release
+
+            // Configure library's Maven coordinates
+            groupId = 'foundation.passkeys'
+            artifactId = 'mobile'
+            version = '1.0.0'
+
+            // Define the POM metadata
+            pom {
+                name.set("Passkeys Mobile Library")
+                description.set("...")
+                url.set("https://github.com/ExodusMovement/passkeys-webview-embedded") // Replace with your GitHub or project URL
+
+                licenses {
+                    license {
+                        name.set("MIT")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("ExodusMovement")
+                        // name.set("Your Name")
+                        // email.set("your.email@example.com")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:github.com/ExodusMovement/passkeys-webview-embedded.git")
+                    developerConnection.set("scm:git:ssh://github.com/ExodusMovement/passkeys-webview-embedded.git")
+                    url.set("https://github.com/ExodusMovement/passkeys-webview-embedded")
+                }
+            }
+        }
+    }
+
+    repositories {
+        // maven {
+        //     name = "MyRepo"
+        //     url = uri("https://maven.example.com/repository/maven-releases/")
+
+        //     credentials {
+        //         username = project.findProperty("repoUser") ?: "defaultUser"
+        //         password = project.findProperty("repoPassword") ?: "defaultPassword"
+        //     }
+        // }
+    }
+}
+
+signing {
+    sign publishing.publications.release
 }
