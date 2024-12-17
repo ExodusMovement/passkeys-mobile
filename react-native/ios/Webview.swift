@@ -27,6 +27,7 @@ struct Webview: UIViewRepresentable {
             window.webkit.messageHandlers.closeSigner.postMessage(null);
         };
         window.nativeBridge.openSigner = function(url) {
+            if (typeof url !== 'string') throw new Error('url is not a string')
             window.webkit.messageHandlers.openSigner.postMessage(url);
         }
         """

@@ -68,7 +68,7 @@ interface SignMessageParams extends SignRequestParams {
   address?: string;
 }
 
-// mutating
+// possibly mutating
 const bufferize = (object: { type?: string; data?: any }) => {
   if (!object) return;
   if (object.type === 'Buffer' && object.data) return Buffer.from(object.data);

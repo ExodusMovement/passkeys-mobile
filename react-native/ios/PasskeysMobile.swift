@@ -16,14 +16,7 @@ struct PasskeysMobile: View {
 
 
     var body: some View {
-        var delegate: WebviewDelegate?
-        delegate = WebviewDelegate(openURLHandler: { url in
-            if let ctrl = RCTPresentedViewController() {
-                delegate?.presentSafariView(from: ctrl, url: url)
-            } else {
-                print("Failed to retrieve presented view controller.")
-            }
-        })
+        let delegate: WebviewDelegate? = WebviewDelegate()
 
         if let delegate = delegate {
             return Webview(
@@ -43,7 +36,7 @@ struct PasskeysMobile: View {
 
     public func callAsyncJavaScript(_ script: String, completion: @escaping (Result<Any?, Error>) -> Void) {
         guard let webviewInstance = viewModel.webView else {
-            print("test evaluating JS missing webview instance", viewModel.webView)
+            completion(.failure(CustomError.message("Didn't find WebView")))
             return
         }
 
@@ -57,27 +50,24 @@ struct PasskeysMobile: View {
 
                 do {
                     if let jsResult = jsResult as? String {
-                        // Handle "null" or "undefined" string cases
                         if jsResult == "null" || jsResult == "undefined" {
-                            completion(.success(nil))
+                            completion(.success(nil)) // todo throw instead?
                             return
                         }
 
-                        // Convert the string to Data for JSON parsing
                         if let jsonData = jsResult.data(using: .utf8) {
                             let jsonObject = try JSONSerialization.jsonObject(with: jsonData)
                             completion(.success(jsonObject))
                         } else {
-                            completion(.failure(CustomError.message("invalid format")))
+                            completion(.failure(CustomError.message("invalid response json format")))
                         }
                     } else {
-                        completion(.failure(CustomError.message("invalid format")))
+                        completion(.failure(CustomError.message("invalid response format")))
                     }
                 } catch {
                     completion(.failure(error))
                 }
             } catch {
-                print("JavaScript execution failed:", error.localizedDescription)
                 completion(.failure(error))
             }
         }
@@ -93,21 +83,19 @@ struct PasskeysMobile: View {
             dataJSON = ""
         }
 
+        // stringify before returning to swift to handle buffers, which swift interprets differently than we expect
         let script = """
         const result = window.\(method)(\(dataJSON));
         if (result instanceof Promise) {
             return result
                 .then(resolved => {
-                    console.log('Async Promise resolved:', resolved);
-                    return JSON.stringify(resolved); // Return resolved value directly
+                    return JSON.stringify(resolved);
                 })
                 .catch(error => {
-                    console.error('Async Promise rejected:', error);
-                    throw error; // Throw error to propagate to Swift
+                    throw error;
                 });
         } else {
-            console.log('Sync result:', result);
-            return JSON.stringify(resolved); // Return sync result directly
+            return JSON.stringify(resolved);
         }
         """
         callAsyncJavaScript(script, completion: completion)
@@ -145,12 +133,7 @@ struct SafariView: UIViewControllerRepresentable {
 }
 
 class WebviewDelegate: NSObject, WKUIDelegate {
-    private var openURLHandler: (URL) -> Void
     private weak var hostingController: UIViewController?
-
-    init(openURLHandler: @escaping (URL) -> Void) {
-        self.openURLHandler = openURLHandler
-    }
 
     func presentSafariView(from ctrl: UIViewController, url: URL) {
         let safariView = SafariView(
@@ -177,19 +160,5 @@ class WebviewDelegate: NSObject, WKUIDelegate {
         } else {
             print("Failed to retrieve presented view controller.")
         }
-    }
-
-    func webView(
-        _ webView: WKWebView,
-        createWebViewWith configuration: WKWebViewConfiguration,
-        for navigationAction: WKNavigationAction,
-        windowFeatures: WKWindowFeatures
-    ) -> WKWebView? {
-        if let url = navigationAction.request.url {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.openURLHandler(url)
-            }
-        }
-        return nil
     }
 }
