@@ -18,7 +18,7 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-type ReactNativePasskeysProps = {
+type PasskeysProps = {
   color?: string;
   style?: ViewStyle;
   ref?: any;
@@ -88,22 +88,22 @@ const bufferize = (object: { type?: string; data?: any }) => {
 
 export default bufferize;
 
-const ComponentName = 'ReactNativePasskeysView';
+const ComponentName = 'PasskeysView';
 
-const _ReactNativePasskeysView =
+const _PasskeysView =
   UIManager.getViewManagerConfig(ComponentName) != null
-    ? requireNativeComponent<ReactNativePasskeysProps>(ComponentName)
+    ? requireNativeComponent<PasskeysProps>(ComponentName)
     : () => {
         throw new Error(LINKING_ERROR);
       };
 
 let componentRef: any;
-export const Passkeys = (props: ReactNativePasskeysProps) => {
+export const Passkeys = (props: PasskeysProps) => {
   const ref = useRef();
   useEffect(() => {
     componentRef = ref;
   }, []);
-  return <_ReactNativePasskeysView {...props} ref={ref} />;
+  return <_PasskeysView {...props} ref={ref} />;
 };
 
 export const connect = async (): Promise<{
@@ -117,9 +117,7 @@ export const connect = async (): Promise<{
     default: ['connect', {}],
   });
   // @ts-ignore
-  return bufferize(
-    await NativeModules.ReactNativePasskeysViewManager.callMethod(...args)
-  );
+  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
 };
 
 export const signTransaction = async (
@@ -135,9 +133,7 @@ export const signTransaction = async (
     default: ['signTransaction', JSON.parse(JSON.stringify(data))],
   });
   // @ts-ignore
-  return bufferize(
-    await NativeModules.ReactNativePasskeysViewManager.callMethod(...args)
-  );
+  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
 };
 
 export const signMessage = async (data: SignMessageParams): Promise<Buffer> => {
@@ -151,7 +147,5 @@ export const signMessage = async (data: SignMessageParams): Promise<Buffer> => {
     default: ['signMessage', JSON.parse(JSON.stringify(data))],
   });
   // @ts-ignore
-  return bufferize(
-    await NativeModules.ReactNativePasskeysViewManager.callMethod(...args)
-  );
+  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
 };

@@ -1,6 +1,6 @@
-package exodus.reactnativepasskeys.example
+package passkeys.reactnative.example
 
-import com.exodus.reactnativepasskeys.Passkeys
+import passkeys.reactnative.Passkeys
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
@@ -14,7 +14,7 @@ class MainActivity : ReactActivity() {
    * Returns the name of the main component registered from JavaScript. This is used to schedule
    * rendering of the component.
    */
-  override fun getMainComponentName(): String = "ReactNativePasskeysExample"
+  override fun getMainComponentName(): String = "PasskeysReactNativeExample"
 
   /**
    * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]

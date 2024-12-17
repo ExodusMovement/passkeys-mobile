@@ -1,4 +1,4 @@
-package exodus.reactnativepasskeys.example
+package passkeys.reactnative.example
 
 import android.app.Application
 import com.facebook.react.PackageList

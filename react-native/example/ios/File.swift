@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  ReactNativePasskeysExample
+//  PasskeysReactNativeExample
 //
 
 import Foundation

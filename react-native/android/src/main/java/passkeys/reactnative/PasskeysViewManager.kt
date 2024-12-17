@@ -1,4 +1,4 @@
-package com.exodus.reactnativepasskeys
+package passkeys.reactnative
 
 import android.app.Activity
 import android.graphics.Color
@@ -14,25 +14,25 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
-class ReactNativePasskeysViewManager : SimpleViewManager<View>() {
+class PasskeysViewManager : SimpleViewManager<View>() {
 
-    override fun getName() = "ReactNativePasskeysView"
+    override fun getName() = "PasskeysView"
 
     override fun createViewInstance(reactContext: ThemedReactContext): View {
         val activity = reactContext.currentActivity
 
         if (activity == null) {
-            throw IllegalStateException("No activity available when creating ReactNativePasskeysView")
+            throw IllegalStateException("No activity available when creating PasskeysView")
         }
         return Passkeys(reactContext, null, 0, activity)
     }
 }
 
-class ReactNativePasskeysModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+class PasskeysModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
     private val coroutineScope = MainScope()
 
-    override fun getName() = "ReactNativePasskeysViewManager"
+    override fun getName() = "PasskeysViewManager"
 
     @ReactMethod
     fun callMethod(method: String, data: ReadableMap, promise: Promise) {

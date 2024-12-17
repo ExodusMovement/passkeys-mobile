@@ -1,7 +1,7 @@
 #import <React/RCTViewManager.h>
 #import <React/RCTBridgeModule.h>
 
-@interface RCT_EXTERN_MODULE(ReactNativePasskeysViewManager, RCTViewManager)
+@interface RCT_EXTERN_MODULE(PasskeysViewManager, RCTViewManager)
 
 RCT_EXTERN_METHOD(callMethod:(nonnull NSNumber *)reactTag
                   method:(nonnull NSString *)method

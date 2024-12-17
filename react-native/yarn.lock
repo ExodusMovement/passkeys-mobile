@@ -1860,26 +1860,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@exodus/react-native-passkeys-example@workspace:example":
-  version: 0.0.0-use.local
-  resolution: "@exodus/react-native-passkeys-example@workspace:example"
-  dependencies:
-    "@babel/core": ^7.25.2
-    "@babel/preset-env": ^7.25.3
-    "@babel/runtime": ^7.25.0
-    "@react-native-community/cli": 15.0.1
-    "@react-native-community/cli-platform-android": 15.0.1
-    "@react-native-community/cli-platform-ios": 15.0.1
-    "@react-native/babel-preset": 0.76.3
-    "@react-native/metro-config": 0.76.3
-    "@react-native/typescript-config": 0.76.3
-    buffer: ^6.0.3
-    react: 18.3.1
-    react-native: 0.76.3
-    react-native-builder-bob: ^0.33.1
-  languageName: unknown
-  linkType: soft
-
 "@hapi/hoek@npm:^9.0.0, @hapi/hoek@npm:^9.3.0":
   version: 9.3.0
   resolution: "@hapi/hoek@npm:9.3.0"
@@ -2479,6 +2459,26 @@ __metadata:
   checksum: c4e51da1ccabc028b70fc90ca58d65091862a7fe3a65ec2692681f473a0aee4c355abfd15fd547bce3a9800d07c1592603fe84b4223e7beea0d493e4fcc1a65e
   languageName: node
   linkType: hard
+
+"@passkeys/react-native-example@workspace:example":
+  version: 0.0.0-use.local
+  resolution: "@passkeys/react-native-example@workspace:example"
+  dependencies:
+    "@babel/core": ^7.25.2
+    "@babel/preset-env": ^7.25.3
+    "@babel/runtime": ^7.25.0
+    "@react-native-community/cli": 15.0.1
+    "@react-native-community/cli-platform-android": 15.0.1
+    "@react-native-community/cli-platform-ios": 15.0.1
+    "@react-native/babel-preset": 0.76.3
+    "@react-native/metro-config": 0.76.3
+    "@react-native/typescript-config": 0.76.3
+    buffer: ^6.0.3
+    react: 18.3.1
+    react-native: 0.76.3
+    react-native-builder-bob: ^0.33.1
+  languageName: unknown
+  linkType: soft
 
 "@passkeys/react-native@workspace:.":
   version: 0.0.0-use.local
