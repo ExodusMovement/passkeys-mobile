@@ -15,15 +15,6 @@ struct passkeys_webview_embeddedApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(safariViewManager)
-                .onOpenURL { url in
-                    handleIncomingURL(url)
-                }
-        }
-    }
-
-    private func handleIncomingURL(_ url: URL) {
-        if url.scheme == "passkeys" {
-            safariViewManager.isSafariViewVisible = false
         }
     }
 }
