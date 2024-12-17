@@ -1,37 +1,44 @@
-package foundation.passkeys.mobile
+package com.exodus.reactnativepasskeys
 
 import android.app.Activity
-import android.content.Context
+import com.facebook.react.uimanager.ThemedReactContext
 import android.content.Intent
 import android.net.Uri
 import android.util.AttributeSet
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.browser.customtabs.CustomTabsIntent
 
 class Passkeys @JvmOverloads constructor(
-    context: Context,
+    context: ThemedReactContext,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
+    private val activity: Activity,
     private val initialUrl: String = "https://dev.passkeys.foundation/playground?relay"
 ) : WebView(context, attrs, defStyleAttr) {
 
-    private var customTabResultLauncher: ActivityResultLauncher<Intent>? = null
-    private var customTabCallback: (() -> Unit)? = null
-
     companion object {
         const val CUSTOM_TAB_REQUEST_CODE = 100
+
+        private var instance: Passkeys? = null
+
+        fun getInstance(): Passkeys? {
+            return instance
+        }
+
+        private var customTabCallback: (() -> Unit)? = null
+
+        fun setOnCloseSignerCallback(callback: () -> Unit) {
+            customTabCallback = callback
+        }
     }
 
     init {
+        // if (instance != null) throw IllegalStateException("Only one instance if Passkeys is allowed") // todo
+        instance = this
 
         setupWebView()
-        setupDefaultLauncherIfNeeded()
-
         loadUrlWithBridge(initialUrl)
     }
 
@@ -45,19 +52,6 @@ class Passkeys @JvmOverloads constructor(
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 openInCustomTab(request.url.toString())
                 return true // We handle the URL ourselves
-            }
-        }
-    }
-
-    private fun setupDefaultLauncherIfNeeded() {
-        if (context is ComponentActivity) {
-            val activity = context as ComponentActivity
-            customTabResultLauncher = activity.registerForActivityResult(
-                ActivityResultContracts.StartActivityForResult()
-            ) { result ->
-                if (result.resultCode == Activity.RESULT_CANCELED) {
-                    reload()
-                }
             }
         }
     }
@@ -84,27 +78,21 @@ class Passkeys @JvmOverloads constructor(
         customTabCallback?.invoke()
     }
 
-    fun setOnCloseSignerCallback(callback: () -> Unit) {
-        this.customTabCallback = callback
+    fun handleActivityResult(requestCode: Int, resultCode: Int) {
+        if (requestCode == CUSTOM_TAB_REQUEST_CODE) {
+            reload()
+        }
     }
 
-    fun registerCustomTabResultLauncher(launcher: ActivityResultLauncher<Intent>) {
-        customTabResultLauncher = launcher
-    }
-
-    // Open a Custom Tab and launch it using the result launcher
     fun openInCustomTab(url: String) {
         val uri = Uri.parse(url)
         val customTabsIntent = CustomTabsIntent.Builder().build()
         val intent = customTabsIntent.intent
         intent.data = uri
 
-        // Use the launcher (default or custom) to handle the intent
-        customTabResultLauncher?.launch(intent)
-            ?: throw IllegalStateException("No ActivityResultLauncher registered. Ensure you're using a ComponentActivity or register a custom launcher.")
+        activity.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
     }
 }
-
 
 class JavaScriptBridge(private val onClose: () -> Unit) {
     @android.webkit.JavascriptInterface
