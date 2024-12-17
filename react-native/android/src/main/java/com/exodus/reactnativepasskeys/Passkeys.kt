@@ -74,7 +74,6 @@ class Passkeys @JvmOverloads constructor(
     private val deferredResults = mutableMapOf<String, CompletableDeferred<ReadableMap?>>()
 
     init {
-        // if (instance != null) throw IllegalStateException("Only one instance if Passkeys is allowed") // todo
         instance = this
 
         setupWebView()
@@ -94,12 +93,7 @@ class Passkeys @JvmOverloads constructor(
             "AndroidBridge"
         )
 
-        webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                openInCustomTab(request.url.toString())
-                return true
-            }
-        }
+        webViewClient = object : WebViewClient() {}
     }
 
     private fun loadUrlWithBridge(url: String) {
@@ -117,6 +111,7 @@ class Passkeys @JvmOverloads constructor(
                 AndroidBridge.closeSigner();
             };
             window.nativeBridge.openSigner = function(url) {
+                if (typeof url !== 'string') throw new Error('url is not a string')
                 AndroidBridge.openSigner(url);
             };
             window.nativeBridge.resolveResult = function(id, result) {
@@ -159,7 +154,7 @@ class Passkeys @JvmOverloads constructor(
         activity.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
     }
 
-    fun callAsyncJavaScriptWithId(script: String): CompletableDeferred<ReadableMap?> {
+    fun callAsyncJavaScript(script: String): CompletableDeferred<ReadableMap?> {
         val deferredResult = CompletableDeferred<ReadableMap?>()
         val uniqueId = java.util.UUID.randomUUID().toString()
         deferredResults[uniqueId] = deferredResult
@@ -197,7 +192,7 @@ class Passkeys @JvmOverloads constructor(
 
         coroutineScope.launch {
             try {
-                val result = callAsyncJavaScriptWithId(script).await()
+                val result = callAsyncJavaScript(script).await()
                 completion(Result.success(result))
             } catch (e: Exception) {
                 completion(Result.failure(e))

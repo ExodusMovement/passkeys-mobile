@@ -38,13 +38,13 @@ class ReactNativePasskeysModule(reactContext: ReactApplicationContext) : ReactCo
     fun callMethod(method: String, data: ReadableMap, promise: Promise) {
         val activity = currentActivity
         if (activity == null) {
-            promise.reject("NO_ACTIVITY", "No activity available")
+            promise.reject("INVALID_VIEW", "No activity available")
             return
         }
 
         val passkeys = Passkeys.getInstance()
         if (passkeys == null) {
-            promise.reject("NO_INSTANCE", "Passkeys instance not initialized")
+            promise.reject("INVALID_VIEW", "Passkeys instance not initialized")
             return
         }
 

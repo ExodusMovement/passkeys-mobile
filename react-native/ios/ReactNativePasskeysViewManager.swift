@@ -45,16 +45,6 @@ class ReactNativePasskeysViewManager: RCTViewManager {
           return
       }
 
-      let script = """
-      const result = window.\(method)(\(dataJSON));
-      if (result instanceof Promise) {
-          return result
-              .then(resolved => resolved)
-              .catch(error => { throw error; });
-      } else {
-          return result;
-      }
-      """
       passkeys.callMethod(method, data: data) { result in
         switch result {
           case .success(let value):
