@@ -80,7 +80,7 @@ struct PasskeysMobile: View {
            let jsonString = String(data: dataString, encoding: .utf8) {
             dataJSON = jsonString
         } else {
-            dataJSON = ""
+            dataJSON = "{}"
         }
 
         // stringify before returning to swift to handle buffers, which swift interprets differently than we expect
