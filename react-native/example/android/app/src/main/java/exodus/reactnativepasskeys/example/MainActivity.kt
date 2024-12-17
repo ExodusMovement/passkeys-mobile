@@ -10,9 +10,6 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnable
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 
 class MainActivity : ReactActivity() {
-
-  private var reopenMainActivityIntent: PendingIntent? = null
-
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule
    * rendering of the component.
@@ -25,23 +22,4 @@ class MainActivity : ReactActivity() {
    */
   override fun createReactActivityDelegate(): ReactActivityDelegate =
       DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-
-    this.reopenMainActivityIntent = PendingIntent.getActivity(
-      this,
-      0,
-      Intent(this, MainActivity::class.java),
-      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-    )
-
-    Passkeys.setOnCloseSignerCallback {
-      reopenMainActivity()
-    }
-  }
-
-  fun reopenMainActivity() {
-    reopenMainActivityIntent?.send()
-  }
 }
