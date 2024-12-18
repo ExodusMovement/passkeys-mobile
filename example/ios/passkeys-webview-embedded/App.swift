@@ -12,8 +12,27 @@ import PasskeysMobile
 struct passkeys_webview_embeddedApp: App {
     var body: some Scene {
         WindowGroup {
-            PasskeysMobile()
-                .environment(\.embeddedWalletUrl, "https://wallet-d.passkeys.foundation/playground?relay")
+            let passkeysView = PasskeysMobileView()
+
+            VStack {
+                Button("Connect") {
+                    passkeysView.callMethod("connect", data: nil) { result in
+                        switch result {
+                        case .success(let response):
+                            print("Success: \(response ?? "nil")")
+                        case .failure(let error):
+                            print("Error: \(error.localizedDescription)")
+                        }
+                    }
+                }
+            }
+            .background(
+                ZStack {
+                    passkeysView
+                        .frame(width: 1, height: 1)
+                        .opacity(0)
+                }
+            )
         }
     }
 }
