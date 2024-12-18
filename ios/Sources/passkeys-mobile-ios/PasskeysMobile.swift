@@ -2,7 +2,7 @@ import SafariServices
 import WebKit
 import SwiftUI
 
-public class WebViewModel: ObservableObject {
+class WebViewModel: ObservableObject {
     @Published var webView: WKWebView? = nil
     public init() {}
 }
@@ -15,8 +15,8 @@ public struct PasskeysMobileView: View {
     @Environment(\.embeddedWalletUrl) private var embeddedWalletUrl: String
     @ObservedObject private var viewModel: WebViewModel
 
-    public init(viewModel: WebViewModel) {
-        self.viewModel = viewModel
+    public init() {
+        self.viewModel = WebViewModel()
     }
 
     public var body: some View {

@@ -12,8 +12,7 @@ import PasskeysMobile
 struct passkeys_webview_embeddedApp: App {
     var body: some Scene {
         WindowGroup {
-            let viewModel = WebViewModel()
-            let passkeysView = PasskeysMobileView(viewModel: viewModel)
+            let passkeysView = PasskeysMobileView()
 
             VStack {
                 Button("Connect") {
