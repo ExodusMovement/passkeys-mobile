@@ -30,9 +30,9 @@ Pod::Spec.new do |spec|
   spec.homepage     = "https://github.com/ExodusMovement/passkeys-webview-embedded/ios"
 
   spec.license      = "MIT"
-  spec.author             = "ExodusMovement"
+  spec.author       = "ExodusMovement"
 
-  spec.platform     = :ios, "14.0"
+  spec.platform     = :ios, "15.0"
 
   spec.source       = { :http => "https://github.com/ExodusMovement/passkeys-webview-embedded/archive/refs/tags/#{spec.version}.tar.gz", :sha256 => "607fdd515a4a1b45bb0861cddcda978988481c5bd6fdf1650c418007d45b62ea" }
 
