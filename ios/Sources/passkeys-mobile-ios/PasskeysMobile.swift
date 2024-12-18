@@ -161,11 +161,26 @@ class WebviewDelegate: NSObject, WKUIDelegate {
         })
     }
 
-    func openSafariView(url: String) {
-        if let ctrl: UIViewController? = UIViewController() {
-            presentSafariView(from: ctrl!, url: URL(string: url)!)
-        } else {
-            print("Failed to retrieve presented view controller.")
+    func getPresentedViewController() -> UIViewController? {
+        if let reactNativeController = (NSClassFromString("RCTPresentedViewController") as? () -> UIViewController)?() {
+            return reactNativeController
         }
+
+        var topController = UIApplication.shared.windows.first { $0.isKeyWindow }?.rootViewController
+
+        while let presentedController = topController?.presentedViewController {
+            topController = presentedController
+        }
+
+        return topController
+    }
+
+    func openSafariView(url: String) {
+        guard let viewController = getPresentedViewController() else {
+            print("Failed to retrieve presented view controller.")
+            return
+        }
+
+        presentSafariView(from: viewController, url: URL(string: url)!)
     }
 }
