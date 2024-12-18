@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "PasskeysMobile"
-  spec.version      = "0.0.1"
+  spec.version      = "0.1.0"
   spec.summary      = "A short description of PasskeysMobile."
 
   # This description is used to generate tags and improve search results.
