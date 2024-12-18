@@ -25,6 +25,7 @@ Pod::Spec.new do |spec|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   spec.description  = <<-DESC
+  A longer description of PasskeysMobile.
                    DESC
 
   spec.homepage     = "https://github.com/ExodusMovement/passkeys-webview-embedded/ios"
@@ -34,9 +35,9 @@ Pod::Spec.new do |spec|
 
   spec.platform     = :ios, "15.0"
 
-  spec.source       = { :http => "https://github.com/ExodusMovement/passkeys-webview-embedded/archive/refs/tags/#{spec.version}.tar.gz", :sha256 => "607fdd515a4a1b45bb0861cddcda978988481c5bd6fdf1650c418007d45b62ea" }
+  spec.source       = { :http => "https://github.com/ExodusMovement/passkeys-webview-embedded/archive/refs/tags/ios-#{spec.version}.tar.gz", :sha256 => "607fdd515a4a1b45bb0861cddcda978988481c5bd6fdf1650c418007d45b62ea" }
 
-  spec.source_files = 'ios/**/*.{swift,h,m}'
+  spec.source_files = 'Sources/**/*.{swift,h,m}'
   spec.requires_arc = true
 
 end
