@@ -9,39 +9,8 @@ import androidx.browser.customtabs.CustomTabsIntent
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import org.json.JSONArray
 import org.json.JSONObject
 import java.util.UUID
-
-private fun JSONObject.toMap(): Map<String, Any?> {
-    val map = mutableMapOf<String, Any?>()
-    val keys = keys()
-    while (keys.hasNext()) {
-        val key = keys.next()
-        val value = this[key]
-        map[key] = when (value) {
-            is JSONObject -> value.toMap()
-            is JSONArray -> value.toList()
-            else -> value
-        }
-    }
-    return map
-}
-
-private fun JSONArray.toList(): List<Any?> {
-    val list = mutableListOf<Any?>()
-    for (i in 0 until length()) {
-        val value = this[i]
-        list.add(
-            when (value) {
-                is JSONObject -> value.toMap()
-                is JSONArray -> value.toList()
-                else -> value
-            }
-        )
-    }
-    return list
-}
 
 class Passkeys @JvmOverloads constructor(
     context: android.content.Context,
@@ -68,7 +37,7 @@ class Passkeys @JvmOverloads constructor(
     }
 
     private val coroutineScope = MainScope()
-    private val deferredResults = mutableMapOf<String, CompletableDeferred<Map<String, Any?>?>>()
+    private val deferredResults = mutableMapOf<String, CompletableDeferred<JSONObject?>>()
 
     init {
         instance = this
@@ -128,13 +97,12 @@ class Passkeys @JvmOverloads constructor(
 
     private fun onJavaScriptResult(id: String, result: String?) {
         try {
-            val resultMap: Map<String, Any?>? = if (result.isNullOrBlank() || result == "undefined" || result == "null") {
+            val jsonObject = if (result.isNullOrBlank() || result == "undefined" || result == "null") {
                 null
             } else {
-                val jsonObject = JSONObject(result)
-                jsonObject.toMap()
+                JSONObject(result)
             }
-            deferredResults[id]?.complete(resultMap)
+            deferredResults[id]?.complete(jsonObject)
         } catch (e: Exception) {
             deferredResults[id]?.completeExceptionally(e)
         } finally {
@@ -151,8 +119,8 @@ class Passkeys @JvmOverloads constructor(
         activity.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
     }
 
-    fun callAsyncJavaScript(script: String): CompletableDeferred<Map<String, Any?>?> {
-        val deferredResult = CompletableDeferred<Map<String, Any?>?>()
+    fun callAsyncJavaScript(script: String): CompletableDeferred<JSONObject?> {
+        val deferredResult = CompletableDeferred<JSONObject?>()
         val uniqueId = UUID.randomUUID().toString()
         deferredResults[uniqueId] = deferredResult
 
@@ -174,16 +142,10 @@ class Passkeys @JvmOverloads constructor(
         return deferredResult
     }
 
-    fun callMethod(method: String, data: Map<String, Any?>?, completion: (Result<Map<String, Any?>?>) -> Unit) {
+    fun callMethod(method: String, data: JSONObject?, completion: (Result<JSONObject?>) -> Unit) {
         injectJavaScript()
 
-        val dataJSON = try {
-            val safeData: Map<String, Any?> = data ?: emptyMap()
-            JSONObject(safeData).toString()
-        } catch (e: Exception) {
-            completion(Result.failure(e))
-            return
-        }
+        val dataJSON = data?.toString() ?: "{}"
 
         val script = "return window.$method($dataJSON);"
 
