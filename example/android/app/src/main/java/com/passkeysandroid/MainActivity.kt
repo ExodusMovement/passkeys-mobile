@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
         val rootLayout = findViewById<RelativeLayout>(R.id.root_layout)
 
-        passkeys = PasskeysMobileView(this, null, 0, this).apply {
+        passkeys = PasskeysMobileView(this).apply {
             visibility = View.GONE // Initially hide the Passkeys view
             layoutParams = RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,

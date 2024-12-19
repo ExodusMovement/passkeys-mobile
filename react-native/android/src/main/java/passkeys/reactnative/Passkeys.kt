@@ -16,7 +16,6 @@ class PasskeysMobileView @JvmOverloads constructor(
     context: android.content.Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    private val activity: Activity,
     private val initialUrl: String = "https://wallet-d.passkeys.foundation?relay"
 ) : WebView(context, attrs, defStyleAttr) {
 
@@ -44,6 +43,26 @@ class PasskeysMobileView @JvmOverloads constructor(
 
         setupWebView()
         loadUrlWithBridge(initialUrl)
+    }
+
+    private fun getActivity(context: android.content.Context): Activity? {
+        if (context is Activity) {
+            return context
+        }
+
+        try {
+            val reactContextClass = Class.forName("com.facebook.react.bridge.ReactContext")
+            if (reactContextClass.isInstance(context)) {
+                // Use reflection to call getCurrentActivity
+                return reactContextClass
+                    .getMethod("getCurrentActivity")
+                    .invoke(context) as? Activity
+            }
+        } catch (e: ClassNotFoundException) {
+            // ReactContext class is not available; ignore
+        }
+
+        return null
     }
 
     private fun setupWebView() {
@@ -116,7 +135,7 @@ class PasskeysMobileView @JvmOverloads constructor(
         val intent = customTabsIntent.intent
         intent.data = uri
 
-        activity.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
+        getActivity(context)!!.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
     }
 
     fun callAsyncJavaScript(script: String): CompletableDeferred<JSONObject?> {

@@ -61,7 +61,7 @@ class PasskeysViewManager : SimpleViewManager<View>() {
         if (activity == null) {
             throw IllegalStateException("No activity available when creating PasskeysView")
         }
-        return PasskeysMobileView(reactContext, null, 0, activity)
+        return PasskeysMobileView(reactContext)
     }
 }
 
@@ -79,7 +79,7 @@ class PasskeysModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
             return
         }
 
-        val passkeys = Passkeys.getInstance()
+        val passkeys = PasskeysMobileView.getInstance()
         if (passkeys == null) {
             promise.reject("INVALID_VIEW", "Passkeys instance not initialized")
             return
