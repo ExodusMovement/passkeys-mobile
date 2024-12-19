@@ -61,7 +61,7 @@ class PasskeysViewManager : SimpleViewManager<View>() {
         if (activity == null) {
             throw IllegalStateException("No activity available when creating PasskeysView")
         }
-        return PasskeysMobile(reactContext, null, 0, activity)
+        return PasskeysMobileView(reactContext, null, 0, activity)
     }
 }
 
