@@ -1,10 +1,8 @@
 package passkeys.reactnative
 
 import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.util.AttributeSet
-import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.browser.customtabs.CustomTabsIntent
@@ -178,8 +176,10 @@ class Passkeys @JvmOverloads constructor(
 
     fun callMethod(method: String, data: Map<String, Any?>?, completion: (Result<Map<String, Any?>?>) -> Unit) {
         injectJavaScript()
+
         val dataJSON = try {
-            JSONObject(data ?: emptyMap()).toString()
+            val safeData: Map<String, Any?> = data ?: emptyMap()
+            JSONObject(safeData).toString()
         } catch (e: Exception) {
             completion(Result.failure(e))
             return
