@@ -1,6 +1,6 @@
 package passkeys.reactnative.example
 
-import passkeys.reactnative.Passkeys
+import passkeys.reactnative.PasskeysMobileView
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle

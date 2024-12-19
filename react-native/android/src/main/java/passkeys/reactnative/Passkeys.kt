@@ -1,65 +1,30 @@
 package passkeys.reactnative
 
 import android.app.Activity
-import com.facebook.react.uimanager.ThemedReactContext
-import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.ReadableMap
-import android.content.Intent
 import android.net.Uri
 import android.util.AttributeSet
-import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.browser.customtabs.CustomTabsIntent
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.util.UUID
 
-private fun org.json.JSONObject.toMap(): Map<String, Any?> {
-    val map = mutableMapOf<String, Any?>()
-    val keys = keys()
-    while (keys.hasNext()) {
-        val key = keys.next()
-        val value = this[key]
-        map[key] = when (value) {
-            is org.json.JSONObject -> value.toMap()
-            is org.json.JSONArray -> value.toList()
-            else -> value
-        }
-    }
-    return map
-}
-
-private fun org.json.JSONArray.toList(): List<Any?> {
-    val list = mutableListOf<Any?>()
-    for (i in 0 until length()) {
-        val value = this[i]
-        list.add(
-            when (value) {
-                is org.json.JSONObject -> value.toMap()
-                is org.json.JSONArray -> value.toList()
-                else -> value
-            }
-        )
-    }
-    return list
-}
-
-class Passkeys @JvmOverloads constructor(
-    context: ThemedReactContext,
+class PasskeysMobileView @JvmOverloads constructor(
+    context: android.content.Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    private val activity: Activity,
     private val initialUrl: String = "https://wallet-d.passkeys.foundation?relay"
 ) : WebView(context, attrs, defStyleAttr) {
 
     companion object {
         const val CUSTOM_TAB_REQUEST_CODE = 100
 
-        private var instance: Passkeys? = null
+        private var instance: PasskeysMobileView? = null
 
-        fun getInstance(): Passkeys? {
+        fun getInstance(): PasskeysMobileView? {
             return instance
         }
 
@@ -71,13 +36,33 @@ class Passkeys @JvmOverloads constructor(
     }
 
     private val coroutineScope = MainScope()
-    private val deferredResults = mutableMapOf<String, CompletableDeferred<ReadableMap?>>()
+    private val deferredResults = mutableMapOf<String, CompletableDeferred<JSONObject?>>()
 
     init {
         instance = this
 
         setupWebView()
         loadUrlWithBridge(initialUrl)
+    }
+
+    private fun getActivity(context: android.content.Context): Activity? {
+        if (context is Activity) {
+            return context
+        }
+
+        try {
+            val reactContextClass = Class.forName("com.facebook.react.bridge.ReactContext")
+            if (reactContextClass.isInstance(context)) {
+                // Use reflection to call getCurrentActivity
+                return reactContextClass
+                    .getMethod("getCurrentActivity")
+                    .invoke(context) as? Activity
+            }
+        } catch (e: ClassNotFoundException) {
+            // ReactContext class is not available; ignore
+        }
+
+        return null
     }
 
     private fun setupWebView() {
@@ -111,7 +96,7 @@ class Passkeys @JvmOverloads constructor(
                 AndroidBridge.closeSigner();
             };
             window.nativeBridge.openSigner = function(url) {
-                if (typeof url !== 'string') throw new Error('url is not a string')
+                if (typeof url !== 'string') throw new Error('url is not a string');
                 AndroidBridge.openSigner(url);
             };
             window.nativeBridge.resolveResult = function(id, result) {
@@ -131,13 +116,12 @@ class Passkeys @JvmOverloads constructor(
 
     private fun onJavaScriptResult(id: String, result: String?) {
         try {
-            val readableMap: ReadableMap? = if (result.isNullOrBlank() || result == "undefined" || result == "null") {
+            val jsonObject = if (result.isNullOrBlank() || result == "undefined" || result == "null") {
                 null
             } else {
-                val jsonObject = org.json.JSONObject(result)
-                Arguments.makeNativeMap(jsonObject.toMap())
+                JSONObject(result)
             }
-            deferredResults[id]?.complete(readableMap)
+            deferredResults[id]?.complete(jsonObject)
         } catch (e: Exception) {
             deferredResults[id]?.completeExceptionally(e)
         } finally {
@@ -151,12 +135,12 @@ class Passkeys @JvmOverloads constructor(
         val intent = customTabsIntent.intent
         intent.data = uri
 
-        activity.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
+        getActivity(context)!!.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
     }
 
-    fun callAsyncJavaScript(script: String): CompletableDeferred<ReadableMap?> {
-        val deferredResult = CompletableDeferred<ReadableMap?>()
-        val uniqueId = java.util.UUID.randomUUID().toString()
+    fun callAsyncJavaScript(script: String): CompletableDeferred<JSONObject?> {
+        val deferredResult = CompletableDeferred<JSONObject?>()
+        val uniqueId = UUID.randomUUID().toString()
         deferredResults[uniqueId] = deferredResult
 
         coroutineScope.launch {
@@ -177,16 +161,10 @@ class Passkeys @JvmOverloads constructor(
         return deferredResult
     }
 
-    fun callMethod(method: String, data: ReadableMap?, completion: (Result<ReadableMap?>) -> Unit) {
+    fun callMethod(method: String, data: JSONObject?, completion: (Result<JSONObject?>) -> Unit) {
         injectJavaScript()
-        val dataJSON = try {
-            data?.toHashMap()?.let { hashMap ->
-                org.json.JSONObject(hashMap as Map<String, Any>).toString()
-            } ?: "{}"
-        } catch (e: Exception) {
-            completion(Result.failure(e))
-            return
-        }
+
+        val dataJSON = data?.toString() ?: "{}"
 
         val script = "return window.$method($dataJSON);"
 

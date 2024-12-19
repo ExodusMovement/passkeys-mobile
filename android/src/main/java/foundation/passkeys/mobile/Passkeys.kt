@@ -1,65 +1,84 @@
 package foundation.passkeys.mobile
 
 import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.util.AttributeSet
-import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.browser.customtabs.CustomTabsIntent
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import java.util.UUID
 
-class Passkeys @JvmOverloads constructor(
-    context: Context,
+class PasskeysMobileView @JvmOverloads constructor(
+    context: android.content.Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    private val initialUrl: String = "https://dev.passkeys.foundation/playground?relay"
+    private val initialUrl: String = "https://wallet-d.passkeys.foundation?relay"
 ) : WebView(context, attrs, defStyleAttr) {
-
-    private var customTabResultLauncher: ActivityResultLauncher<Intent>? = null
-    private var customTabCallback: (() -> Unit)? = null
 
     companion object {
         const val CUSTOM_TAB_REQUEST_CODE = 100
+
+        private var instance: PasskeysMobileView? = null
+
+        fun getInstance(): PasskeysMobileView? {
+            return instance
+        }
+
+        private var customTabCallback: (() -> Unit)? = null
+
+        fun setOnCloseSignerCallback(callback: () -> Unit) {
+            customTabCallback = callback
+        }
     }
 
+    private val coroutineScope = MainScope()
+    private val deferredResults = mutableMapOf<String, CompletableDeferred<JSONObject?>>()
+
     init {
+        instance = this
 
         setupWebView()
-        setupDefaultLauncherIfNeeded()
-
         loadUrlWithBridge(initialUrl)
+    }
+
+    private fun getActivity(context: android.content.Context): Activity? {
+        if (context is Activity) {
+            return context
+        }
+
+        try {
+            val reactContextClass = Class.forName("com.facebook.react.bridge.ReactContext")
+            if (reactContextClass.isInstance(context)) {
+                // Use reflection to call getCurrentActivity
+                return reactContextClass
+                    .getMethod("getCurrentActivity")
+                    .invoke(context) as? Activity
+            }
+        } catch (e: ClassNotFoundException) {
+            // ReactContext class is not available; ignore
+        }
+
+        return null
     }
 
     private fun setupWebView() {
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
 
-        addJavascriptInterface(JavaScriptBridge { onCloseSigner() }, "AndroidBridge")
+        addJavascriptInterface(
+            JavaScriptBridge(
+                onClose = { onCloseSigner() },
+                onOpen = { url -> onOpenSigner(url) },
+                onResult = { id, result -> onJavaScriptResult(id, result) }
+            ),
+            "AndroidBridge"
+        )
 
-        webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                openInCustomTab(request.url.toString())
-                return true // We handle the URL ourselves
-            }
-        }
-    }
-
-    private fun setupDefaultLauncherIfNeeded() {
-        if (context is ComponentActivity) {
-            val activity = context as ComponentActivity
-            customTabResultLauncher = activity.registerForActivityResult(
-                ActivityResultContracts.StartActivityForResult()
-            ) { result ->
-                if (result.resultCode == Activity.RESULT_CANCELED) {
-                    reload()
-                }
-            }
-        }
+        webViewClient = object : WebViewClient() {}
     }
 
     private fun loadUrlWithBridge(url: String) {
@@ -70,11 +89,18 @@ class Passkeys @JvmOverloads constructor(
     private fun injectJavaScript() {
         evaluateJavascript(
             """
-            if (!window.uiControl) {
-                window.uiControl = {};
+            if (!window.nativeBridge) {
+                window.nativeBridge = {};
             }
-            window.uiControl.closeSigner = function() {
+            window.nativeBridge.closeSigner = function() {
                 AndroidBridge.closeSigner();
+            };
+            window.nativeBridge.openSigner = function(url) {
+                if (typeof url !== 'string') throw new Error('url is not a string');
+                AndroidBridge.openSigner(url);
+            };
+            window.nativeBridge.resolveResult = function(id, result) {
+                AndroidBridge.resolveResult(id, result);
             };
         """
         ) { }
@@ -84,31 +110,92 @@ class Passkeys @JvmOverloads constructor(
         customTabCallback?.invoke()
     }
 
-    fun setOnCloseSignerCallback(callback: () -> Unit) {
-        this.customTabCallback = callback
+    private fun onOpenSigner(url: String) {
+        openInCustomTab(url)
     }
 
-    fun registerCustomTabResultLauncher(launcher: ActivityResultLauncher<Intent>) {
-        customTabResultLauncher = launcher
+    private fun onJavaScriptResult(id: String, result: String?) {
+        try {
+            val jsonObject = if (result.isNullOrBlank() || result == "undefined" || result == "null") {
+                null
+            } else {
+                JSONObject(result)
+            }
+            deferredResults[id]?.complete(jsonObject)
+        } catch (e: Exception) {
+            deferredResults[id]?.completeExceptionally(e)
+        } finally {
+            deferredResults.remove(id)
+        }
     }
 
-    // Open a Custom Tab and launch it using the result launcher
     fun openInCustomTab(url: String) {
         val uri = Uri.parse(url)
         val customTabsIntent = CustomTabsIntent.Builder().build()
         val intent = customTabsIntent.intent
         intent.data = uri
 
-        // Use the launcher (default or custom) to handle the intent
-        customTabResultLauncher?.launch(intent)
-            ?: throw IllegalStateException("No ActivityResultLauncher registered. Ensure you're using a ComponentActivity or register a custom launcher.")
+        getActivity(context)!!.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
+    }
+
+    fun callAsyncJavaScript(script: String): CompletableDeferred<JSONObject?> {
+        val deferredResult = CompletableDeferred<JSONObject?>()
+        val uniqueId = UUID.randomUUID().toString()
+        deferredResults[uniqueId] = deferredResult
+
+        coroutineScope.launch {
+            evaluateJavascript(
+                """
+                (async function() {
+                    try {
+                        const result = await (function() { $script })();
+                        window.nativeBridge.resolveResult('$uniqueId', JSON.stringify(result));
+                    } catch (e) {
+                        window.nativeBridge.resolveResult('$uniqueId', null);
+                    }
+                })();
+                """
+            ) { }
+        }
+
+        return deferredResult
+    }
+
+    fun callMethod(method: String, data: JSONObject?, completion: (Result<JSONObject?>) -> Unit) {
+        injectJavaScript()
+
+        val dataJSON = data?.toString() ?: "{}"
+
+        val script = "return window.$method($dataJSON);"
+
+        coroutineScope.launch {
+            try {
+                val result = callAsyncJavaScript(script).await()
+                completion(Result.success(result))
+            } catch (e: Exception) {
+                completion(Result.failure(e))
+            }
+        }
     }
 }
 
-
-class JavaScriptBridge(private val onClose: () -> Unit) {
+class JavaScriptBridge(
+    private val onClose: () -> Unit,
+    private val onOpen: (String) -> Unit,
+    private val onResult: (String, String?) -> Unit
+) {
     @android.webkit.JavascriptInterface
     fun closeSigner() {
         onClose()
+    }
+
+    @android.webkit.JavascriptInterface
+    fun openSigner(url: String) {
+        onOpen(url)
+    }
+
+    @android.webkit.JavascriptInterface
+    fun resolveResult(id: String, result: String?) {
+        onResult(id, result)
     }
 }
