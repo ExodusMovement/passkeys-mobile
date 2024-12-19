@@ -1,9 +1,6 @@
 package passkeys.reactnative
 
 import android.app.Activity
-import com.facebook.react.uimanager.ThemedReactContext
-import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.ReadableMap
 import android.content.Intent
 import android.net.Uri
 import android.util.AttributeSet
@@ -14,31 +11,33 @@ import androidx.browser.customtabs.CustomTabsIntent
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
 import java.util.UUID
 
-private fun org.json.JSONObject.toMap(): Map<String, Any?> {
+private fun JSONObject.toMap(): Map<String, Any?> {
     val map = mutableMapOf<String, Any?>()
     val keys = keys()
     while (keys.hasNext()) {
         val key = keys.next()
         val value = this[key]
         map[key] = when (value) {
-            is org.json.JSONObject -> value.toMap()
-            is org.json.JSONArray -> value.toList()
+            is JSONObject -> value.toMap()
+            is JSONArray -> value.toList()
             else -> value
         }
     }
     return map
 }
 
-private fun org.json.JSONArray.toList(): List<Any?> {
+private fun JSONArray.toList(): List<Any?> {
     val list = mutableListOf<Any?>()
     for (i in 0 until length()) {
         val value = this[i]
         list.add(
             when (value) {
-                is org.json.JSONObject -> value.toMap()
-                is org.json.JSONArray -> value.toList()
+                is JSONObject -> value.toMap()
+                is JSONArray -> value.toList()
                 else -> value
             }
         )
@@ -47,7 +46,7 @@ private fun org.json.JSONArray.toList(): List<Any?> {
 }
 
 class Passkeys @JvmOverloads constructor(
-    context: ThemedReactContext,
+    context: android.content.Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     private val activity: Activity,
@@ -71,7 +70,7 @@ class Passkeys @JvmOverloads constructor(
     }
 
     private val coroutineScope = MainScope()
-    private val deferredResults = mutableMapOf<String, CompletableDeferred<ReadableMap?>>()
+    private val deferredResults = mutableMapOf<String, CompletableDeferred<Map<String, Any?>?>>()
 
     init {
         instance = this
@@ -111,7 +110,7 @@ class Passkeys @JvmOverloads constructor(
                 AndroidBridge.closeSigner();
             };
             window.nativeBridge.openSigner = function(url) {
-                if (typeof url !== 'string') throw new Error('url is not a string')
+                if (typeof url !== 'string') throw new Error('url is not a string');
                 AndroidBridge.openSigner(url);
             };
             window.nativeBridge.resolveResult = function(id, result) {
@@ -131,13 +130,13 @@ class Passkeys @JvmOverloads constructor(
 
     private fun onJavaScriptResult(id: String, result: String?) {
         try {
-            val readableMap: ReadableMap? = if (result.isNullOrBlank() || result == "undefined" || result == "null") {
+            val resultMap: Map<String, Any?>? = if (result.isNullOrBlank() || result == "undefined" || result == "null") {
                 null
             } else {
-                val jsonObject = org.json.JSONObject(result)
-                Arguments.makeNativeMap(jsonObject.toMap())
+                val jsonObject = JSONObject(result)
+                jsonObject.toMap()
             }
-            deferredResults[id]?.complete(readableMap)
+            deferredResults[id]?.complete(resultMap)
         } catch (e: Exception) {
             deferredResults[id]?.completeExceptionally(e)
         } finally {
@@ -154,9 +153,9 @@ class Passkeys @JvmOverloads constructor(
         activity.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
     }
 
-    fun callAsyncJavaScript(script: String): CompletableDeferred<ReadableMap?> {
-        val deferredResult = CompletableDeferred<ReadableMap?>()
-        val uniqueId = java.util.UUID.randomUUID().toString()
+    fun callAsyncJavaScript(script: String): CompletableDeferred<Map<String, Any?>?> {
+        val deferredResult = CompletableDeferred<Map<String, Any?>?>()
+        val uniqueId = UUID.randomUUID().toString()
         deferredResults[uniqueId] = deferredResult
 
         coroutineScope.launch {
@@ -177,12 +176,10 @@ class Passkeys @JvmOverloads constructor(
         return deferredResult
     }
 
-    fun callMethod(method: String, data: ReadableMap?, completion: (Result<ReadableMap?>) -> Unit) {
+    fun callMethod(method: String, data: Map<String, Any?>?, completion: (Result<Map<String, Any?>?>) -> Unit) {
         injectJavaScript()
         val dataJSON = try {
-            data?.toHashMap()?.let { hashMap ->
-                org.json.JSONObject(hashMap as Map<String, Any>).toString()
-            } ?: "{}"
+            JSONObject(data ?: emptyMap()).toString()
         } catch (e: Exception) {
             completion(Result.failure(e))
             return
