@@ -6,13 +6,10 @@ class HostingAwareView<T: View>: UIView {
 
 @objc(PasskeysViewManager)
 class PasskeysViewManager: RCTViewManager {
-    private var webViewModel: WebViewModel?
-
     override func view() -> (UIView) {
-        webViewModel = WebViewModel()
-        let passkeysView = PasskeysMobile(viewModel: webViewModel!)
+        let passkeysView = PasskeysMobileView()
         let hostingController = UIHostingController(rootView: passkeysView)
-        let customView: HostingAwareView<PasskeysMobile> = HostingAwareView()
+        let customView: HostingAwareView<PasskeysMobileView> = HostingAwareView()
         customView.hostingController = hostingController
         customView.addSubview(hostingController.view)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -29,21 +26,13 @@ class PasskeysViewManager: RCTViewManager {
   @objc(callMethod:method:data:resolver:rejecter:)
   func callMethod(_ reactTag: NSNumber, _ method: String, data: [String: Any], resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
     DispatchQueue.main.async {
-      guard let view = self.bridge.uiManager.view(forReactTag: reactTag) as? HostingAwareView<PasskeysMobile> else {
+      guard let view = self.bridge.uiManager.view(forReactTag: reactTag) as? HostingAwareView<PasskeysMobileView> else {
           rejecter("INVALID_VIEW", "Didn't find view from reference", nil)
           return
       }
 
-      let hostingController :UIHostingController<PasskeysMobile> = view.hostingController!
+      let hostingController :UIHostingController<PasskeysMobileView> = view.hostingController!
       let passkeys = hostingController.rootView
-      let dataJSON: String
-      if let jsonData = try? JSONSerialization.data(withJSONObject: data),
-        let jsonString = String(data: jsonData, encoding: .utf8) {
-          dataJSON = jsonString
-      } else {
-          rejecter("INVALID_JSON", "Failed to serialize data to JSON", nil)
-          return
-      }
 
       passkeys.callMethod(method, data: data) { result in
         switch result {

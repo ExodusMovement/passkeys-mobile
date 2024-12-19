@@ -4,39 +4,45 @@ import SwiftUI
 
 class WebViewModel: ObservableObject {
     @Published var webView: WKWebView? = nil
+    public init() {}
 }
 
 enum CustomError: Error {
     case message(String)
 }
 
-struct PasskeysMobile: View {
-    @Environment(\.embeddedWalletUrl) var embeddedWalletUrl: String
-    @ObservedObject var viewModel: WebViewModel
+public struct PasskeysMobileView: View {
+    @Environment(\.embeddedWalletUrl) private var embeddedWalletUrl: String
+    @ObservedObject private var viewModel: WebViewModel
 
+    public init() {
+        self.viewModel = WebViewModel()
+    }
 
-    var body: some View {
-        let delegate: WebviewDelegate? = WebviewDelegate()
+    public var body: some View {
+        let delegate = WebviewDelegate()
 
-        if let delegate = delegate {
-            return Webview(
-                url: URL(string: embeddedWalletUrl)!,
-                uiDelegate: delegate,
-                onWebViewCreated: { webView in
-                    self.viewModel.webView = webView
-                }
-            )
-            .ignoresSafeArea()
-            .navigationTitle("Passkeys")
-            .navigationBarTitleDisplayMode(.inline)
-        } else {
-            return Text("Error: Delegate not initialized")
+        Group {
+            if let url = URL(string: embeddedWalletUrl) {
+                Webview(
+                    url: url,
+                    uiDelegate: delegate,
+                    onWebViewCreated: { webView in
+                        self.viewModel.webView = webView
+                    }
+                )
+                .ignoresSafeArea()
+                .navigationTitle("Passkeys")
+                .navigationBarTitleDisplayMode(.inline)
+            } else {
+                Text("Error: Invalid URL")
+            }
         }
     }
 
     public func callAsyncJavaScript(_ script: String, completion: @escaping (Result<Any?, Error>) -> Void) {
         guard let webviewInstance = viewModel.webView else {
-            completion(.failure(CustomError.message("Didn't find WebView")))
+            completion(.failure(CustomError.message("WebView not found")))
             return
         }
 
@@ -48,24 +54,12 @@ struct PasskeysMobile: View {
                     contentWorld: .page
                 )
 
-                do {
-                    if let jsResult = jsResult as? String {
-                        if jsResult == "null" || jsResult == "undefined" {
-                            completion(.success(nil)) // todo throw instead?
-                            return
-                        }
-
-                        if let jsonData = jsResult.data(using: .utf8) {
-                            let jsonObject = try JSONSerialization.jsonObject(with: jsonData)
-                            completion(.success(jsonObject))
-                        } else {
-                            completion(.failure(CustomError.message("invalid response json format")))
-                        }
-                    } else {
-                        completion(.failure(CustomError.message("invalid response format")))
-                    }
-                } catch {
-                    completion(.failure(error))
+                if let jsResult = jsResult as? String,
+                   let jsonData = jsResult.data(using: .utf8),
+                   let jsonObject = try? JSONSerialization.jsonObject(with: jsonData) {
+                    completion(.success(jsonObject))
+                } else {
+                    completion(.failure(CustomError.message("Invalid JavaScript response format")))
                 }
             } catch {
                 completion(.failure(error))
@@ -76,32 +70,26 @@ struct PasskeysMobile: View {
     public func callMethod(_ method: String, data: [String: Any]?, completion: @escaping (Result<Any?, Error>) -> Void) {
         let dataJSON: String
         if let data = data,
-           let dataString = try? JSONSerialization.data(withJSONObject: data),
-           let jsonString = String(data: dataString, encoding: .utf8) {
+           let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []),
+           let jsonString = String(data: jsonData, encoding: .utf8) {
             dataJSON = jsonString
         } else {
             dataJSON = "{}"
         }
 
-        // stringify before returning to swift to handle buffers, which swift interprets differently than we expect
         let script = """
         const result = window.\(method)(\(dataJSON));
         if (result instanceof Promise) {
             return result
-                .then(resolved => {
-                    return JSON.stringify(resolved);
-                })
-                .catch(error => {
-                    throw error;
-                });
+                .then(resolved => JSON.stringify(resolved))
+                .catch(error => { throw error; });
         } else {
-            return JSON.stringify(resolved);
+            return JSON.stringify(result);
         }
         """
         callAsyncJavaScript(script, completion: completion)
     }
 }
-
 
 struct SafariView: UIViewControllerRepresentable {
     let url: URL
@@ -135,30 +123,40 @@ struct SafariView: UIViewControllerRepresentable {
 class WebviewDelegate: NSObject, WKUIDelegate {
     private weak var hostingController: UIViewController?
 
-    func presentSafariView(from ctrl: UIViewController, url: URL) {
-        let safariView = SafariView(
-            url: url,
-            onDismiss: {
-                ctrl.dismiss(animated: true)
-                self.hostingController = nil
-            }
-        )
+    func presentSafariView(from viewController: UIViewController, url: URL) {
+        let safariView = SafariView(url: url, onDismiss: {
+            viewController.dismiss(animated: true)
+            self.hostingController = nil
+        })
         let hostingController = UIHostingController(rootView: safariView)
         self.hostingController = hostingController
-        ctrl.present(hostingController, animated: true)
+        viewController.present(hostingController, animated: true)
     }
 
     func closeSafariView() {
-        hostingController?.dismiss(animated: true, completion: {
+        hostingController?.dismiss(animated: true) {
             self.hostingController = nil
-        })
+        }
+    }
+
+    func getPresentedViewController() -> UIViewController? {
+        if let reactNativeController = (NSClassFromString("RCTPresentedViewController") as? () -> UIViewController)?() {
+            return reactNativeController
+        }
+
+        var topController = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.rootViewController
+        while let presentedController = topController?.presentedViewController {
+            topController = presentedController
+        }
+        return topController
     }
 
     func openSafariView(url: String) {
-        if let ctrl = RCTPresentedViewController() {
-            presentSafariView(from: ctrl, url: URL(string: url)!)
-        } else {
-            print("Failed to retrieve presented view controller.")
+        guard let viewController = getPresentedViewController(),
+              let safariURL = URL(string: url) else {
+            print("Failed to retrieve presented view controller or invalid URL.")
+            return
         }
+        presentSafariView(from: viewController, url: safariURL)
     }
 }
