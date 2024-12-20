@@ -63,6 +63,13 @@ class PasskeysViewManager : SimpleViewManager<View>() {
         }
         return PasskeysMobileView(reactContext)
     }
+
+    override fun onDropViewInstance(view: Passkeys) {
+        super.onDropViewInstance(view)
+        if (Passkeys.getInstance() === view) {
+            Passkeys.clearInstance()
+        }
+    }
 }
 
 class PasskeysModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -80,7 +87,7 @@ class PasskeysModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
         }
 
         val passkeys = PasskeysMobileView.getInstance()
-        if (passkeys == null) {
+        if (passkeys == null || activity?.isFinishing == true || passkeys?.isAttachedToWindow == false) {
             promise.reject("INVALID_VIEW", "Passkeys instance not initialized")
             return
         }
