@@ -11,34 +11,21 @@ enum CustomError: Error {
 }
 
 struct PasskeysMobile: View {
-    @Environment(\.embeddedWalletUrl) var embeddedWalletUrl: String
     @ObservedObject var viewModel: WebViewModel
 
-
     var body: some View {
-        var delegate: WebviewDelegate?
-        delegate = WebviewDelegate(openURLHandler: { url in
-            if let ctrl = RCTPresentedViewController() {
-                delegate?.presentSafariView(from: ctrl, url: url)
-            } else {
-                print("Failed to retrieve presented view controller.")
-            }
-        })
+        var delegate = WebviewDelegate()
 
-        if let delegate = delegate {
-            return Webview(
-                url: URL(string: embeddedWalletUrl)!,
-                uiDelegate: delegate,
-                onWebViewCreated: { webView in
-                    self.viewModel.webView = webView
-                }
-            )
-            .ignoresSafeArea()
-            .navigationTitle("Passkeys")
-            .navigationBarTitleDisplayMode(.inline)
-        } else {
-            return Text("Error: Delegate not initialized")
-        }
+        return Webview(
+            url: URL(string: "https://wallet-d.passkeys.foundation?relay")!,
+            uiDelegate: delegate,
+            onWebViewCreated: { webView in
+                self.viewModel.webView = webView
+            }
+        )
+        .ignoresSafeArea()
+        .navigationTitle("Passkeys")
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     public func callAsyncJavaScript(_ script: String, completion: @escaping (Result<Any?, Error>) -> Void) {
@@ -145,12 +132,7 @@ struct SafariView: UIViewControllerRepresentable {
 }
 
 class WebviewDelegate: NSObject, WKUIDelegate {
-    private var openURLHandler: (URL) -> Void
     private weak var hostingController: UIViewController?
-
-    init(openURLHandler: @escaping (URL) -> Void) {
-        self.openURLHandler = openURLHandler
-    }
 
     func presentSafariView(from ctrl: UIViewController, url: URL) {
         let safariView = SafariView(
@@ -177,19 +159,5 @@ class WebviewDelegate: NSObject, WKUIDelegate {
         } else {
             print("Failed to retrieve presented view controller.")
         }
-    }
-
-    func webView(
-        _ webView: WKWebView,
-        createWebViewWith configuration: WKWebViewConfiguration,
-        for navigationAction: WKNavigationAction,
-        windowFeatures: WKWindowFeatures
-    ) -> WKWebView? {
-        if let url = navigationAction.request.url {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.openURLHandler(url)
-            }
-        }
-        return nil
     }
 }
