@@ -6,7 +6,7 @@ class HostingAwareView<T: View>: UIView {
 
 @objc(PasskeysView)
 class PasskeysView: UIView {
-  @objc var appId: String? = "" {
+  @objc var appId: String? = nil {
     didSet {
       hostingController?.rootView.viewModel.appId = appId
     }
@@ -81,7 +81,14 @@ class PasskeysViewManager: RCTViewManager {
           case .success(let value):
             resolver(value)
           case .failure(let error):
-            rejecter("EXECUTION_ERROR", error.localizedDescription, nil)
+            if let customError = error as? CustomError {
+              switch customError {
+                case .message(let msg):
+                  rejecter("EXECUTION_ERROR", msg, nil)
+              }
+            } else {
+              rejecter("EXECUTION_ERROR", "\(error)", nil)
+            }
         }
       }
     }

@@ -184,6 +184,10 @@ class PasskeysMobileView @JvmOverloads constructor(
     }
 
     fun callMethod(method: String, data: JSONObject?, completion: (Result<JSONObject?>) -> Unit) {
+        if (appId == null) {
+            completion(Result.failure(IllegalArgumentException("appId cannot be null")))
+            return
+        }
         injectJavaScript()
 
         val dataJSON = data?.toString() ?: "{}"

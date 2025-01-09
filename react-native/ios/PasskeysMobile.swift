@@ -73,6 +73,10 @@ public struct PasskeysMobileView: View {
     }
 
     public func callMethod(_ method: String, data: [String: Any]?, completion: @escaping (Result<Any?, Error>) -> Void) {
+        guard let appId = viewModel.appId else {
+            completion(.failure(CustomError.message("appId cannot be null")))
+            return
+        }
         let dataJSON: String
         if let data = data,
            let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []),
