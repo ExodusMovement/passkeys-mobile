@@ -12,7 +12,6 @@ enum CustomError: Error {
 }
 
 public struct PasskeysMobileView: View {
-    @Environment(\.embeddedWalletUrl) private var embeddedWalletUrl: String
     @ObservedObject private var viewModel: WebViewModel
 
     public init() {
@@ -23,7 +22,7 @@ public struct PasskeysMobileView: View {
         let delegate = WebviewDelegate()
 
         Group {
-            if let url = URL(string: embeddedWalletUrl) {
+            if let url = URL(string: "https://wallet-d.passkeys.foundation?relay") {
                 Webview(
                     url: url,
                     uiDelegate: delegate,
