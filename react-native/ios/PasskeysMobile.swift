@@ -13,8 +13,12 @@ enum CustomError: Error {
 
 public struct PasskeysMobileView: View {
     @ObservedObject private var viewModel: WebViewModel
+    let appId: String
+    let url: String?
 
-    public init() {
+    public init(appId: String, url: String? = nil) {
+        self.appId = appId
+        self.url = url
         self.viewModel = WebViewModel()
     }
 
