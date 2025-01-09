@@ -27,6 +27,7 @@ class PasskeysMobileView @JvmOverloads constructor(
         fun getInstance(): PasskeysMobileView? {
             return instance
         }
+        fun clearInstance() { instance = null }
 
         private var customTabCallback: (() -> Unit)? = null
 
@@ -43,6 +44,13 @@ class PasskeysMobileView @JvmOverloads constructor(
 
         setupWebView()
         loadUrlWithBridge(initialUrl)
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        if (instance === this) {
+            clearInstance()
+        }
     }
 
     private fun getActivity(context: android.content.Context): Activity? {
