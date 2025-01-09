@@ -64,10 +64,10 @@ class PasskeysViewManager : SimpleViewManager<View>() {
         return PasskeysMobileView(reactContext)
     }
 
-    override fun onDropViewInstance(view: Passkeys) {
+    override fun onDropViewInstance(view: View) {
         super.onDropViewInstance(view)
-        if (Passkeys.getInstance() === view) {
-            Passkeys.clearInstance()
+        if (view is PasskeysMobileView && PasskeysMobileView.getInstance() === view) {
+            PasskeysMobileView.clearInstance()
         }
     }
 }
