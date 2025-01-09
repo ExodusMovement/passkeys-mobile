@@ -16,7 +16,7 @@ class PasskeysMobileView @JvmOverloads constructor(
     context: android.content.Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    private val initialUrl: String = "https://wallet-d.passkeys.foundation?relay"
+    private val initialUrl: String = "https://signer-relay-d.passkeys.foundation"
 ) : WebView(context, attrs, defStyleAttr) {
 
     companion object {
