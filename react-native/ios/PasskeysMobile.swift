@@ -25,7 +25,7 @@ public struct PasskeysMobileView: View {
     public var body: some View {
         let delegate = WebviewDelegate()
         let baseURLString = viewModel.url ?? "https://signer-relay-d.passkeys.foundation"
-        let fullURLString = "\(baseURLString)?appId=\(viewModel.appId)"
+        let fullURLString = "\(baseURLString)?appId=\(viewModel.appId as? String ?? "")"
 
         Group {
             if let url = URL(string: fullURLString) {
