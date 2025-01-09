@@ -9,6 +9,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.Promise
+import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.SimpleViewManager
 import kotlinx.coroutines.MainScope
@@ -62,6 +63,18 @@ class PasskeysViewManager : SimpleViewManager<View>() {
             throw IllegalStateException("No activity available when creating PasskeysView")
         }
         return PasskeysMobileView(reactContext)
+    }
+
+    @ReactProp(name = "appId")
+    fun setAppId(view: PasskeysMobileView, appId: String?) {
+        if (appId != null) {
+            view.setAppId(appId)
+        }
+    }
+
+    @ReactProp(name = "url")
+    fun setUrl(view: PasskeysMobileView, url: String?) {
+        view.setUrl(url)
     }
 
     override fun onDropViewInstance(view: View) {

@@ -18,6 +18,7 @@ class PasskeysMobileView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
     private val initialUrl: String = "https://signer-relay-d.passkeys.foundation"
 ) : WebView(context, attrs, defStyleAttr) {
+    private var url: String = ""
 
     companion object {
         const val CUSTOM_TAB_REQUEST_CODE = 100
@@ -43,7 +44,17 @@ class PasskeysMobileView @JvmOverloads constructor(
         instance = this
 
         setupWebView()
-        loadUrlWithBridge(initialUrl)
+        url = initialUrl
+        loadUrlWithBridge(url)
+    }
+
+    fun setAppId(appId: String?) {
+        loadUrlWithBridge(url)
+    }
+
+    fun setUrl(url: String?) {
+        this.url = url ?: initialUrl
+        loadUrlWithBridge(this.url)
     }
 
     override fun onDetachedFromWindow() {
