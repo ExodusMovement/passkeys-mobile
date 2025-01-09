@@ -19,7 +19,8 @@ const LINKING_ERROR =
   '- You are not using Expo Go\n';
 
 type PasskeysProps = {
-  color?: string;
+  appId: string;
+  url?: string;
   style?: ViewStyle;
   ref?: any;
 };

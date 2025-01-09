@@ -16,8 +16,10 @@ class PasskeysMobileView @JvmOverloads constructor(
     context: android.content.Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    private val initialUrl: String = "https://wallet-d.passkeys.foundation?relay"
+    private val initialUrl: String = "https://signer-relay-d.passkeys.foundation"
 ) : WebView(context, attrs, defStyleAttr) {
+    private var url: String = ""
+    private var appId: String? = null
 
     companion object {
         const val CUSTOM_TAB_REQUEST_CODE = 100
@@ -43,7 +45,18 @@ class PasskeysMobileView @JvmOverloads constructor(
         instance = this
 
         setupWebView()
-        loadUrlWithBridge(initialUrl)
+        url = initialUrl
+        loadUrlWithBridge()
+    }
+
+    fun setAppId(appId: String?) {
+        this.appId = appId
+        loadUrlWithBridge()
+    }
+
+    fun setUrl(url: String?) {
+        this.url = url ?: initialUrl
+        loadUrlWithBridge()
     }
 
     override fun onDetachedFromWindow() {
@@ -89,7 +102,8 @@ class PasskeysMobileView @JvmOverloads constructor(
         webViewClient = object : WebViewClient() {}
     }
 
-    private fun loadUrlWithBridge(url: String) {
+    private fun loadUrlWithBridge() {
+        val url = "${this.url}?appId=$appId"
         loadUrl(url)
         injectJavaScript()
     }
@@ -170,6 +184,10 @@ class PasskeysMobileView @JvmOverloads constructor(
     }
 
     fun callMethod(method: String, data: JSONObject?, completion: (Result<JSONObject?>) -> Unit) {
+        if (appId == null) {
+            completion(Result.failure(IllegalArgumentException("appId cannot be null")))
+            return
+        }
         injectJavaScript()
 
         val dataJSON = data?.toString() ?: "{}"

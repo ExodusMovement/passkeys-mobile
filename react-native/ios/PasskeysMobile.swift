@@ -4,6 +4,8 @@ import SwiftUI
 
 class WebViewModel: ObservableObject {
     @Published var webView: WKWebView? = nil
+    @Published var url: String? = nil
+    @Published var appId: String? = nil
     public init() {}
 }
 
@@ -12,17 +14,21 @@ enum CustomError: Error {
 }
 
 public struct PasskeysMobileView: View {
-    @ObservedObject private var viewModel: WebViewModel
+    @ObservedObject var viewModel: WebViewModel
 
-    public init() {
+    public init(appId: String?, url: String? = nil) {
         self.viewModel = WebViewModel()
+        self.viewModel.url = url
+        self.viewModel.appId = appId
     }
 
     public var body: some View {
         let delegate = WebviewDelegate()
+        let baseURLString = viewModel.url ?? "https://signer-relay-d.passkeys.foundation"
+        let fullURLString = "\(baseURLString)?appId=\(viewModel.appId as? String ?? "")"
 
         Group {
-            if let url = URL(string: "https://wallet-d.passkeys.foundation?relay") {
+            if let url = URL(string: fullURLString) {
                 Webview(
                     url: url,
                     uiDelegate: delegate,
@@ -67,6 +73,10 @@ public struct PasskeysMobileView: View {
     }
 
     public func callMethod(_ method: String, data: [String: Any]?, completion: @escaping (Result<Any?, Error>) -> Void) {
+        guard let appId = viewModel.appId else {
+            completion(.failure(CustomError.message("appId cannot be null")))
+            return
+        }
         let dataJSON: String
         if let data = data,
            let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []),

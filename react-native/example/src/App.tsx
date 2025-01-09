@@ -79,7 +79,7 @@ export default function App() {
         </TouchableOpacity>
       )}
 
-      <Passkeys style={styles.passkeys} />
+      <Passkeys appId="test" style={styles.passkeys} />
     </SafeAreaView>
   );
 }
