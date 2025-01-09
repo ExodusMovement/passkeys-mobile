@@ -24,9 +24,11 @@ public struct PasskeysMobileView: View {
 
     public var body: some View {
         let delegate = WebviewDelegate()
+        let baseURLString = viewModel.url ?? "https://signer-relay-d.passkeys.foundation"
+        let fullURLString = "\(baseURLString)?appId=\(viewModel.appId)"
 
         Group {
-            if let url = URL(string: viewModel.url ?? "https://signer-relay-d.passkeys.foundation") {
+            if let url = URL(string: fullURLString) {
                 Webview(
                     url: url,
                     uiDelegate: delegate,
