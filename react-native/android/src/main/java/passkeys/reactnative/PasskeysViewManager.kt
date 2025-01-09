@@ -67,9 +67,7 @@ class PasskeysViewManager : SimpleViewManager<View>() {
 
     @ReactProp(name = "appId")
     fun setAppId(view: PasskeysMobileView, appId: String?) {
-        if (appId != null) {
-            view.setAppId(appId)
-        }
+        view.setAppId(appId)
     }
 
     @ReactProp(name = "url")
