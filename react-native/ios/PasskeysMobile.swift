@@ -4,6 +4,8 @@ import SwiftUI
 
 class WebViewModel: ObservableObject {
     @Published var webView: WKWebView? = nil
+    @Published var url: String? = nil
+    @Published var appId: String? = nil
     public init() {}
 }
 
@@ -12,21 +14,19 @@ enum CustomError: Error {
 }
 
 public struct PasskeysMobileView: View {
-    @ObservedObject private var viewModel: WebViewModel
-    let appId: String
-    let url: String?
+    @ObservedObject var viewModel: WebViewModel
 
-    public init(appId: String, url: String? = nil) {
-        self.appId = appId
-        self.url = url
+    public init(appId: String?, url: String? = nil) {
         self.viewModel = WebViewModel()
+        self.viewModel.url = url
+        self.viewModel.appId = appId
     }
 
     public var body: some View {
         let delegate = WebviewDelegate()
 
         Group {
-            if let url = URL(string: "https://wallet-d.passkeys.foundation?relay") {
+            if let url = URL(string: viewModel.url ?? "https://wallet-d.passkeys.foundation?relay") {
                 Webview(
                     url: url,
                     uiDelegate: delegate,

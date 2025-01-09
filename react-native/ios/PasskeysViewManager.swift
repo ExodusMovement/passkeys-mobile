@@ -6,8 +6,16 @@ class HostingAwareView<T: View>: UIView {
 
 @objc(PasskeysView)
 class PasskeysView: UIView {
-  @objc var appId: String = ""
-  @objc var url: String? = nil
+  @objc var appId: String? = "" {
+    didSet {
+      hostingController?.rootView.viewModel.appId = appId
+    }
+  }
+  @objc var url: String? = nil {
+    didSet {
+      hostingController?.rootView.viewModel.url = url
+    }
+  }
 
   private(set) var hostingController: UIHostingController<PasskeysMobileView>?
 
@@ -22,7 +30,7 @@ class PasskeysView: UIView {
   }
 
   private func setupHostingController() {
-    let passkeysView = PasskeysMobileView(appId: appId, url: nil)
+    let passkeysView = PasskeysMobileView(appId: appId, url: url)
     hostingController = UIHostingController(rootView: passkeysView)
 
     if let hostedView = hostingController?.view {
