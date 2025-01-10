@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.content.Intent
 import androidx.browser.customtabs.CustomTabsIntent
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.MainScope
@@ -138,10 +139,10 @@ class PasskeysMobileView @JvmOverloads constructor(
 
     private fun onJavaScriptResult(id: String, result: String?) {
         try {
-            val jsonObject = if (result.isNullOrBlank() || result == "undefined" || result == "null") {
-                null
-            } else {
-                JSONObject(result)
+            val jsonObject = when {
+                result.isNullOrBlank() || result == "undefined" || result == "null" -> null
+                result == "\"no-method\"" -> throw IllegalStateException("Unsupported browser")
+                else -> JSONObject(result)
             }
             deferredResults[id]?.complete(jsonObject)
         } catch (e: Exception) {
@@ -157,7 +158,37 @@ class PasskeysMobileView @JvmOverloads constructor(
         val intent = customTabsIntent.intent
         intent.data = uri
 
-        getActivity(context)!!.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
+        val context = context
+        val activity = getActivity(context)
+
+        if (activity == null) {
+            throw IllegalStateException("No activity available to open the URL")
+        }
+
+        if (hasCustomTabsSupport(context)) {
+            activity.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
+        } else {
+            // Fallback to opening the URL in the default browser
+            val fallbackIntent = Intent(Intent.ACTION_VIEW, uri)
+            activity.startActivity(fallbackIntent)
+        }
+    }
+
+    private fun hasCustomTabsSupport(context: android.content.Context): Boolean {
+        val packageManager = context.packageManager
+        val activityIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.example.com"))
+        val resolveInfoList = packageManager.queryIntentActivities(activityIntent, 0)
+
+        for (resolveInfo in resolveInfoList) {
+            val serviceIntent = Intent()
+            serviceIntent.action = androidx.browser.customtabs.CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION
+            serviceIntent.setPackage(resolveInfo.activityInfo.packageName)
+
+            if (packageManager.resolveService(serviceIntent, 0) != null) {
+                return true
+            }
+        }
+        return false
     }
 
     fun callAsyncJavaScript(script: String): CompletableDeferred<JSONObject?> {
@@ -192,7 +223,8 @@ class PasskeysMobileView @JvmOverloads constructor(
 
         val dataJSON = data?.toString() ?: "{}"
 
-        val script = "return window.$method($dataJSON);"
+        val script = """if (!window.$method) return 'no-method';
+        else return window.$method($dataJSON);"""
 
         coroutineScope.launch {
             try {
