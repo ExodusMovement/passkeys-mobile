@@ -139,10 +139,10 @@ class PasskeysMobileView @JvmOverloads constructor(
 
     private fun onJavaScriptResult(id: String, result: String?) {
         try {
-            val jsonObject = if (result.isNullOrBlank() || result == "undefined" || result == "null") {
-                null
-            } else {
-                JSONObject(result)
+            val jsonObject = when {
+                result.isNullOrBlank() || result == "undefined" || result == "null" -> null
+                result == "\"no-method\"" -> throw IllegalStateException("Unsupported browser")
+                else -> JSONObject(result)
             }
             deferredResults[id]?.complete(jsonObject)
         } catch (e: Exception) {
@@ -223,7 +223,8 @@ class PasskeysMobileView @JvmOverloads constructor(
 
         val dataJSON = data?.toString() ?: "{}"
 
-        val script = "return window.$method($dataJSON);"
+        val script = """if (!window.$method) return 'no-method';
+        else return window.$method($dataJSON);"""
 
         coroutineScope.launch {
             try {
