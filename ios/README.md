@@ -1,10 +1,20 @@
-//
-//  passkeys_webview_embeddedApp.swift
-//  passkeys-mobile
-//
-//  Created by Jan on 11.10.24.
-//
+# Passkeys
 
+Passkeys
+
+## Installation
+
+```pod
+Pod::Spec.new do |s|
+  s.name         = "passkeys-react-native"
+  ...
+
+  s.dependency 'PasskeysMobile', '~> 1.0.0'
+```
+
+## Usage
+
+```swift
 import SwiftUI
 import Passkeys
 
@@ -12,7 +22,7 @@ import Passkeys
 struct passkeys_webview_embeddedApp: App {
     var body: some Scene {
         WindowGroup {
-            let passkeysView = PasskeysMobileView(appId: "test")
+            let passkeysView = Passkeys(appId: "test")
 
             VStack {
                 Button("Connect") {
@@ -36,3 +46,8 @@ struct passkeys_webview_embeddedApp: App {
         }
     }
 }
+```
+
+## License
+
+MIT

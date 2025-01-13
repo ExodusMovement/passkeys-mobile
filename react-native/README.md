@@ -11,21 +11,55 @@ npm install @passkeys/react-native
 ## Usage
 
 ```js
-import { Passkeys } from '@passkeys/react-native';
+import {
+  Passkeys,
+  connect,
+  signMessage,
+  signTransaction,
+  exportPrivateKey,
+  shareWallet,
+} from '@passkeys/react-native';
 
 // ...
 
-<Passkeys color="tomato" />;
+<Passkeys appId="test" />;
+
+const { addresses, credentialId: id } = await connect();
+
+const signedMessageResponse = await signMessage({
+  message: {
+    rawMessage: Buffer.from('Hello World!'),
+  },
+  baseAssetName: 'ethereum',
+  credentialId,
+  metadata: { title: 'Sign Message' },
+});
+
+const signTransactionResponse = await signTransaction({
+  transaction: {
+    txData: {
+      transactionBuffer: Buffer.from(
+        'AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEDlQMu5tnOGTuT6craZOCkndrjA9o2EJb1rBw/ohlcpypy8Z7Z8rsF8SRaO8FE7vKMoIjCMnrsYrINFR5JNNf2tAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCppgV9A6KWVpt6hEMng2GqzikT9gsGmsvUzYWZIQ6KoPcBAgMBAQAJA0BCDwAAAAAA',
+        'base64'
+      ),
+    },
+    txMeta: Object.create(null),
+  },
+  baseAssetName: 'solana',
+  credentialId,
+  metadata: { title: 'Sign Transaction' },
+});
+
+const exportPrivateKeyResponse = await exportPrivateKey({
+  assetName: 'solana',
+  credentialId,
+});
+
+const shareWalletResponse = await shareWallet({
+  credentialId,
+});
 ```
-
-## Contributing
-
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
 
 ## License
 
 MIT
-
----
-
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)

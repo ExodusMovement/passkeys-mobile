@@ -1,16 +1,24 @@
-package com.passkeysandroid
+# network.passkeys.client
 
-import foundation.passkeys.mobile.PasskeysMobileView
+network.passkeys.client
 
-import android.app.PendingIntent
-import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.RelativeLayout
-import androidx.appcompat.app.AppCompatActivity
+## Installation
+
+```sh
+implementation 'network.passkeys.client:1.0.0'
+```
+
+## Usage
+
+```kotlin
+...
+
+import foundation.passkeys.mobile.Passkeys
+
+...
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var passkeys: PasskeysMobileView
+    private lateinit var passkeys: Passkeys
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         val rootLayout = findViewById<RelativeLayout>(R.id.root_layout)
 
-        passkeys = PasskeysMobileView(this).apply {
+        passkeys = Passkeys(this).apply {
             visibility = View.GONE
             layoutParams = RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
@@ -49,3 +57,8 @@ class MainActivity : AppCompatActivity() {
         rootLayout.addView(connectButton)
     }
 }
+```
+
+## License
+
+MIT
