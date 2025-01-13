@@ -6,6 +6,8 @@ import {
   connect,
   signMessage,
   signTransaction,
+  exportPrivateKey,
+  shareWallet,
 } from '@passkeys/react-native';
 
 export default function App() {
@@ -76,6 +78,39 @@ export default function App() {
           }}
         >
           <Text>Sign Transaction</Text>
+        </TouchableOpacity>
+      )}
+      {credentialId && (
+        <TouchableOpacity
+          onPress={async () => {
+            try {
+              const exportPrivateKeyResponse = await exportPrivateKey({
+                assetName: 'solana',
+                credentialId,
+              });
+              console.log('exportPrivateKeyResponse', exportPrivateKeyResponse);
+            } catch (error) {
+              console.error(error);
+            }
+          }}
+        >
+          <Text>Export Private Key</Text>
+        </TouchableOpacity>
+      )}
+      {credentialId && (
+        <TouchableOpacity
+          onPress={async () => {
+            try {
+              const shareWalletResponse = await shareWallet({
+                credentialId,
+              });
+              console.log('shareWalletResponse', shareWalletResponse);
+            } catch (error) {
+              console.error(error);
+            }
+          }}
+        >
+          <Text>Share Wallet</Text>
         </TouchableOpacity>
       )}
 
