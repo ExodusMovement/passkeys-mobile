@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3A0716F72CF4B1C200880AD4 /* PasskeysMobile in Frameworks */ = {isa = PBXBuildFile; productRef = 3A0716F62CF4B1C200880AD4 /* PasskeysMobile */; };
+		3A0716F72CF4B1C200880AD4 /* Passkeys in Frameworks */ = {isa = PBXBuildFile; productRef = 3A0716F62CF4B1C200880AD4 /* Passkeys */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,7 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A0716F72CF4B1C200880AD4 /* PasskeysMobile in Frameworks */,
+				3A0716F72CF4B1C200880AD4 /* Passkeys in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,7 +83,7 @@
 			);
 			name = "passkeys-mobile";
 			packageProductDependencies = (
-				3A0716F62CF4B1C200880AD4 /* PasskeysMobile */,
+				3A0716F62CF4B1C200880AD4 /* Passkeys */,
 			);
 			productName = "passkeys-mobile";
 			productReference = 203E28B52CB9086E00E14D44 /* passkeys-mobile.app */;
@@ -357,9 +357,9 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3A0716F62CF4B1C200880AD4 /* PasskeysMobile */ = {
+		3A0716F62CF4B1C200880AD4 /* Passkeys */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = PasskeysMobile;
+			productName = Passkeys;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

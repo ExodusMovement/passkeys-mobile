@@ -1,6 +1,6 @@
 package com.passkeysandroid
 
-import foundation.passkeys.mobile.PasskeysMobileView
+import foundation.passkeys.mobile.Passkeys
 
 import android.app.PendingIntent
 import android.os.Bundle
@@ -10,7 +10,7 @@ import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var passkeys: PasskeysMobileView
+    private lateinit var passkeys: Passkeys
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
         val rootLayout = findViewById<RelativeLayout>(R.id.root_layout)
 
-        passkeys = PasskeysMobileView(this).apply {
+        passkeys = Passkeys(this).apply {
             visibility = View.GONE
             layoutParams = RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,

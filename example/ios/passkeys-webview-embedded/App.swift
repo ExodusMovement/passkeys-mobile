@@ -12,7 +12,7 @@ import Passkeys
 struct passkeys_webview_embeddedApp: App {
     var body: some Scene {
         WindowGroup {
-            let passkeysView = PasskeysMobileView(appId: "test")
+            let passkeysView = Passkeys(appId: "test")
 
             VStack {
                 Button("Connect") {

@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.UUID
 
-class PasskeysMobileView @JvmOverloads constructor(
+class Passkeys @JvmOverloads constructor(
     context: android.content.Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -25,9 +25,9 @@ class PasskeysMobileView @JvmOverloads constructor(
     companion object {
         const val CUSTOM_TAB_REQUEST_CODE = 100
 
-        private var instance: PasskeysMobileView? = null
+        private var instance: Passkeys? = null
 
-        fun getInstance(): PasskeysMobileView? {
+        fun getInstance(): Passkeys? {
             return instance
         }
         fun clearInstance() { instance = null }
