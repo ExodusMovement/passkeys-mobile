@@ -59,7 +59,9 @@ public struct PasskeysMobileView: View {
                     contentWorld: .page
                 )
 
-                if let jsResult = jsResult as? String,
+                if jsResult == nil || jsResult is NSNull {
+                    completion(.success(nil))
+                } else if let jsResult = jsResult as? String,
                    let jsonData = jsResult.data(using: .utf8),
                    let jsonObject = try? JSONSerialization.jsonObject(with: jsonData) {
                     completion(.success(jsonObject))

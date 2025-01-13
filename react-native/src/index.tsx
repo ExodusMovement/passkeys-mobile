@@ -69,6 +69,14 @@ interface SignMessageParams extends SignRequestParams {
   address?: string;
 }
 
+interface ExportPrivateKeyParams extends AuthenticatedRequestParams {
+  assetName: string;
+}
+
+type ErrorResponse = {
+  error: string;
+};
+
 // possibly mutating
 const bufferize = (object: { type?: string; data?: any }) => {
   if (!object) return;
@@ -107,11 +115,14 @@ export const Passkeys = (props: PasskeysProps) => {
   return <_PasskeysView {...props} ref={ref} />;
 };
 
-export const connect = async (): Promise<{
-  addresses: any;
-  publicKeys: any;
-  credentialId: String;
-}> => {
+export const connect = async (): Promise<
+  | {
+      addresses: any;
+      publicKeys: any;
+      credentialId: String;
+    }
+  | ErrorResponse
+> => {
   if (!componentRef) throw new Error('Passkeys is not rendered');
   const args = Platform.select({
     ios: [findNodeHandle(componentRef.current), 'connect', {}],
@@ -123,7 +134,7 @@ export const connect = async (): Promise<{
 
 export const signTransaction = async (
   data: SignTransactionParams
-): Promise<{ rawTx: String; txId: String }> => {
+): Promise<{ rawTx: String; txId: String } | ErrorResponse> => {
   if (!componentRef) throw new Error('Passkeys is not rendered');
   const args = Platform.select({
     ios: [
@@ -137,7 +148,9 @@ export const signTransaction = async (
   return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
 };
 
-export const signMessage = async (data: SignMessageParams): Promise<Buffer> => {
+export const signMessage = async (
+  data: SignMessageParams
+): Promise<Buffer | ErrorResponse> => {
   if (!componentRef) throw new Error('Passkeys is not rendered');
   const args = Platform.select({
     ios: [
@@ -146,6 +159,38 @@ export const signMessage = async (data: SignMessageParams): Promise<Buffer> => {
       JSON.parse(JSON.stringify(data)),
     ],
     default: ['signMessage', JSON.parse(JSON.stringify(data))],
+  });
+  // @ts-ignore
+  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
+};
+
+export const exportPrivateKey = async (
+  data: ExportPrivateKeyParams
+): Promise<undefined | ErrorResponse> => {
+  if (!componentRef) throw new Error('Passkeys is not rendered');
+  const args = Platform.select({
+    ios: [
+      findNodeHandle(componentRef.current),
+      'exportPrivateKey',
+      JSON.parse(JSON.stringify(data)),
+    ],
+    default: ['exportPrivateKey', JSON.parse(JSON.stringify(data))],
+  });
+  // @ts-ignore
+  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
+};
+
+export const shareWallet = async (
+  data: AuthenticatedRequestParams
+): Promise<undefined | ErrorResponse> => {
+  if (!componentRef) throw new Error('Passkeys is not rendered');
+  const args = Platform.select({
+    ios: [
+      findNodeHandle(componentRef.current),
+      'shareWallet',
+      JSON.parse(JSON.stringify(data)),
+    ],
+    default: ['shareWallet', JSON.parse(JSON.stringify(data))],
   });
   // @ts-ignore
   return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
