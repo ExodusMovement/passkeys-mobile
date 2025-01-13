@@ -28,14 +28,14 @@ Pod::Spec.new do |spec|
   A longer description of PasskeysMobile.
                    DESC
 
-  spec.homepage     = "https://github.com/ExodusMovement/passkeys-webview-embedded/ios"
+  spec.homepage     = "https://github.com/ExodusMovement/passkeys-mobile/ios"
 
   spec.license      = "MIT"
   spec.author       = "ExodusMovement"
 
   spec.platform     = :ios, "15.0"
 
-  spec.source       = { :http => "https://github.com/ExodusMovement/passkeys-webview-embedded/archive/refs/tags/ios-0.1.0.tar.gz", :sha256 => "6edf7097a2a0f78b66ff73eafd61976e2061dec3a6ae15bcdb7b688d9bd77687" }
+  spec.source       = { :http => "https://github.com/ExodusMovement/passkeys-mobile/archive/refs/tags/ios-0.1.0.tar.gz", :sha256 => "6edf7097a2a0f78b66ff73eafd61976e2061dec3a6ae15bcdb7b688d9bd77687" }
 
   spec.source_files = 'Sources/**/*.{swift,h,m}'
   spec.requires_arc = true

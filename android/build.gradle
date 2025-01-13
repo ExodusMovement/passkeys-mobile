@@ -56,7 +56,7 @@ mavenPublishing {
         name.set("Passkeys Mobile Library")
         description.set("A library for managing passkeys in Android applications.")
         inceptionYear.set("2024")
-        url.set("https://github.com/ExodusMovement/passkeys-webview-embedded")
+        url.set("https://github.com/ExodusMovement/passkeys-mobile")
 
         licenses {
             license {
@@ -74,9 +74,9 @@ mavenPublishing {
         }
 
         scm {
-            connection.set("scm:git:git://github.com/ExodusMovement/passkeys-webview-embedded.git")
-            developerConnection.set("scm:git:ssh://git@github.com/ExodusMovement/passkeys-webview-embedded.git")
-            url.set("https://github.com/ExodusMovement/passkeys-webview-embedded")
+            connection.set("scm:git:git://github.com/ExodusMovement/passkeys-mobile.git")
+            developerConnection.set("scm:git:ssh://git@github.com/ExodusMovement/passkeys-mobile.git")
+            url.set("https://github.com/ExodusMovement/passkeys-mobile")
         }
     }
 
