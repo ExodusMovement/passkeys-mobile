@@ -69,6 +69,10 @@ interface SignMessageParams extends SignRequestParams {
   address?: string;
 }
 
+interface ExportPrivateKeyParams {
+  assetName: string;
+}
+
 // possibly mutating
 const bufferize = (object: { type?: string; data?: any }) => {
   if (!object) return;
@@ -146,6 +150,22 @@ export const signMessage = async (data: SignMessageParams): Promise<Buffer> => {
       JSON.parse(JSON.stringify(data)),
     ],
     default: ['signMessage', JSON.parse(JSON.stringify(data))],
+  });
+  // @ts-ignore
+  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
+};
+
+export const exportPrivateKey = async (
+  data: ExportPrivateKeyParams
+): Promise<Buffer> => {
+  if (!componentRef) throw new Error('Passkeys is not rendered');
+  const args = Platform.select({
+    ios: [
+      findNodeHandle(componentRef.current),
+      'exportPrivateKey',
+      JSON.parse(JSON.stringify(data)),
+    ],
+    default: ['exportPrivateKey', JSON.parse(JSON.stringify(data))],
   });
   // @ts-ignore
   return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
