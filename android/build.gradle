@@ -49,11 +49,6 @@ dependencies {
     implementation "androidx.browser:browser:1.5.0"
 }
 
-repositories {
-    google()
-    mavenCentral()
-}
-
 mavenPublishing {
     coordinates('foundation.passkeys', 'mobile', libraryVersion)
 
