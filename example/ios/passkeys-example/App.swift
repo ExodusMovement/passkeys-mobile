@@ -1,6 +1,6 @@
 //
 //  passkeys_webview_embeddedApp.swift
-//  passkeys-mobile
+//  passkeys-example
 //
 //  Created by Jan on 11.10.24.
 //
