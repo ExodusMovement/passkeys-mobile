@@ -170,3 +170,13 @@ export const exportPrivateKey = async (
   // @ts-ignore
   return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
 };
+
+export const shareWallet = async (): Promise<Buffer> => {
+  if (!componentRef) throw new Error('Passkeys is not rendered');
+  const args = Platform.select({
+    ios: [findNodeHandle(componentRef.current), 'shareWallet', {}],
+    default: ['shareWallet', {}],
+  });
+  // @ts-ignore
+  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
+};
