@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.content.Intent
 import androidx.browser.customtabs.CustomTabsIntent
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.MainScope
@@ -16,8 +17,10 @@ class PasskeysMobileView @JvmOverloads constructor(
     context: android.content.Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    private val initialUrl: String = "https://wallet-d.passkeys.foundation?relay"
+    private val initialUrl: String = "https://signer-relay-d.passkeys.foundation"
 ) : WebView(context, attrs, defStyleAttr) {
+    private var url: String = ""
+    private var appId: String? = null
 
     companion object {
         const val CUSTOM_TAB_REQUEST_CODE = 100
@@ -43,7 +46,18 @@ class PasskeysMobileView @JvmOverloads constructor(
         instance = this
 
         setupWebView()
-        loadUrlWithBridge(initialUrl)
+        url = initialUrl
+        loadUrlWithBridge()
+    }
+
+    fun setAppId(appId: String?) {
+        this.appId = appId
+        loadUrlWithBridge()
+    }
+
+    fun setUrl(url: String?) {
+        this.url = url ?: initialUrl
+        loadUrlWithBridge()
     }
 
     override fun onDetachedFromWindow() {
@@ -89,7 +103,8 @@ class PasskeysMobileView @JvmOverloads constructor(
         webViewClient = object : WebViewClient() {}
     }
 
-    private fun loadUrlWithBridge(url: String) {
+    private fun loadUrlWithBridge() {
+        val url = "${this.url}?appId=$appId"
         loadUrl(url)
         injectJavaScript()
     }
@@ -124,10 +139,10 @@ class PasskeysMobileView @JvmOverloads constructor(
 
     private fun onJavaScriptResult(id: String, result: String?) {
         try {
-            val jsonObject = if (result.isNullOrBlank() || result == "undefined" || result == "null") {
-                null
-            } else {
-                JSONObject(result)
+            val jsonObject = when {
+                result.isNullOrBlank() || result == "undefined" || result == "null" -> null
+                result == "\"no-method\"" -> throw IllegalStateException("Unsupported browser")
+                else -> JSONObject(result)
             }
             deferredResults[id]?.complete(jsonObject)
         } catch (e: Exception) {
@@ -143,7 +158,37 @@ class PasskeysMobileView @JvmOverloads constructor(
         val intent = customTabsIntent.intent
         intent.data = uri
 
-        getActivity(context)!!.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
+        val context = context
+        val activity = getActivity(context)
+
+        if (activity == null) {
+            throw IllegalStateException("No activity available to open the URL")
+        }
+
+        if (hasCustomTabsSupport(context)) {
+            activity.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
+        } else {
+            // Fallback to opening the URL in the default browser
+            val fallbackIntent = Intent(Intent.ACTION_VIEW, uri)
+            activity.startActivity(fallbackIntent)
+        }
+    }
+
+    private fun hasCustomTabsSupport(context: android.content.Context): Boolean {
+        val packageManager = context.packageManager
+        val activityIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.example.com"))
+        val resolveInfoList = packageManager.queryIntentActivities(activityIntent, 0)
+
+        for (resolveInfo in resolveInfoList) {
+            val serviceIntent = Intent()
+            serviceIntent.action = androidx.browser.customtabs.CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION
+            serviceIntent.setPackage(resolveInfo.activityInfo.packageName)
+
+            if (packageManager.resolveService(serviceIntent, 0) != null) {
+                return true
+            }
+        }
+        return false
     }
 
     fun callAsyncJavaScript(script: String): CompletableDeferred<JSONObject?> {
@@ -170,11 +215,16 @@ class PasskeysMobileView @JvmOverloads constructor(
     }
 
     fun callMethod(method: String, data: JSONObject?, completion: (Result<JSONObject?>) -> Unit) {
+        if (appId == null) {
+            completion(Result.failure(IllegalArgumentException("appId cannot be null")))
+            return
+        }
         injectJavaScript()
 
         val dataJSON = data?.toString() ?: "{}"
 
-        val script = "return window.$method($dataJSON);"
+        val script = """if (!window.$method) return 'no-method';
+        else return window.$method($dataJSON);"""
 
         coroutineScope.launch {
             try {
