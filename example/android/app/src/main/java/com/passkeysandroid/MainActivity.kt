@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
                 RelativeLayout.LayoutParams.MATCH_PARENT
             )
         }
+        passkeys.setAppId("test")
         passkeys.visibility = View.GONE
         rootLayout.addView(passkeys)
 
