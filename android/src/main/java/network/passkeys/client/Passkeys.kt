@@ -1,4 +1,4 @@
-package foundation.passkeys.mobile
+package network.passkeys.client
 
 import android.app.Activity
 import android.net.Uri

@@ -13,7 +13,7 @@ implementation 'network.passkeys.client:1.0.0'
 ```kotlin
 ...
 
-import foundation.passkeys.mobile.Passkeys
+import network.passkeys.client.Passkeys
 
 ...
 

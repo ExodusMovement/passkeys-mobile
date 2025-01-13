@@ -10,7 +10,7 @@ import com.vanniktech.maven.publish.SonatypeHost
 def libraryVersion = '0.1.0'
 
 android {
-    namespace 'foundation.passkeys.mobile'
+    namespace 'network.passkeys.client'
     compileSdk 34
 
     defaultConfig {
@@ -50,7 +50,7 @@ dependencies {
 }
 
 mavenPublishing {
-    coordinates('foundation.passkeys', 'mobile', libraryVersion)
+    coordinates('network.passkeys', 'client', libraryVersion)
 
     pom {
         name.set("Passkeys Mobile Library")

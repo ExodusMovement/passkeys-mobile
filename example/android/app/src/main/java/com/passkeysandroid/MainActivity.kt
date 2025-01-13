@@ -1,6 +1,6 @@
 package com.passkeysandroid
 
-import foundation.passkeys.mobile.Passkeys
+import network.passkeys.client.Passkeys
 
 import android.app.PendingIntent
 import android.os.Bundle
