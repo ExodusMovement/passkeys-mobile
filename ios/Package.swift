@@ -4,18 +4,18 @@
 import PackageDescription
 
 let package = Package(
-    name: "PasskeysMobile",
+    name: "Passkeys",
     platforms: [
         .iOS(.v15)
     ],
     products: [
         .library(
-            name: "PasskeysMobile",
-            targets: ["PasskeysMobile"]),
+            name: "Passkeys",
+            targets: ["Passkeys"]),
     ],
     targets: [
         .target(
-            name: "PasskeysMobile"),
+            name: "Passkeys"),
 
     ]
 )

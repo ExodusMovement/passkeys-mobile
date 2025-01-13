@@ -62,23 +62,23 @@ class PasskeysViewManager : SimpleViewManager<View>() {
         if (activity == null) {
             throw IllegalStateException("No activity available when creating PasskeysView")
         }
-        return PasskeysMobileView(reactContext)
+        return Passkeys(reactContext)
     }
 
     @ReactProp(name = "appId")
-    fun setAppId(view: PasskeysMobileView, appId: String?) {
+    fun setAppId(view: Passkeys, appId: String?) {
         view.setAppId(appId)
     }
 
     @ReactProp(name = "url")
-    fun setUrl(view: PasskeysMobileView, url: String?) {
+    fun setUrl(view: Passkeys, url: String?) {
         view.setUrl(url)
     }
 
     override fun onDropViewInstance(view: View) {
         super.onDropViewInstance(view)
-        if (view is PasskeysMobileView && PasskeysMobileView.getInstance() === view) {
-            PasskeysMobileView.clearInstance()
+        if (view is Passkeys && Passkeys.getInstance() === view) {
+            Passkeys.clearInstance()
         }
     }
 }
@@ -97,7 +97,7 @@ class PasskeysModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
             return
         }
 
-        val passkeys = PasskeysMobileView.getInstance()
+        val passkeys = Passkeys.getInstance()
         if (passkeys == null || activity?.isFinishing == true || passkeys?.isAttachedToWindow == false) {
             promise.reject("INVALID_VIEW", "Passkeys instance not initialized")
             return

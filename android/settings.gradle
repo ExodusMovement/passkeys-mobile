@@ -6,4 +6,4 @@ pluginManagement {
     }
 }
 
-include ':foundation.passkeys.mobile'
+include ':network.passkeys.client'

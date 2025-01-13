@@ -13,7 +13,7 @@ enum CustomError: Error {
     case message(String)
 }
 
-public struct PasskeysMobileView: View {
+public struct Passkeys: View {
     @ObservedObject var viewModel: WebViewModel
 
     public init(appId: String?, url: String? = nil) {

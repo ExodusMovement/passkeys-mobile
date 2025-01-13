@@ -17,7 +17,7 @@ class PasskeysView: UIView {
     }
   }
 
-  private(set) var hostingController: UIHostingController<PasskeysMobileView>?
+  private(set) var hostingController: UIHostingController<Passkeys>?
 
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -30,7 +30,7 @@ class PasskeysView: UIView {
   }
 
   private func setupHostingController() {
-    let passkeysView = PasskeysMobileView(appId: appId, url: url)
+    let passkeysView = Passkeys(appId: appId, url: url)
     hostingController = UIHostingController(rootView: passkeysView)
 
     if let hostedView = hostingController?.view {
