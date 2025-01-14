@@ -36,9 +36,6 @@ public struct Passkeys: View {
                         self.viewModel.webView = webView
                     }
                 )
-                .ignoresSafeArea()
-                .navigationTitle("Passkeys")
-                .navigationBarTitleDisplayMode(.inline)
             } else {
                 Text("Error: Invalid URL")
             }
