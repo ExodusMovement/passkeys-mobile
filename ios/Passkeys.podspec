@@ -33,7 +33,7 @@ Pod::Spec.new do |spec|
   spec.license = { :type => 'MIT', :file => 'ios/LICENSE' }
   spec.author       = "ExodusMovement"
 
-  spec.platform     = :ios, "15.0"
+  spec.platform     = :ios, "13.0"
   spec.swift_versions = ['4', '5']
 
   spec.source       = { :http => "https://github.com/ExodusMovement/passkeys-mobile/archive/refs/tags/ios-1.0.3.tar.gz", :sha256 => "852b3a312b012049165b6b86680d8d0ef9363bc53325dd17f7b931563cd83726" }
