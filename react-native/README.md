@@ -35,6 +35,32 @@ const signedMessageResponse = await signMessage({
   metadata: { title: 'Sign Message' },
 });
 
+const signedMessageResponse = await signMessage({
+  message: {
+    EIP712Message: {
+      types: {
+        EIP712Domain: [
+          { name: 'name', type: 'string' },
+          { name: 'version', type: 'string' },
+          { name: 'chainId', type: 'uint256' },
+          { name: 'verifyingContract', type: 'address' },
+        ],
+        DummyType: [{ name: 'name', type: 'string' }],
+      },
+      primaryType: 'DummyType',
+      domain: {
+        name: 'Passkeys Network',
+        version: '1',
+        chainId: 1,
+        verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+      },
+      message: {
+        name: 'Fred',
+      },
+    },
+  },
+});
+
 const signTransactionResponse = await signTransaction({
   transaction: {
     txData: {
