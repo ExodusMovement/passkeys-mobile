@@ -6,7 +6,19 @@ public class WebViewModel: ObservableObject {
     @Published var webView: WKWebView? = nil
     @Published public var url: String? = nil
     @Published public var appId: String? = nil
+
+    private var pendingPromises: [String: (Result<Any?, Error>) -> Void] = [:]
+
     public init() {}
+
+    public func storePromise(id: String, resolver: @escaping (Result<Any?, Error>) -> Void) {
+        pendingPromises[id] = resolver
+    }
+
+    public func resolvePromise(id: String, result: Result<Any?, Error>) {
+        pendingPromises[id]?(result)
+        pendingPromises.removeValue(forKey: id)
+    }
 }
 
 public enum CustomError: Error {
@@ -23,7 +35,7 @@ public struct Passkeys: View {
     }
 
     public var body: some View {
-        let delegate = WebviewDelegate()
+        let delegate = WebviewDelegate(viewModel: viewModel)
         let baseURLString = viewModel.url ?? "https://relay.passkeys.network"
         let fullURLString = "\(baseURLString)?appId=\(viewModel.appId ?? "")"
 
@@ -50,23 +62,73 @@ public struct Passkeys: View {
 
         Task {
             do {
-                let jsResult = try await webviewInstance.callAsyncJavaScript(
-                    script,
-                    arguments: [:],
-                    contentWorld: .page
-                )
+                let jsResult: Any
+                if #available(iOS 15.0, *) {
+                    jsResult = try await webviewInstance.callAsyncJavaScript(
+                        script,
+                        arguments: [:],
+                        contentWorld: .page
+                    )
+                } else {
+                    jsResult = try await callAsyncJavaScriptShim(
+                        script,
+                        arguments: [:]
+                    )
+                }
 
                 if jsResult == nil || jsResult is NSNull {
                     completion(.success(nil))
                 } else if let jsResult = jsResult as? String,
-                   let jsonData = jsResult.data(using: .utf8),
-                   let jsonObject = try? JSONSerialization.jsonObject(with: jsonData) {
+                          let jsonData = jsResult.data(using: .utf8),
+                          let jsonObject = try? JSONSerialization.jsonObject(with: jsonData) {
                     completion(.success(jsonObject))
                 } else {
                     completion(.failure(CustomError.message("Invalid JavaScript response format")))
                 }
             } catch {
                 completion(.failure(error))
+            }
+        }
+    }
+
+    func callAsyncJavaScriptShim(_ script: String, arguments: [String: Any] = [:]) async throws -> Any {
+        guard let webviewInstance = viewModel.webView else {
+            throw NSError(domain: "WebviewError", code: -1, userInfo: [NSLocalizedDescriptionKey: "WebView instance is not available"])
+        }
+
+        let id = UUID().uuidString
+        let jsonData = try JSONSerialization.data(withJSONObject: arguments, options: [])
+        let jsonString = String(data: jsonData, encoding: .utf8) ?? "{}"
+
+        let js = """
+        (async function() {
+            const data = \(jsonString);
+            try {
+                const result = await (function() { \(script) })();
+                window.nativeBridge.resolveResult(\"\(id)\", JSON.stringify(result));
+            } catch (error) {
+                window.nativeBridge.resolveResult(\"\(id)\", null);
+            }
+        })();
+        """
+
+        return try await withCheckedThrowingContinuation { continuation in
+            self.viewModel.storePromise(id: id) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let value):
+                        continuation.resume(returning: value)
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+            webviewInstance.evaluateJavaScript(js) { _, error in
+                if let error = error {
+                    DispatchQueue.main.async {
+                        continuation.resume(throwing: error)
+                    }
+                }
             }
         }
     }
@@ -130,6 +192,11 @@ struct SafariView: UIViewControllerRepresentable {
 
 class WebviewDelegate: NSObject, WKUIDelegate {
     private weak var hostingController: UIViewController?
+    weak var viewModel: WebViewModel?
+
+    init(viewModel: WebViewModel? = nil) {
+        self.viewModel = viewModel
+    }
 
     func presentSafariView(from viewController: UIViewController, url: URL) {
         let safariView = SafariView(url: url, onDismiss: {

@@ -156,7 +156,11 @@ export default function App() {
         </TouchableOpacity>
       )}
 
-      <Passkeys appId="test" url="https://relay-d.passkeys.network" style={styles.passkeys} />
+      <Passkeys
+        appId="test"
+        url="https://relay-d.passkeys.network"
+        style={styles.passkeys}
+      />
     </SafeAreaView>
   );
 }

@@ -17,6 +17,7 @@ struct Webview: UIViewRepresentable {
         let contentController = WKUserContentController()
         contentController.add(context.coordinator, name: "closeSigner")
         contentController.add(context.coordinator, name: "openSigner")
+        contentController.add(context.coordinator, name: "resolveResult")
         configuration.userContentController = contentController
 
         let js = """
@@ -27,9 +28,13 @@ struct Webview: UIViewRepresentable {
             window.webkit.messageHandlers.closeSigner.postMessage(null);
         };
         window.nativeBridge.openSigner = function(url) {
-            if (typeof url !== 'string') throw new Error('url is not a string')
+            if (typeof url !== 'string') throw new Error('url is not a string');
             window.webkit.messageHandlers.openSigner.postMessage(url);
-        }
+        };
+        window.nativeBridge.resolveResult = function(id, result, isError) {
+            const message = { id, result, isError };
+            window.webkit.messageHandlers.resolveResult.postMessage(message);
+        };
         """
         contentController.addUserScript(WKUserScript(source: js, injectionTime: .atDocumentEnd, forMainFrameOnly: false))
 
@@ -71,6 +76,12 @@ struct Webview: UIViewRepresentable {
                     }
                 } else {
                     print("url is not a String")
+                }
+            }
+            if message.name == "resolveResult" {
+                if let body = message.body as? [String: Any],
+                   let id = body["id"] as? String {
+                    self.parent.uiDelegate.viewModel?.resolvePromise(id: id, result: .success(body["result"]))
                 }
             }
         }
