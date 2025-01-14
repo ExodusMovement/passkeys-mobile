@@ -35,7 +35,7 @@ Pod::Spec.new do |spec|
 
   spec.platform     = :ios, "15.0"
 
-  spec.source       = { :http => "https://github.com/ExodusMovement/passkeys-mobile/archive/refs/tags/ios-1.0.1.tar.gz", :sha256 => "02aaef78b05570fd39540ca5aa655e869bf9e368ad2258aebd68a6acc3448185" }
+  spec.source       = { :http => "https://github.com/ExodusMovement/passkeys-mobile/archive/refs/tags/ios-1.0.1.tar.gz", :sha256 => "00f165f4d3a3b1327caa98ae29b4be4e894936bd27f7c76af4c8707ae9b1c8d7" }
 
   spec.source_files = 'ios/Sources/**/*.{swift,h,m}'
   spec.requires_arc = true
