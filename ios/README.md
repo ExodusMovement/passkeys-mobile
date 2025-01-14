@@ -48,6 +48,10 @@ struct passkeys_webview_embeddedApp: App {
 }
 ```
 
+## Publishing
+
+We are publishing to cocoapods. Before publishing you will need to adjust [the podspec](./Passkeys.podspec) to contain the correct shasum of the version you are trying to publish.
+
 ## License
 
 MIT

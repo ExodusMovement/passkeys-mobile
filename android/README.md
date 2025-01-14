@@ -59,6 +59,18 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
+## Publishing
+
+We are publishing to [maven central](httos://central.sonatype.com). You will need this in your `gradle.properties`
+
+```kotlin
+mavenCentralUsername=[username]
+mavenCentralPassword=[token]
+android.useAndroidX=true
+signing.gnupg.executable=gpg
+signing.gnupg.useAgent=true
+```
+
 ## License
 
 MIT
