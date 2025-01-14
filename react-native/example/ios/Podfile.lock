@@ -7,11 +7,12 @@ PODS:
   - hermes-engine (0.76.3):
     - hermes-engine/Pre-built (= 0.76.3)
   - hermes-engine/Pre-built (0.76.3)
-  - Passkeys (0.1.0)
+  - Passkeys (1.0.3)
   - passkeys-react-native (0.2.0):
     - DoubleConversion
     - glog
     - hermes-engine
+    - Passkeys (~> 1.0.3)
     - RCT-Folly (= 2024.01.01.00)
     - RCTRequired
     - RCTTypeSafety
@@ -1541,7 +1542,6 @@ DEPENDENCIES:
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
-  - Passkeys (from `../../../ios`)
   - passkeys-react-native (from `../..`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCT-Folly/Fabric (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -1605,6 +1605,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Passkeys
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -1621,8 +1622,6 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2024-11-12-RNv0.76.2-5b4aa20c719830dcf5684832b89a6edb95ac3d64
-  Passkeys:
-    :path: "../../../ios"
   passkeys-react-native:
     :path: "../.."
   RCT-Folly:
@@ -1747,8 +1746,8 @@ SPEC CHECKSUMS:
   fmt: 10c6e61f4be25dc963c36bd73fc7b1705fe975be
   glog: 08b301085f15bcbb6ff8632a8ebaf239aae04e6a
   hermes-engine: 0555a84ea495e8e3b4bde71b597cd87fbb382888
-  Passkeys: 1e3dd1095c8264631daa4a0e9eb9a2840acdec57
-  passkeys-react-native: e8254bdba644461ecf1085c87d4dccbf4bd2ca6f
+  Passkeys: 06f1ac8c58a14daa72373322e13b7f3a865c9428
+  passkeys-react-native: f91ebbf298eeddb3a41d65999e409720288786a7
   RCT-Folly: bf5c0376ffe4dd2cf438dcf86db385df9fdce648
   RCTDeprecation: 2c5e1000b04ab70b53956aa498bf7442c3c6e497
   RCTRequired: 5f785a001cf68a551c5f5040fb4c415672dbb481
@@ -1808,6 +1807,6 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 3deb2471faa9916c8a82dda2a22d3fba2620ad37
 
-PODFILE CHECKSUM: bbe95272015e4135ca6b2cef088aa046e633716f
+PODFILE CHECKSUM: 2d423e56f177a48c34fc064a14557dd9105ba896
 
 COCOAPODS: 1.15.2

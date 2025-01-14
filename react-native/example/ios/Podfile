@@ -23,8 +23,6 @@ target 'PasskeysReactNativeExample' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  pod 'Passkeys', :path => '../../../ios'
-
   target 'PasskeysReactNativeExampleTests' do
     inherit! :complete
     # Pods for testing

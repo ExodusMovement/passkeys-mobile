@@ -1,4 +1,5 @@
 import SwiftUI
+import Passkeys
 
 class HostingAwareView<T: View>: UIView {
     var hostingController: UIHostingController<T>?
