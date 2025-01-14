@@ -57,6 +57,48 @@ export default function App() {
         <TouchableOpacity
           onPress={async () => {
             try {
+              const signedMessageResponse = await signMessage({
+                message: {
+                  EIP712Message: {
+                    types: {
+                      EIP712Domain: [
+                        { name: 'name', type: 'string' },
+                        { name: 'version', type: 'string' },
+                        { name: 'chainId', type: 'uint256' },
+                        { name: 'verifyingContract', type: 'address' },
+                      ],
+                      DummyType: [{ name: 'name', type: 'string' }],
+                    },
+                    primaryType: 'DummyType',
+                    domain: {
+                      name: 'Passkeys Network',
+                      version: '1',
+                      chainId: 1,
+                      verifyingContract:
+                        '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+                    },
+                    message: {
+                      name: 'Fred',
+                    },
+                  },
+                },
+                baseAssetName: 'ethereum',
+                credentialId,
+                metadata: { title: 'Sign Message' },
+              });
+              console.log('signedMessageResponse', signedMessageResponse);
+            } catch (error) {
+              console.error(error);
+            }
+          }}
+        >
+          <Text>Sign EIP712 Message</Text>
+        </TouchableOpacity>
+      )}
+      {credentialId && (
+        <TouchableOpacity
+          onPress={async () => {
+            try {
               const signTransactionResponse = await signTransaction({
                 transaction: {
                   txData: {
@@ -114,7 +156,7 @@ export default function App() {
         </TouchableOpacity>
       )}
 
-      <Passkeys appId="test" style={styles.passkeys} />
+      <Passkeys appId="test" url="https://relay-d.passkeys.network" style={styles.passkeys} />
     </SafeAreaView>
   );
 }
