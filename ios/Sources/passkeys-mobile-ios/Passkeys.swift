@@ -2,7 +2,7 @@ import SafariServices
 import WebKit
 import SwiftUI
 
-class WebViewModel: ObservableObject {
+public class WebViewModel: ObservableObject {
     @Published var webView: WKWebView? = nil
     @Published var url: String? = nil
     @Published var appId: String? = nil
@@ -14,7 +14,7 @@ enum CustomError: Error {
 }
 
 public struct Passkeys: View {
-    @ObservedObject var viewModel: WebViewModel
+    @ObservedObject public var viewModel: WebViewModel
 
     public init(appId: String?, url: String? = nil) {
         self.viewModel = WebViewModel()
