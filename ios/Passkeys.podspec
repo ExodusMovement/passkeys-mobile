@@ -17,7 +17,7 @@ Pod::Spec.new do |spec|
 
   spec.name         = "Passkeys"
   spec.version      = "1.0.1"
-  spec.summary      = "A short description of Passkeys."
+  spec.summary      = "Passkeys is used to interact with my.passkeys.network crypto signer. Checkout passkeys.foundation for more details."
 
   # This description is used to generate tags and improve search results.
   #   * Think: What does it do? Why did you write it? What is the focus?
@@ -25,7 +25,7 @@ Pod::Spec.new do |spec|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   spec.description  = <<-DESC
-  A longer description of Passkeys.
+  Passkeys is used to interact with my.passkeys.network crypto signer. Checkout passkeys.foundation for more details.
                    DESC
 
   spec.homepage     = "https://github.com/ExodusMovement/passkeys-mobile/ios"
