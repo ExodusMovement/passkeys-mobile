@@ -35,9 +35,6 @@ struct Webview: UIViewRepresentable {
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.uiDelegate = uiDelegate
-        if #available(iOS 16.4, *) {
-            webView.isInspectable = true
-        }
 
         webView.load(URLRequest(url: url))
 
