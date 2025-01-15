@@ -28,7 +28,7 @@ Pod::Spec.new do |spec|
   Passkeys is used to interact with my.passkeys.network crypto signer. Checkout passkeys.foundation or README.md for more details.
                    DESC
 
-  spec.homepage     = "https://github.com/ExodusMovement/passkeys-mobile/ios"
+  spec.homepage     = "https://github.com/ExodusMovement/passkeys-mobile/tree/master/ios"
 
   spec.license = { :type => 'MIT', :file => 'ios/LICENSE' }
   spec.author       = "ExodusMovement"
