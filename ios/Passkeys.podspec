@@ -25,15 +25,16 @@ Pod::Spec.new do |spec|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   spec.description  = <<-DESC
-  Passkeys is used to interact with my.passkeys.network crypto signer. Checkout passkeys.foundation for more details.
+  Passkeys is used to interact with my.passkeys.network crypto signer. Checkout passkeys.foundation or README.md for more details.
                    DESC
 
   spec.homepage     = "https://github.com/ExodusMovement/passkeys-mobile/ios"
 
-  spec.license      = "MIT"
+  spec.license = { :type => 'MIT', :file => 'ios/LICENSE' }
   spec.author       = "ExodusMovement"
 
   spec.platform     = :ios, "15.0"
+  spec.swift_versions = ['4', '5']
 
   spec.source       = { :http => "https://github.com/ExodusMovement/passkeys-mobile/archive/refs/tags/ios-1.0.1.tar.gz", :sha256 => "00f165f4d3a3b1327caa98ae29b4be4e894936bd27f7c76af4c8707ae9b1c8d7" }
 

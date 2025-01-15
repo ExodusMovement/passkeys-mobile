@@ -25,7 +25,7 @@ public struct Passkeys: View {
     public var body: some View {
         let delegate = WebviewDelegate()
         let baseURLString = viewModel.url ?? "https://relay.passkeys.network"
-        let fullURLString = "\(baseURLString)?appId=\(viewModel.appId as? String ?? "")"
+        let fullURLString = "\(baseURLString)?appId=\(viewModel.appId ?? "")"
 
         Group {
             if let url = URL(string: fullURLString) {
@@ -75,7 +75,7 @@ public struct Passkeys: View {
     }
 
     public func callMethod(_ method: String, data: [String: Any]?, completion: @escaping (Result<Any?, Error>) -> Void) {
-        guard let appId = viewModel.appId else {
+        guard viewModel.appId != nil else {
             completion(.failure(CustomError.message("appId cannot be null")))
             return
         }
@@ -151,15 +151,27 @@ class WebviewDelegate: NSObject, WKUIDelegate {
     }
 
     func getPresentedViewController() -> UIViewController? {
-        if let reactNativeController = (NSClassFromString("RCTPresentedViewController") as? () -> UIViewController)?() {
+        if let ReactNativeControllerClass = NSClassFromString("RCTPresentedViewController") as? UIViewController.Type {
+            let reactNativeController = ReactNativeControllerClass.init()
             return reactNativeController
         }
 
-        var topController = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.rootViewController
-        while let presentedController = topController?.presentedViewController {
-            topController = presentedController
+        var topController: UIViewController? {
+            if #available(iOS 15.0, *) {
+                guard let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene else {
+                    return nil
+                }
+                return windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController
+            } else {
+                return UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.rootViewController
+            }
         }
-        return topController
+        var currentController = topController
+
+        while let presentedController = currentController?.presentedViewController {
+            currentController = presentedController
+        }
+        return currentController
     }
 
     func openSafariView(url: String) {
