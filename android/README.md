@@ -5,7 +5,7 @@ network.passkeys.client
 ## Installation
 
 ```sh
-implementation 'network.passkeys:client:1.0.3'
+implementation 'network.passkeys:client:1.0.4'
 ```
 
 ## Usage
