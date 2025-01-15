@@ -7,7 +7,7 @@ plugins {
 
 import com.vanniktech.maven.publish.SonatypeHost
 
-def libraryVersion = '1.0.0'
+def libraryVersion = '1.0.2'
 
 android {
     namespace 'network.passkeys.client'
