@@ -4,12 +4,12 @@ import SwiftUI
 
 public class WebViewModel: ObservableObject {
     @Published var webView: WKWebView? = nil
-    @Published var url: String? = nil
-    @Published var appId: String? = nil
+    @Published public var url: String? = nil
+    @Published public var appId: String? = nil
     public init() {}
 }
 
-enum CustomError: Error {
+public enum CustomError: Error {
     case message(String)
 }
 
