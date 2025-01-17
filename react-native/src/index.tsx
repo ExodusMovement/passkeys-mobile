@@ -25,10 +25,6 @@ type PasskeysProps = {
   ref?: any;
 };
 
-interface Metadata {
-  title: string;
-}
-
 // Simplified version of the EIP-712 message type.
 // See: https://eips.ethereum.org/EIPS/eip-712.
 interface EIP712Message {
@@ -52,7 +48,6 @@ interface AuthenticatedRequestParams extends RequestParams {
 }
 
 interface SignRequestParams extends AuthenticatedRequestParams {
-  metadata: Metadata;
   baseAssetName: string;
 }
 

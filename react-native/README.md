@@ -32,7 +32,6 @@ const signedMessageResponse = await signMessage({
   },
   baseAssetName: 'ethereum',
   credentialId,
-  metadata: { title: 'Sign Message' },
 });
 
 const signedMessageResponse = await signMessage({
@@ -73,7 +72,6 @@ const signTransactionResponse = await signTransaction({
   },
   baseAssetName: 'solana',
   credentialId,
-  metadata: { title: 'Sign Transaction' },
 });
 
 const exportPrivateKeyResponse = await exportPrivateKey({
