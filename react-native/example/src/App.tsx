@@ -42,7 +42,6 @@ export default function App() {
                 },
                 baseAssetName: 'ethereum',
                 credentialId,
-                metadata: { title: 'Sign Message' },
               });
               console.log('signedMessageResponse', signedMessageResponse);
             } catch (error) {
@@ -84,7 +83,6 @@ export default function App() {
                 },
                 baseAssetName: 'ethereum',
                 credentialId,
-                metadata: { title: 'Sign Message' },
               });
               console.log('signedMessageResponse', signedMessageResponse);
             } catch (error) {
@@ -111,7 +109,6 @@ export default function App() {
                 },
                 baseAssetName: 'solana',
                 credentialId,
-                metadata: { title: 'Sign Transaction' },
               });
               console.log('signTransactionResponse', signTransactionResponse);
             } catch (error) {
