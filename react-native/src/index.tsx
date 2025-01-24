@@ -56,6 +56,7 @@ interface SignTransactionParams extends SignRequestParams {
     txData: { transactionBuffer: Buffer };
     txMeta: object;
   };
+  broadcast?: boolean;
   expiresAt?: number;
 }
 
@@ -129,7 +130,15 @@ export const connect = async (): Promise<
 
 export const signTransaction = async (
   data: SignTransactionParams
-): Promise<{ rawTx: String; txId: String } | ErrorResponse> => {
+): Promise<
+  | {
+      rawTx: String;
+      txId: String;
+      broadcasted?: boolean;
+      broadcastError?: string;
+    }
+  | ErrorResponse
+> => {
   if (!componentRef) throw new Error('Passkeys is not rendered');
   const args = Platform.select({
     ios: [

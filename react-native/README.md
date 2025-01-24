@@ -74,6 +74,21 @@ const signTransactionResponse = await signTransaction({
   credentialId,
 });
 
+const { rawTx, txId, broadcasted, broadcastError } = await signTransaction({
+  transaction: {
+    txData: {
+      transactionBuffer: Buffer.from(
+        'AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEDlQMu5tnOGTuT6craZOCkndrjA9o2EJb1rBw/ohlcpypy8Z7Z8rsF8SRaO8FE7vKMoIjCMnrsYrINFR5JNNf2tAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCppgV9A6KWVpt6hEMng2GqzikT9gsGmsvUzYWZIQ6KoPcBAgMBAQAJA0BCDwAAAAAA',
+        'base64'
+      ),
+    },
+    txMeta: Object.create(null),
+  },
+  broadcast: true,
+  baseAssetName: 'solana',
+  credentialId,
+});
+
 const exportPrivateKeyResponse = await exportPrivateKey({
   assetName: 'solana',
   credentialId,
