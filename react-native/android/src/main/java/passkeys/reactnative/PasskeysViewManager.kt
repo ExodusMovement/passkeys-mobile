@@ -52,7 +52,6 @@ fun JSONArray.toWritableArray(): WritableArray {
     return writableArray
 }
 
-
 class PasskeysViewManager : SimpleViewManager<View>() {
 
     override fun getName() = "PasskeysView"
@@ -78,9 +77,17 @@ class PasskeysViewManager : SimpleViewManager<View>() {
 
     override fun onDropViewInstance(view: View) {
         super.onDropViewInstance(view)
-        if (view is Passkeys && Passkeys.getInstance() === view) {
-            Passkeys.clearInstance()
+        if (view is Passkeys) {
+            view.onDestroy()
         }
+    }
+
+    override fun onHostPause() {
+        Passkeys.getInstance()?.onPause()
+    }
+
+    override fun onHostResume() {
+        Passkeys.getInstance()?.onResume()
     }
 }
 
@@ -99,7 +106,7 @@ class PasskeysModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
         }
 
         val passkeys = Passkeys.getInstance()
-        if (passkeys == null || activity?.isFinishing == true || passkeys?.isAttachedToWindow == false) {
+        if (passkeys == null || activity.isFinishing || !passkeys.isAttachedToWindow) {
             promise.reject("INVALID_VIEW", "Passkeys instance not initialized")
             return
         }

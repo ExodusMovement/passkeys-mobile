@@ -1,13 +1,13 @@
-package com.passkeysandroid
+package com.passkeysandroid;
 
-import network.passkeys.client.Passkeys
+import network.passkeys.client.Passkeys;
 
-import android.app.PendingIntent
-import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.RelativeLayout
-import androidx.appcompat.app.AppCompatActivity
+import android.app.PendingIntent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import androidx.appcompat.app.AppCompatActivity;
 
 class MainActivity : AppCompatActivity() {
     private lateinit var passkeys: Passkeys
@@ -47,5 +47,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         rootLayout.addView(connectButton)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        passkeys.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        passkeys.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        passkeys.onDestroy()
     }
 }

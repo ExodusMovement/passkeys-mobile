@@ -19,18 +19,20 @@ class Passkeys @JvmOverloads constructor(
     defStyleAttr: Int = 0,
     private val initialUrl: String = "https://relay.passkeys.network"
 ) : WebView(context, attrs, defStyleAttr) {
+
     private var url: String = ""
     private var appId: String? = null
 
     companion object {
-        const val CUSTOM_TAB_REQUEST_CODE = 100
-
         private var instance: Passkeys? = null
 
         fun getInstance(): Passkeys? {
             return instance
         }
-        fun clearInstance() { instance = null }
+
+        fun clearInstance() {
+            instance = null
+        }
 
         private var customTabCallback: (() -> Unit)? = null
 
@@ -166,7 +168,7 @@ class Passkeys @JvmOverloads constructor(
         }
 
         if (hasCustomTabsSupport(context)) {
-            activity.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
+            activity.startActivity(intent)
         } else {
             // Fallback to opening the URL in the default browser
             val fallbackIntent = Intent(Intent.ACTION_VIEW, uri)
@@ -234,6 +236,14 @@ class Passkeys @JvmOverloads constructor(
                 completion(Result.failure(e))
             }
         }
+    }
+
+    fun onDestroy() {
+        loadUrl("about:blank")
+        clearInstance()
+        clearHistory()
+        removeAllViews()
+        destroy()
     }
 }
 
