@@ -56,7 +56,23 @@ class MainActivity : AppCompatActivity() {
 
         rootLayout.addView(connectButton)
     }
+
+    override fun onPause() {
+        super.onPause()
+        passkeys.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        passkeys.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        passkeys.onDestroy()
+    }
 }
+
 ```
 
 ## Publishing
