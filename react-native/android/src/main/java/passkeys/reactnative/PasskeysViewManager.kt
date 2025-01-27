@@ -82,11 +82,11 @@ class PasskeysViewManager : SimpleViewManager<View>() {
         }
     }
 
-    override fun onHostPause() {
+    fun onHostPause() {
         Passkeys.getInstance()?.onPause()
     }
 
-    override fun onHostResume() {
+    fun onHostResume() {
         Passkeys.getInstance()?.onResume()
     }
 }
