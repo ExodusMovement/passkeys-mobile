@@ -23,8 +23,6 @@ class Passkeys @JvmOverloads constructor(
     private var appId: String? = null
 
     companion object {
-        const val CUSTOM_TAB_REQUEST_CODE = 100
-
         private var instance: Passkeys? = null
 
         fun getInstance(): Passkeys? {
@@ -166,7 +164,7 @@ class Passkeys @JvmOverloads constructor(
         }
 
         if (hasCustomTabsSupport(context)) {
-            activity.startActivityForResult(intent, CUSTOM_TAB_REQUEST_CODE)
+            activity.startActivity(intent)
         } else {
             // Fallback to opening the URL in the default browser
             val fallbackIntent = Intent(Intent.ACTION_VIEW, uri)
