@@ -19,6 +19,7 @@ class Passkeys @JvmOverloads constructor(
     defStyleAttr: Int = 0,
     private val initialUrl: String = "https://relay.passkeys.network"
 ) : WebView(context, attrs, defStyleAttr) {
+
     private var url: String = ""
     private var appId: String? = null
 
@@ -28,7 +29,10 @@ class Passkeys @JvmOverloads constructor(
         fun getInstance(): Passkeys? {
             return instance
         }
-        fun clearInstance() { instance = null }
+
+        fun clearInstance() {
+            instance = null
+        }
 
         private var customTabCallback: (() -> Unit)? = null
 
@@ -232,6 +236,14 @@ class Passkeys @JvmOverloads constructor(
                 completion(Result.failure(e))
             }
         }
+    }
+
+    fun onDestroy() {
+        loadUrl("about:blank")
+        clearInstance()
+        clearHistory()
+        removeAllViews()
+        destroy()
     }
 }
 
