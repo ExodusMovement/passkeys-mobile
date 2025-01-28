@@ -25,6 +25,7 @@ struct passkeys_webview_embeddedApp: App {
                         }
                     }
                 }
+                .disabled(passkeysView.viewModel.isLoading)
             }
             .background(
                 ZStack {
