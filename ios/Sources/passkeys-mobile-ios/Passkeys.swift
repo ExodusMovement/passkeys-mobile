@@ -19,10 +19,12 @@ public enum CustomError: Error {
 public struct Passkeys: View {
     @ObservedObject public var viewModel: WebViewModel
 
-    public init(appId: String?, url: String? = nil) {
-        self.viewModel = WebViewModel()
-        self.viewModel.url = url
-        self.viewModel.appId = appId
+    public init(appId: String?, url: String? = nil, viewModel: WebViewModel = WebViewModel()) {
+        self.viewModel = viewModel
+        DispatchQueue.main.async {
+            viewModel.url = url
+            viewModel.appId = appId
+        }
     }
 
     public var body: some View {

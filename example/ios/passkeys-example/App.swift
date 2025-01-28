@@ -10,9 +10,11 @@ import Passkeys
 
 @main
 struct passkeys_webview_embeddedApp: App {
+    @StateObject private var viewModel = WebViewModel()
+
     var body: some Scene {
         WindowGroup {
-            let passkeysView = Passkeys(appId: "test")
+            let passkeysView = Passkeys(appId: "test", viewModel: viewModel)
 
             VStack {
                 Button("Connect") {
@@ -25,7 +27,7 @@ struct passkeys_webview_embeddedApp: App {
                         }
                     }
                 }
-                .disabled(passkeysView.viewModel.isLoading)
+                .disabled(viewModel.isLoading)
             }
             .background(
                 ZStack {

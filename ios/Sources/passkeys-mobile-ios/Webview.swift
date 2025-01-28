@@ -33,10 +33,10 @@ struct Webview: UIViewRepresentable {
             window.webkit.messageHandlers.openSigner.postMessage(url);
         };
         window.nativeBridge.onLoadingEnd = function(loading, error) {
-            window.webkit.messageHandlers.onLoadingEnd.postMessage({ loading: loading, error: String(error) });
+            window.webkit.messageHandlers.onLoadingEnd.postMessage({ loading: loading, error: error && String(error) });
         };
         """
-        contentController.addUserScript(WKUserScript(source: js, injectionTime: .atDocumentEnd, forMainFrameOnly: false))
+        contentController.addUserScript(WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: false))
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.uiDelegate = uiDelegate
@@ -80,8 +80,8 @@ struct Webview: UIViewRepresentable {
             }
             if message.name == "onLoadingEnd" {
                 if let body = message.body as? [String: Any],
-                   let loading = body["loading"] as? Bool,
-                   let error = body["error"] as? String? {
+                   let loading = body["loading"] as? Bool {
+                    let error: String? = body["error"] is NSNull ? nil : body["error"] as? String
                     DispatchQueue.main.async {
                         self.parent.onLoadingEnd?(loading, error)
                     }
