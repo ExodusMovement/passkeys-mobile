@@ -6,6 +6,9 @@ public class WebViewModel: ObservableObject {
     @Published var webView: WKWebView? = nil
     @Published public var url: String? = nil
     @Published public var appId: String? = nil
+    @Published public var isLoading: Bool = true
+    @Published public var loadingErrorMessage: String? = nil
+
     public init() {}
 }
 
@@ -34,6 +37,10 @@ public struct Passkeys: View {
                     uiDelegate: delegate,
                     onWebViewCreated: { webView in
                         self.viewModel.webView = webView
+                    },
+                    onLoadingEnd: { loading, error in
+                        self.viewModel.isLoading = loading
+                        self.viewModel.loadingErrorMessage = error
                     }
                 )
                 .ignoresSafeArea()
@@ -42,6 +49,10 @@ public struct Passkeys: View {
             } else {
                 Text("Error: Invalid URL")
             }
+        }
+        .onAppear {
+            self.viewModel.loadingErrorMessage = nil
+            self.viewModel.isLoading = true
         }
     }
 

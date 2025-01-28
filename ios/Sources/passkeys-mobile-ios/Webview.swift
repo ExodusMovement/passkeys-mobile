@@ -5,6 +5,7 @@ struct Webview: UIViewRepresentable {
     let url: URL
     let uiDelegate: WebviewDelegate
     var onWebViewCreated: ((WKWebView) -> Void)?
+    var onLoadingEnd: ((Bool, String?) -> Void)?
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -17,6 +18,7 @@ struct Webview: UIViewRepresentable {
         let contentController = WKUserContentController()
         contentController.add(context.coordinator, name: "closeSigner")
         contentController.add(context.coordinator, name: "openSigner")
+        contentController.add(context.coordinator, name: "onLoadingEnd")
         configuration.userContentController = contentController
 
         let js = """
@@ -27,9 +29,12 @@ struct Webview: UIViewRepresentable {
             window.webkit.messageHandlers.closeSigner.postMessage(null);
         };
         window.nativeBridge.openSigner = function(url) {
-            if (typeof url !== 'string') throw new Error('url is not a string')
+            if (typeof url !== 'string') throw new Error('url is not a string');
             window.webkit.messageHandlers.openSigner.postMessage(url);
-        }
+        };
+        window.nativeBridge.onLoadingEnd = function(loading, error) {
+            window.webkit.messageHandlers.onLoadingEnd.postMessage({ loading: loading, error: String(error) });
+        };
         """
         contentController.addUserScript(WKUserScript(source: js, injectionTime: .atDocumentEnd, forMainFrameOnly: false))
 
@@ -71,6 +76,15 @@ struct Webview: UIViewRepresentable {
                     }
                 } else {
                     print("url is not a String")
+                }
+            }
+            if message.name == "onLoadingEnd" {
+                if let body = message.body as? [String: Any],
+                   let loading = body["loading"] as? Bool,
+                   let error = body["error"] as? String? {
+                    DispatchQueue.main.async {
+                        self.parent.onLoadingEnd?(loading, error)
+                    }
                 }
             }
         }
