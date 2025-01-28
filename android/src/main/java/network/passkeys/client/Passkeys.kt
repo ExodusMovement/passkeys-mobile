@@ -1,5 +1,7 @@
 package network.passkeys.client
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import android.app.Activity
 import android.net.Uri
 import android.util.AttributeSet
@@ -22,6 +24,17 @@ class Passkeys @JvmOverloads constructor(
 
     private var url: String = ""
     private var appId: String? = null
+    private var _isLoading = MutableLiveData(true)
+    private var error: String? = null
+
+    fun setLoading(loading: Boolean) {
+        _isLoading.value = loading
+    }
+
+    val isLoading: LiveData<Boolean> get() = _isLoading
+
+    val loadingErrorMessage: String?
+        get() = error
 
     companion object {
         private var instance: Passkeys? = null
@@ -97,7 +110,8 @@ class Passkeys @JvmOverloads constructor(
             JavaScriptBridge(
                 onClose = { onCloseSigner() },
                 onOpen = { url -> onOpenSigner(url) },
-                onResult = { id, result -> onJavaScriptResult(id, result) }
+                onResult = { id, result -> onJavaScriptResult(id, result) },
+                onLoading = { loading, error -> onLoadingEnd(loading, error) }
             ),
             "AndroidBridge"
         )
@@ -106,6 +120,8 @@ class Passkeys @JvmOverloads constructor(
     }
 
     private fun loadUrlWithBridge() {
+        this.error = null
+        setLoading(true)
         val url = "${this.url}?appId=$appId"
         loadUrl(url)
         injectJavaScript()
@@ -120,12 +136,16 @@ class Passkeys @JvmOverloads constructor(
             window.nativeBridge.closeSigner = function() {
                 AndroidBridge.closeSigner();
             };
+            window.nativeBridge.resolveResult = function(id, result) {
+                AndroidBridge.resolveResult(id, result);
+            };
+            window.nativeBridge.onLoadingEnd = function(loading, error) {
+                AndroidBridge.onLoadingEnd(loading, error ? String(error) : error);
+            };
+            window.nativeBridge.onLoadingEnd(window.loading ? true : false, window.loadingError ? window.loadingError : null )
             window.nativeBridge.openSigner = function(url) {
                 if (typeof url !== 'string') throw new Error('url is not a string');
                 AndroidBridge.openSigner(url);
-            };
-            window.nativeBridge.resolveResult = function(id, result) {
-                AndroidBridge.resolveResult(id, result);
             };
         """
         ) { }
@@ -133,6 +153,13 @@ class Passkeys @JvmOverloads constructor(
 
     private fun onCloseSigner() {
         customTabCallback?.invoke()
+    }
+
+    private fun onLoadingEnd(loading: Boolean, error: String?) {
+        this.error = error
+        coroutineScope.launch {
+            setLoading(loading)
+        }
     }
 
     private fun onOpenSigner(url: String) {
@@ -250,7 +277,8 @@ class Passkeys @JvmOverloads constructor(
 class JavaScriptBridge(
     private val onClose: () -> Unit,
     private val onOpen: (String) -> Unit,
-    private val onResult: (String, String?) -> Unit
+    private val onResult: (String, String?) -> Unit,
+    private val onLoading: (Boolean, String?) -> Unit
 ) {
     @android.webkit.JavascriptInterface
     fun closeSigner() {
@@ -265,5 +293,10 @@ class JavaScriptBridge(
     @android.webkit.JavascriptInterface
     fun resolveResult(id: String, result: String?) {
         onResult(id, result)
+    }
+
+    @android.webkit.JavascriptInterface
+    fun onLoadingEnd(loading: Boolean, error: String?) {
+        onLoading(loading, error)
     }
 }
