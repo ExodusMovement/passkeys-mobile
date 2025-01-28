@@ -120,6 +120,8 @@ class Passkeys @JvmOverloads constructor(
     }
 
     private fun loadUrlWithBridge() {
+        this.error = null
+        setLoading(true)
         val url = "${this.url}?appId=$appId"
         loadUrl(url)
         injectJavaScript()
