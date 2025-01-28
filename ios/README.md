@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.name         = "passkeys-react-native"
   ...
 
-  s.dependency 'Passkeys', '~> 1.0.3'
+  s.dependency 'Passkeys', '~> 1.1.0'
 ```
 
 ## Usage

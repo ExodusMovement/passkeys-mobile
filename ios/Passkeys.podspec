@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "Passkeys"
-  spec.version      = "1.0.3"
+  spec.version      = "1.1.0"
   spec.summary      = "Passkeys is used to interact with my.passkeys.network crypto signer. Checkout passkeys.foundation for more details."
 
   # This description is used to generate tags and improve search results.
@@ -36,7 +36,7 @@ Pod::Spec.new do |spec|
   spec.platform     = :ios, "15.0"
   spec.swift_versions = ['4', '5']
 
-  spec.source       = { :http => "https://github.com/ExodusMovement/passkeys-mobile/archive/refs/tags/ios-1.0.3.tar.gz", :sha256 => "852b3a312b012049165b6b86680d8d0ef9363bc53325dd17f7b931563cd83726" }
+  spec.source       = { :http => "https://github.com/ExodusMovement/passkeys-mobile/archive/refs/tags/ios-1.1.0.tar.gz", :sha256 => "852b3a312b012049165b6b86680d8d0ef9363bc53325dd17f7b931563cd83726" }
 
   spec.source_files = 'ios/Sources/**/*.{swift,h,m}'
   spec.requires_arc = true
