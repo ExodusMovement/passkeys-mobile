@@ -1,5 +1,7 @@
 package network.passkeys.client
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import android.app.Activity
 import android.net.Uri
 import android.util.AttributeSet
@@ -22,6 +24,17 @@ class Passkeys @JvmOverloads constructor(
 
     private var url: String = ""
     private var appId: String? = null
+    private var _isLoading = MutableLiveData(true)
+    private var error: String? = null
+
+    fun setLoading(loading: Boolean) {
+        _isLoading.value = loading
+    }
+
+    val isLoading: LiveData<Boolean> get() = _isLoading
+
+    val loadingErrorMessage: String?
+        get() = error
 
     companion object {
         private var instance: Passkeys? = null
@@ -97,7 +110,8 @@ class Passkeys @JvmOverloads constructor(
             JavaScriptBridge(
                 onClose = { onCloseSigner() },
                 onOpen = { url -> onOpenSigner(url) },
-                onResult = { id, result -> onJavaScriptResult(id, result) }
+                onResult = { id, result -> onJavaScriptResult(id, result) },
+                onLoadingEnd = { loading, error -> onLoadingEnd(loading, error) }
             ),
             "AndroidBridge"
         )
@@ -127,12 +141,20 @@ class Passkeys @JvmOverloads constructor(
             window.nativeBridge.resolveResult = function(id, result) {
                 AndroidBridge.resolveResult(id, result);
             };
+            window.nativeBridge.onLoadingEnd = function(loading, error) {
+                AndroidBridge.onLoadingEnd(loading, error && String(error));
+            };
         """
         ) { }
     }
 
     private fun onCloseSigner() {
         customTabCallback?.invoke()
+    }
+
+    private fun onLoadingEnd(loading: Boolean, error: String?) {
+        setLoading(loading)
+        this.error = error
     }
 
     private fun onOpenSigner(url: String) {
@@ -250,7 +272,8 @@ class Passkeys @JvmOverloads constructor(
 class JavaScriptBridge(
     private val onClose: () -> Unit,
     private val onOpen: (String) -> Unit,
-    private val onResult: (String, String?) -> Unit
+    private val onResult: (String, String?) -> Unit,
+    private val onLoadingEnd: (Boolean, String?) -> Unit
 ) {
     @android.webkit.JavascriptInterface
     fun closeSigner() {
@@ -265,5 +288,10 @@ class JavaScriptBridge(
     @android.webkit.JavascriptInterface
     fun resolveResult(id: String, result: String?) {
         onResult(id, result)
+    }
+
+    @android.webkit.JavascriptInterface
+    fun onLoadingEnd(loading: Boolean, error: String?) {
+        onLoadingEnd(loading, error)
     }
 }
