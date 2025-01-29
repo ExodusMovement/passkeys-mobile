@@ -12,8 +12,15 @@ public class WebViewModel: ObservableObject {
     public init() {}
 }
 
-public enum CustomError: Error {
+enum CustomError: Error, LocalizedError {
     case message(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .message(let msg):
+            return msg
+        }
+    }
 }
 
 public struct Passkeys: View {

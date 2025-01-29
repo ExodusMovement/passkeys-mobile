@@ -15,6 +15,8 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.UUID
 
+class Error(val msg: String) : Throwable(msg)
+
 class Passkeys @JvmOverloads constructor(
     context: android.content.Context,
     attrs: AttributeSet? = null,
@@ -175,7 +177,7 @@ class Passkeys @JvmOverloads constructor(
         try {
             val jsonObject = when {
                 result.isNullOrBlank() || result == "undefined" || result == "null" -> null
-                result == "\"no-method\"" -> throw IllegalStateException("Unsupported browser")
+                result == "\"no-method\"" -> throw Error("Unsupported browser")
                 else -> JSONObject(result)
             }
             deferredResults[id]?.complete(jsonObject)
@@ -196,7 +198,7 @@ class Passkeys @JvmOverloads constructor(
         val activity = getActivity(context)
 
         if (activity == null) {
-            throw IllegalStateException("No activity available to open the URL")
+            throw Error("No activity available to open the URL")
         }
 
         if (hasCustomTabsSupport(context)) {
@@ -250,7 +252,7 @@ class Passkeys @JvmOverloads constructor(
 
     fun callMethod(method: String, data: JSONObject?, completion: (Result<JSONObject?>) -> Unit) {
         if (appId == null) {
-            completion(Result.failure(IllegalArgumentException("appId cannot be null")))
+            completion(Result.failure(Error("appId cannot be null")))
             return
         }
         injectJavaScript()
