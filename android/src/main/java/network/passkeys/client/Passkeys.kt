@@ -116,7 +116,12 @@ class Passkeys @JvmOverloads constructor(
             "AndroidBridge"
         )
 
-        webViewClient = object : WebViewClient() {}
+        webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                injectJavaScript()
+            }
+        }
     }
 
     private fun loadUrlWithBridge() {
