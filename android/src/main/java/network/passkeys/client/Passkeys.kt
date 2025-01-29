@@ -142,7 +142,7 @@ class Passkeys @JvmOverloads constructor(
             window.nativeBridge.onLoadingEnd = function(loading, error) {
                 AndroidBridge.onLoadingEnd(loading, error ? String(error) : error);
             };
-            window.nativeBridge.onLoadingEnd(window.loading ? true : false, window.loadingError ? window.loadingError : null )
+            window.nativeBridge.onLoadingEnd(window.loading === false ? false : true, window.loadingError ? window.loadingError : null )
             window.nativeBridge.openSigner = function(url) {
                 if (typeof url !== 'string') throw new Error('url is not a string');
                 AndroidBridge.openSigner(url);
