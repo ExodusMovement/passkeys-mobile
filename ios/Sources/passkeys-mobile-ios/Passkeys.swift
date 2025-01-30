@@ -83,8 +83,12 @@ public struct Passkeys: View {
                     completion(.success(nil))
                 } else if let jsResult = jsResult as? String,
                    let jsonData = jsResult.data(using: .utf8),
-                   let jsonObject = try? JSONSerialization.jsonObject(with: jsonData) {
-                    completion(.success(jsonObject))
+                   let jsonObject = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] {
+                    if let noMethod = jsonObject["noMethod"] as? Bool, noMethod {
+                        completion(.failure(CustomError.message("Unsupported browser")))
+                    } else {
+                        completion(.success(jsonObject))
+                    }
                 } else {
                     completion(.failure(CustomError.message("Invalid JavaScript response format")))
                 }
@@ -109,6 +113,7 @@ public struct Passkeys: View {
         }
 
         let script = """
+        if (!window.\(method)) return JSON.stringify({noMethod: true});
         const result = window.\(method)(\(dataJSON));
         if (result instanceof Promise) {
             return result
