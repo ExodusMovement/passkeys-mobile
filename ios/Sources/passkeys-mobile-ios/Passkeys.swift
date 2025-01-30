@@ -120,7 +120,14 @@ public struct Passkeys: View {
 
         let script = """
         if (!window.\(method)) return JSON.stringify({noMethod: true});
-        const result = window.\(method)(\(dataJSON));
+        let result;
+        try {
+            result = window.\(method)(\(dataJSON));
+        }
+        catch (error) {
+            return JSON.stringify({isError: true, error: error && (error.message || String(error))})
+        }
+
         if (result instanceof Promise) {
             return result
                 .then(resolved => JSON.stringify(resolved))
