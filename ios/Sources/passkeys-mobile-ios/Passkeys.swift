@@ -65,7 +65,7 @@ public struct Passkeys: View {
         let fullURLString = "\(baseURLString)?appId=\(viewModel.appId ?? "")"
 
         Group {
-            if let appId = viewModel.appId  {
+            if viewModel.appId != nil  {
                 if let url = URL(string: fullURLString) {
                     Webview(
                         url: url,
