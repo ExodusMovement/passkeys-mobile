@@ -147,7 +147,7 @@ class Passkeys @JvmOverloads constructor(
                 AndroidBridge.resolveResult(id, result);
             };
             window.nativeBridge.onLoadingEnd = function(loading, error) {
-                AndroidBridge.onLoadingEnd(loading, error ? String(error) : error);
+                AndroidBridge.onLoadingEnd(loading, error ? String(error) : null);
             };
             window.nativeBridge.onLoadingEnd(window.loading === false ? false : true, window.loadingError ? window.loadingError : null )
             window.nativeBridge.openSigner = function(url) {
