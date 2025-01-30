@@ -71,7 +71,7 @@ class PasskeysViewManager: RCTViewManager {
         let passkeysView = self.bridge.uiManager.view(forReactTag: reactTag) as? PasskeysView,
         let hostingController = passkeysView.hostingController
       else {
-        rejecter("INVALID_VIEW", "Did not find PasskeysView for the given tag.", nil)
+        rejecter("INVALID_VIEW", "Passkeys instance not initialized", nil)
         return
       }
 
