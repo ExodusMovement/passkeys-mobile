@@ -2,10 +2,35 @@ import SafariServices
 import WebKit
 import SwiftUI
 
+@MainActor
 public class WebViewModel: ObservableObject {
     @Published var webView: WKWebView? = nil
-    @Published public var url: String? = nil
-    @Published public var appId: String? = nil
+    @Published public var url: String? = nil {
+        didSet {
+            guard url != oldValue else { return }
+            if let webView {
+                let baseURLString = url ?? "https://relay.passkeys.network"
+                let fullURLString = "\(baseURLString)?appId=\(appId ?? "")"
+                if let newURL = URL(string: fullURLString) {
+                    let request = URLRequest(url: newURL)
+                    webView.load(request)
+                }
+            }
+        }
+    }
+    @Published public var appId: String? = nil {
+        didSet {
+            guard appId != oldValue else { return }
+            if let webView {
+                let baseURLString = url ?? "https://relay.passkeys.network"
+                let fullURLString = "\(baseURLString)?appId=\(appId ?? "")"
+                if let newURL = URL(string: fullURLString) {
+                    let request = URLRequest(url: newURL)
+                    webView.load(request)
+                }
+            }
+        }
+    }
     @Published public var isLoading: Bool = true
     @Published public var loadingErrorMessage: String? = nil
 
@@ -40,23 +65,28 @@ public struct Passkeys: View {
         let fullURLString = "\(baseURLString)?appId=\(viewModel.appId ?? "")"
 
         Group {
-            if let url = URL(string: fullURLString) {
-                Webview(
-                    url: url,
-                    uiDelegate: delegate,
-                    onWebViewCreated: { webView in
-                        self.viewModel.webView = webView
-                    },
-                    onLoadingEnd: { loading, error in
-                        self.viewModel.isLoading = loading
-                        self.viewModel.loadingErrorMessage = error
-                    }
-                )
-                .ignoresSafeArea()
-                .navigationTitle("Passkeys")
-                .navigationBarTitleDisplayMode(.inline)
-            } else {
-                Text("Error: Invalid URL")
+            if let appId = viewModel.appId  {
+                if let url = URL(string: fullURLString) {
+                    Webview(
+                        url: url,
+                        uiDelegate: delegate,
+                        onWebViewCreated: { webView in
+                            self.viewModel.webView = webView
+                        },
+                        onLoadingEnd: { loading, error in
+                            self.viewModel.isLoading = loading
+                            self.viewModel.loadingErrorMessage = error
+                        }
+                    )
+                    .ignoresSafeArea()
+                    .navigationTitle("Passkeys")
+                    .navigationBarTitleDisplayMode(.inline)
+                } else {
+                    Text("Error: Invalid URL")
+                }
+            }
+            else {
+                Text("Error: missing appId")
             }
         }
         .onAppear {
