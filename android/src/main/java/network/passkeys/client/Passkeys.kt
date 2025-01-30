@@ -200,6 +200,10 @@ class Passkeys @JvmOverloads constructor(
 
     fun openInCustomTab(url: String) {
         val uri = Uri.parse(url)
+        if (uri.scheme != "http" && uri.scheme != "https") {
+            println("Invalid url.")
+            return
+        }
         val customTabsIntent = CustomTabsIntent.Builder().build()
         val intent = customTabsIntent.intent
         intent.data = uri

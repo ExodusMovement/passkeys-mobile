@@ -218,9 +218,14 @@ class WebviewDelegate: NSObject, WKUIDelegate {
     }
 
     func openSafariView(url: String) {
-        guard let viewController = getPresentedViewController(),
-              let safariURL = URL(string: url) else {
-            print("Failed to retrieve presented view controller or invalid URL.")
+        guard let viewController = getPresentedViewController() else {
+            print("Failed to retrieve presented view controller.")
+            return
+        }
+        guard let safariURL = URL(string: url),
+              let scheme = safariURL.scheme,
+              ["http", "https"].contains(scheme.lowercased()) else {
+            print("Invalid URL.")
             return
         }
         presentSafariView(from: viewController, url: safariURL)
