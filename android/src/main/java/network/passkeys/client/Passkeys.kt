@@ -12,8 +12,11 @@ import androidx.browser.customtabs.CustomTabsIntent
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancel
 import org.json.JSONObject
 import java.util.UUID
+
+class Error(val msg: String) : Throwable(msg)
 
 class Passkeys @JvmOverloads constructor(
     context: android.content.Context,
@@ -80,6 +83,7 @@ class Passkeys @JvmOverloads constructor(
         if (instance === this) {
             clearInstance()
         }
+        coroutineScope.cancel()
     }
 
     private fun getActivity(context: android.content.Context): Activity? {
@@ -116,7 +120,12 @@ class Passkeys @JvmOverloads constructor(
             "AndroidBridge"
         )
 
-        webViewClient = object : WebViewClient() {}
+        webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                injectJavaScript()
+            }
+        }
     }
 
     private fun loadUrlWithBridge() {
@@ -140,9 +149,9 @@ class Passkeys @JvmOverloads constructor(
                 AndroidBridge.resolveResult(id, result);
             };
             window.nativeBridge.onLoadingEnd = function(loading, error) {
-                AndroidBridge.onLoadingEnd(loading, error ? String(error) : error);
+                AndroidBridge.onLoadingEnd(loading, error ? String(error) : null);
             };
-            window.nativeBridge.onLoadingEnd(window.loading ? true : false, window.loadingError ? window.loadingError : null )
+            window.nativeBridge.onLoadingEnd(window.loading === false ? false : true, window.loadingError ? window.loadingError : null )
             window.nativeBridge.openSigner = function(url) {
                 if (typeof url !== 'string') throw new Error('url is not a string');
                 AndroidBridge.openSigner(url);
@@ -170,8 +179,18 @@ class Passkeys @JvmOverloads constructor(
         try {
             val jsonObject = when {
                 result.isNullOrBlank() || result == "undefined" || result == "null" -> null
-                result == "\"no-method\"" -> throw IllegalStateException("Unsupported browser")
+                result == "\"no-method\"" -> throw Error("Method not defined")
                 else -> JSONObject(result)
+            }
+            if (jsonObject?.optBoolean("isError") == true) {
+                val errorMessage = jsonObject.optString("error", null)
+
+                if (!errorMessage.isNullOrBlank()) {
+                    deferredResults[id]?.completeExceptionally(Error(errorMessage))
+                } else {
+                    deferredResults[id]?.completeExceptionally(Error("Unknown JavaScript Error"))
+                }
+                return
             }
             deferredResults[id]?.complete(jsonObject)
         } catch (e: Exception) {
@@ -183,6 +202,10 @@ class Passkeys @JvmOverloads constructor(
 
     fun openInCustomTab(url: String) {
         val uri = Uri.parse(url)
+        if (uri.scheme != "http" && uri.scheme != "https") {
+            println("Invalid url.")
+            return
+        }
         val customTabsIntent = CustomTabsIntent.Builder().build()
         val intent = customTabsIntent.intent
         intent.data = uri
@@ -191,7 +214,7 @@ class Passkeys @JvmOverloads constructor(
         val activity = getActivity(context)
 
         if (activity == null) {
-            throw IllegalStateException("No activity available to open the URL")
+            throw Error("No activity available to open the URL")
         }
 
         if (hasCustomTabsSupport(context)) {
@@ -232,8 +255,8 @@ class Passkeys @JvmOverloads constructor(
                     try {
                         const result = await (function() { $script })();
                         window.nativeBridge.resolveResult('$uniqueId', JSON.stringify(result));
-                    } catch (e) {
-                        window.nativeBridge.resolveResult('$uniqueId', null);
+                    } catch (error) {
+                        window.nativeBridge.resolveResult('$uniqueId', JSON.stringify({isError: true, error: error && (error.message || String(error))}));
                     }
                 })();
                 """
@@ -245,7 +268,7 @@ class Passkeys @JvmOverloads constructor(
 
     fun callMethod(method: String, data: JSONObject?, completion: (Result<JSONObject?>) -> Unit) {
         if (appId == null) {
-            completion(Result.failure(IllegalArgumentException("appId cannot be null")))
+            completion(Result.failure(Error("appId cannot be null")))
             return
         }
         injectJavaScript()
@@ -256,18 +279,16 @@ class Passkeys @JvmOverloads constructor(
         else return window.$method($dataJSON);"""
 
         coroutineScope.launch {
-            try {
-                val result = callAsyncJavaScript(script).await()
-                completion(Result.success(result))
-            } catch (e: Exception) {
-                completion(Result.failure(e))
-            }
+            val result = runCatching { callAsyncJavaScript(script).await() }
+            result.onSuccess { completion(Result.success(it)) }
+                .onFailure { completion(Result.failure(it)) }
         }
     }
 
     fun onDestroy() {
         loadUrl("about:blank")
         clearInstance()
+        stopLoading()
         clearHistory()
         removeAllViews()
         destroy()

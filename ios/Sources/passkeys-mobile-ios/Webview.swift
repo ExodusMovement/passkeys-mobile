@@ -33,7 +33,7 @@ struct Webview: UIViewRepresentable {
             window.webkit.messageHandlers.openSigner.postMessage(url);
         };
         window.nativeBridge.onLoadingEnd = function(loading, error) {
-            window.webkit.messageHandlers.onLoadingEnd.postMessage({ loading: loading, error: error && String(error) });
+            window.webkit.messageHandlers.onLoadingEnd.postMessage({ loading: loading, error: error ? String(error) : null });
         };
         """
         contentController.addUserScript(WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: false))

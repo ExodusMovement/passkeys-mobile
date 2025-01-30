@@ -2,18 +2,50 @@ import SafariServices
 import WebKit
 import SwiftUI
 
+@MainActor
 public class WebViewModel: ObservableObject {
     @Published var webView: WKWebView? = nil
-    @Published public var url: String? = nil
-    @Published public var appId: String? = nil
+    @Published public var url: String? = nil {
+        didSet {
+            guard url != oldValue else { return }
+            if let webView {
+                let baseURLString = url ?? "https://relay.passkeys.network"
+                let fullURLString = "\(baseURLString)?appId=\(appId ?? "")"
+                if let newURL = URL(string: fullURLString) {
+                    let request = URLRequest(url: newURL)
+                    webView.load(request)
+                }
+            }
+        }
+    }
+    @Published public var appId: String? = nil {
+        didSet {
+            guard appId != oldValue else { return }
+            if let webView {
+                let baseURLString = url ?? "https://relay.passkeys.network"
+                let fullURLString = "\(baseURLString)?appId=\(appId ?? "")"
+                if let newURL = URL(string: fullURLString) {
+                    let request = URLRequest(url: newURL)
+                    webView.load(request)
+                }
+            }
+        }
+    }
     @Published public var isLoading: Bool = true
     @Published public var loadingErrorMessage: String? = nil
 
     public init() {}
 }
 
-public enum CustomError: Error {
+enum CustomError: Error, LocalizedError {
     case message(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .message(let msg):
+            return msg
+        }
+    }
 }
 
 public struct Passkeys: View {
@@ -33,23 +65,28 @@ public struct Passkeys: View {
         let fullURLString = "\(baseURLString)?appId=\(viewModel.appId ?? "")"
 
         Group {
-            if let url = URL(string: fullURLString) {
-                Webview(
-                    url: url,
-                    uiDelegate: delegate,
-                    onWebViewCreated: { webView in
-                        self.viewModel.webView = webView
-                    },
-                    onLoadingEnd: { loading, error in
-                        self.viewModel.isLoading = loading
-                        self.viewModel.loadingErrorMessage = error
-                    }
-                )
-                .ignoresSafeArea()
-                .navigationTitle("Passkeys")
-                .navigationBarTitleDisplayMode(.inline)
-            } else {
-                Text("Error: Invalid URL")
+            if let appId = viewModel.appId  {
+                if let url = URL(string: fullURLString) {
+                    Webview(
+                        url: url,
+                        uiDelegate: delegate,
+                        onWebViewCreated: { webView in
+                            self.viewModel.webView = webView
+                        },
+                        onLoadingEnd: { loading, error in
+                            self.viewModel.isLoading = loading
+                            self.viewModel.loadingErrorMessage = error
+                        }
+                    )
+                    .ignoresSafeArea()
+                    .navigationTitle("Passkeys")
+                    .navigationBarTitleDisplayMode(.inline)
+                } else {
+                    Text("Error: Invalid URL")
+                }
+            }
+            else {
+                Text("Error: missing appId")
             }
         }
         .onAppear {
@@ -76,8 +113,18 @@ public struct Passkeys: View {
                     completion(.success(nil))
                 } else if let jsResult = jsResult as? String,
                    let jsonData = jsResult.data(using: .utf8),
-                   let jsonObject = try? JSONSerialization.jsonObject(with: jsonData) {
-                    completion(.success(jsonObject))
+                   let jsonObject = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] {
+                    if let noMethod = jsonObject["noMethod"] as? Bool, noMethod {
+                        completion(.failure(CustomError.message("Method not defined")))
+                    } else if  let isError = jsonObject["isError"] as? Bool, isError {
+                        if let errorMessage = jsonObject["error"] as? String {
+                            completion(.failure(CustomError.message(errorMessage)))
+                        } else {
+                            completion(.failure(CustomError.message("Unknown JavaScript Error")))
+                        }
+                    } else {
+                        completion(.success(jsonObject))
+                    }
                 } else {
                     completion(.failure(CustomError.message("Invalid JavaScript response format")))
                 }
@@ -102,13 +149,26 @@ public struct Passkeys: View {
         }
 
         let script = """
-        const result = window.\(method)(\(dataJSON));
+        if (!window.\(method)) return JSON.stringify({noMethod: true});
+        let result;
+        try {
+            result = window.\(method)(\(dataJSON));
+        }
+        catch (error) {
+            return JSON.stringify({isError: true, error: error && (error.message || String(error))})
+        }
+
         if (result instanceof Promise) {
             return result
                 .then(resolved => JSON.stringify(resolved))
-                .catch(error => { throw error; });
+                .catch(error => JSON.stringify({isError: true, error: error && (error.message || String(error))}));
         } else {
-            return JSON.stringify(result);
+            try {
+                return JSON.stringify(result);
+            }
+            catch (error) {
+                return JSON.stringify({isError: true, error: error && (error.message || String(error))});
+            }
         }
         """
         callAsyncJavaScript(script, completion: completion)
@@ -188,9 +248,14 @@ class WebviewDelegate: NSObject, WKUIDelegate {
     }
 
     func openSafariView(url: String) {
-        guard let viewController = getPresentedViewController(),
-              let safariURL = URL(string: url) else {
-            print("Failed to retrieve presented view controller or invalid URL.")
+        guard let viewController = getPresentedViewController() else {
+            print("Failed to retrieve presented view controller.")
+            return
+        }
+        guard let safariURL = URL(string: url),
+              let scheme = safariURL.scheme,
+              ["http", "https"].contains(scheme.lowercased()) else {
+            print("Invalid URL.")
             return
         }
         presentSafariView(from: viewController, url: safariURL)
