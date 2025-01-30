@@ -86,6 +86,12 @@ public struct Passkeys: View {
                    let jsonObject = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] {
                     if let noMethod = jsonObject["noMethod"] as? Bool, noMethod {
                         completion(.failure(CustomError.message("Method not defined")))
+                    } else if  let isError = jsonObject["isError"] as? Bool, isError {
+                        if let errorMessage = jsonObject["error"] as? String {
+                            completion(.failure(CustomError.message(errorMessage)))
+                        } else {
+                            completion(.failure(CustomError.message("Unknown JavaScript Error")))
+                        }
                     } else {
                         completion(.success(jsonObject))
                     }
@@ -118,7 +124,7 @@ public struct Passkeys: View {
         if (result instanceof Promise) {
             return result
                 .then(resolved => JSON.stringify(resolved))
-                .catch(error => { throw error; });
+                .catch(error => JSON.stringify({isError: true, error: error && (error.message || String(error))}));
         } else {
             return JSON.stringify(result);
         }

@@ -180,6 +180,16 @@ class Passkeys @JvmOverloads constructor(
                 result == "\"no-method\"" -> throw Error("Method not defined")
                 else -> JSONObject(result)
             }
+            if (jsonObject?.optBoolean("isError") == true) {
+                val errorMessage = jsonObject.optString("error", null)
+
+                if (!errorMessage.isNullOrBlank()) {
+                    deferredResults[id]?.completeExceptionally(Error(errorMessage))
+                } else {
+                    deferredResults[id]?.completeExceptionally(Error("Unknown JavaScript Error"))
+                }
+                return
+            }
             deferredResults[id]?.complete(jsonObject)
         } catch (e: Exception) {
             deferredResults[id]?.completeExceptionally(e)
@@ -239,8 +249,8 @@ class Passkeys @JvmOverloads constructor(
                     try {
                         const result = await (function() { $script })();
                         window.nativeBridge.resolveResult('$uniqueId', JSON.stringify(result));
-                    } catch (e) {
-                        window.nativeBridge.resolveResult('$uniqueId', null);
+                    } catch (error) {
+                        window.nativeBridge.resolveResult('$uniqueId', JSON.stringify({isError: true, error: error && (error.message || String(error))}));
                     }
                 })();
                 """
@@ -263,12 +273,9 @@ class Passkeys @JvmOverloads constructor(
         else return window.$method($dataJSON);"""
 
         coroutineScope.launch {
-            try {
-                val result = callAsyncJavaScript(script).await()
-                completion(Result.success(result))
-            } catch (e: Exception) {
-                completion(Result.failure(e))
-            }
+            val result = runCatching { callAsyncJavaScript(script).await() }
+            result.onSuccess { completion(Result.success(it)) }
+                .onFailure { completion(Result.failure(it)) }
         }
     }
 
