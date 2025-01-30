@@ -2,35 +2,10 @@ import SafariServices
 import WebKit
 import SwiftUI
 
-@MainActor
 public class WebViewModel: ObservableObject {
     @Published var webView: WKWebView? = nil
-    @Published public var url: String? = nil {
-        didSet {
-            guard url != oldValue else { return }
-            if let webView {
-                let baseURLString = url ?? "https://relay.passkeys.network"
-                let fullURLString = "\(baseURLString)?appId=\(appId ?? "")"
-                if let newURL = URL(string: fullURLString) {
-                    let request = URLRequest(url: newURL)
-                    webView.load(request)
-                }
-            }
-        }
-    }
-    @Published public var appId: String? = nil {
-        didSet {
-            guard appId != oldValue else { return }
-            if let webView {
-                let baseURLString = url ?? "https://relay.passkeys.network"
-                let fullURLString = "\(baseURLString)?appId=\(appId ?? "")"
-                if let newURL = URL(string: fullURLString) {
-                    let request = URLRequest(url: newURL)
-                    webView.load(request)
-                }
-            }
-        }
-    }
+    @Published public var url: String? = nil
+    @Published public var appId: String? = nil
     @Published public var isLoading: Bool = true
     @Published public var loadingErrorMessage: String? = nil
 
@@ -53,6 +28,7 @@ public struct Passkeys: View {
 
     public init(appId: String?, url: String? = nil, viewModel: WebViewModel = WebViewModel()) {
         self.viewModel = viewModel
+
         DispatchQueue.main.async {
             viewModel.url = url
             viewModel.appId = appId
