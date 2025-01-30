@@ -12,6 +12,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancel
 import org.json.JSONObject
 import java.util.UUID
 
@@ -82,6 +83,7 @@ class Passkeys @JvmOverloads constructor(
         if (instance === this) {
             clearInstance()
         }
+        coroutineScope.cancel()
     }
 
     private fun getActivity(context: android.content.Context): Activity? {
@@ -286,6 +288,7 @@ class Passkeys @JvmOverloads constructor(
     fun onDestroy() {
         loadUrl("about:blank")
         clearInstance()
+        stopLoading()
         clearHistory()
         removeAllViews()
         destroy()
