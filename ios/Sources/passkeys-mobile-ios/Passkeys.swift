@@ -85,7 +85,7 @@ public struct Passkeys: View {
                    let jsonData = jsResult.data(using: .utf8),
                    let jsonObject = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] {
                     if let noMethod = jsonObject["noMethod"] as? Bool, noMethod {
-                        completion(.failure(CustomError.message("Unsupported browser")))
+                        completion(.failure(CustomError.message("Method not defined")))
                     } else {
                         completion(.success(jsonObject))
                     }

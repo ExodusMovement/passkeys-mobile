@@ -177,7 +177,7 @@ class Passkeys @JvmOverloads constructor(
         try {
             val jsonObject = when {
                 result.isNullOrBlank() || result == "undefined" || result == "null" -> null
-                result == "\"no-method\"" -> throw Error("Unsupported browser")
+                result == "\"no-method\"" -> throw Error("Method not defined")
                 else -> JSONObject(result)
             }
             deferredResults[id]?.complete(jsonObject)
