@@ -133,7 +133,12 @@ public struct Passkeys: View {
                 .then(resolved => JSON.stringify(resolved))
                 .catch(error => JSON.stringify({isError: true, error: error && (error.message || String(error))}));
         } else {
-            return JSON.stringify(result);
+            try {
+                return JSON.stringify(result);
+            }
+            catch (error) {
+                return JSON.stringify({isError: true, error: error && (error.message || String(error))});
+            }
         }
         """
         callAsyncJavaScript(script, completion: completion)
