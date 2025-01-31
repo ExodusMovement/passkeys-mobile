@@ -11,5 +11,6 @@ RCT_EXTERN_METHOD(callMethod:(nonnull NSNumber *)reactTag
 
 RCT_EXPORT_VIEW_PROPERTY(appId, NSString)
 RCT_EXPORT_VIEW_PROPERTY(url, NSString)
+RCT_EXPORT_VIEW_PROPERTY(onLoadingUpdate, RCTDirectEventBlock)
 
 @end
