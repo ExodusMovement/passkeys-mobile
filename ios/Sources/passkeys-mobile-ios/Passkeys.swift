@@ -12,10 +12,10 @@ public class WebViewModel: ObservableObject {
     public init() {}
 }
 
-enum CustomError: Error, LocalizedError {
+public enum CustomError: Error, LocalizedError {
     case message(String)
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .message(let msg):
             return msg
