@@ -2,6 +2,8 @@ package passkeys.reactnative
 
 import network.passkeys.client.Passkeys
 import android.view.View
+import androidx.lifecycle.Observer
+import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableArray
@@ -13,6 +15,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.SimpleViewManager
+import com.facebook.react.uimanager.events.RCTEventEmitter
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -62,7 +65,30 @@ class PasskeysViewManager : SimpleViewManager<View>() {
         if (activity == null) {
             throw IllegalStateException("No activity available when creating PasskeysView")
         }
-        return Passkeys(reactContext)
+        val passkeys = Passkeys(reactContext)
+
+        var lastIsLoading: Boolean? = null
+        var lastLoadingErrorMessage: String? = null
+
+        if (activity is LifecycleOwner) {
+            passkeys.isLoading.observe(activity, Observer { isLoading ->
+                if (passkeys.id != View.NO_ID && (isLoading != lastIsLoading || lastLoadingErrorMessage != passkeys.loadingErrorMessage)) {
+                    sendLoadingUpdate(passkeys.id, reactContext, isLoading, passkeys.loadingErrorMessage)
+                    lastIsLoading = isLoading
+                    lastLoadingErrorMessage = passkeys.loadingErrorMessage
+                }
+            })
+        }
+
+        return passkeys
+    }
+
+    private fun sendLoadingUpdate(id: Int, reactContext: ThemedReactContext, isLoading: Boolean?, loadingErrorMessage: String? ) {
+        val event = Arguments.createMap().apply {
+            putBoolean("isLoading", isLoading ?: true)
+            putString("loadingErrorMessage", loadingErrorMessage)
+        }
+        reactContext.getJSModule(RCTEventEmitter::class.java).receiveEvent(id, "onLoadingUpdate", event)
     }
 
     @ReactProp(name = "appId")
@@ -88,6 +114,10 @@ class PasskeysViewManager : SimpleViewManager<View>() {
 
     fun onHostResume() {
         Passkeys.getInstance()?.onResume()
+    }
+
+    override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> {
+        return mapOf("onLoadingUpdate" to mapOf("registrationName" to "onLoadingUpdate"))
     }
 }
 

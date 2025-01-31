@@ -18,11 +18,21 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
+type LoadingData = {
+  isLoading: boolean | undefined;
+  loadingErrorMessage: String | undefined;
+};
+
+type LoadingEvent = {
+  nativeEvent: LoadingData | undefined;
+};
+
 type PasskeysProps = {
   appId: string;
   url?: string;
   style?: ViewStyle;
   ref?: any;
+  onLoadingUpdate: (event: LoadingEvent) => void;
 };
 
 // Simplified version of the EIP-712 message type.

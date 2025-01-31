@@ -11,13 +11,18 @@ import {
 } from '@passkeys/react-native';
 
 export default function App() {
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
   const [_, setAddresses] = useState();
   const [credentialId, setCredentialId] = useState();
+
+  const disabled = loading || Boolean(errorMessage);
 
   return (
     <SafeAreaView style={styles.container}>
       {!credentialId && (
         <TouchableOpacity
+          disabled={disabled}
           onPress={async () => {
             try {
               const { addresses, credentialId: id } = await connect();
@@ -34,6 +39,7 @@ export default function App() {
       )}
       {credentialId && (
         <TouchableOpacity
+          disabled={disabled}
           onPress={async () => {
             try {
               const signedMessageResponse = await signMessage({
@@ -54,6 +60,7 @@ export default function App() {
       )}
       {credentialId && (
         <TouchableOpacity
+          disabled={disabled}
           onPress={async () => {
             try {
               const signedMessageResponse = await signMessage({
@@ -95,6 +102,7 @@ export default function App() {
       )}
       {credentialId && (
         <TouchableOpacity
+          disabled={disabled}
           onPress={async () => {
             try {
               const signTransactionResponse = await signTransaction({
@@ -121,6 +129,7 @@ export default function App() {
       )}
       {credentialId && (
         <TouchableOpacity
+          disabled={disabled}
           onPress={async () => {
             try {
               const exportPrivateKeyResponse = await exportPrivateKey({
@@ -138,6 +147,7 @@ export default function App() {
       )}
       {credentialId && (
         <TouchableOpacity
+          disabled={disabled}
           onPress={async () => {
             try {
               const shareWalletResponse = await shareWallet({
@@ -152,8 +162,18 @@ export default function App() {
           <Text>Share Wallet</Text>
         </TouchableOpacity>
       )}
+      {errorMessage && <Text style={{ color: 'red' }}>{errorMessage}</Text>}
 
-      <Passkeys appId="test" url="https://relay-d.passkeys.network" style={styles.passkeys} />
+      <Passkeys
+        onLoadingUpdate={(event) => {
+          const { isLoading, loadingErrorMessage } = event?.nativeEvent || {};
+          setLoading(isLoading);
+          setErrorMessage(loadingErrorMessage);
+        }}
+        appId="test"
+        url="https://relay-d.passkeys.network"
+        style={styles.passkeys}
+      />
     </SafeAreaView>
   );
 }

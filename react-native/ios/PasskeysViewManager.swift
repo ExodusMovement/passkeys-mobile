@@ -1,5 +1,18 @@
 import SwiftUI
 import Passkeys
+import Combine
+
+// todo remove in next iOS bump, made it public in the iOS lib
+enum CustomError: Error, LocalizedError {
+    case message(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .message(let msg):
+            return msg
+        }
+    }
+}
 
 class HostingAwareView<T: View>: UIView {
     var hostingController: UIHostingController<T>?
@@ -7,18 +20,28 @@ class HostingAwareView<T: View>: UIView {
 
 @objc(PasskeysView)
 class PasskeysView: UIView {
+  private let viewModel = WebViewModel()
+  private var cancellables = Set<AnyCancellable>()
+
+  @objc var onLoadingUpdate: RCTDirectEventBlock?
+
   @objc var appId: String? = nil {
     didSet {
-      hostingController?.rootView.viewModel.appId = appId
+      viewModel.appId = appId
+      updateHostingController()
     }
   }
+
   @objc var url: String? = nil {
     didSet {
-      hostingController?.rootView.viewModel.url = url
+      viewModel.url = url
+      updateHostingController()
     }
   }
 
   private(set) var hostingController: UIHostingController<Passkeys>?
+  private var lastIsLoading: Bool?
+  private var lastLoadingErrorMessage: String?
 
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -31,7 +54,7 @@ class PasskeysView: UIView {
   }
 
   private func setupHostingController() {
-    let passkeysView = Passkeys(appId: appId, url: url)
+    let passkeysView = Passkeys(appId: appId, url: url, viewModel: viewModel)
     hostingController = UIHostingController(rootView: passkeysView)
 
     if let hostedView = hostingController?.view {
@@ -45,8 +68,49 @@ class PasskeysView: UIView {
         hostedView.bottomAnchor.constraint(equalTo: bottomAnchor)
       ])
     }
+
+    observePasskeysLoading(passkeysView)
+  }
+
+  private func updateHostingController() {
+    guard let hostingController = hostingController else { return }
+    let passkeysView = Passkeys(appId: appId, url: url, viewModel: viewModel)
+    hostingController.rootView = passkeysView
+
+    observePasskeysLoading(passkeysView)
+  }
+
+  private func observePasskeysLoading(_ passkeys: Passkeys) {
+    cancellables.removeAll()
+    passkeys.viewModel.$isLoading.sink { [weak self] isLoading in
+      DispatchQueue.main.async {
+        let errorMessage = passkeys.viewModel.loadingErrorMessage
+
+        if isLoading != self?.lastIsLoading || errorMessage != self?.lastLoadingErrorMessage {
+          self?.sendLoadingUpdate(isLoading: isLoading, loadingErrorMessage: errorMessage)
+          self?.lastIsLoading = isLoading
+          self?.lastLoadingErrorMessage = errorMessage
+        }
+      }
+    }
+    .store(in: &cancellables)
+  }
+
+  private func sendLoadingUpdate(isLoading: Bool?, loadingErrorMessage: String?) {
+    guard let onLoadingUpdate = self.onLoadingUpdate else {
+      print("onLoadingUpdate is not set")
+      return
+    }
+
+    let event: [String: Any] = [
+      "isLoading": isLoading ?? true,
+      "loadingErrorMessage": loadingErrorMessage
+    ]
+
+    onLoadingUpdate(event)
   }
 }
+
 
 @objc(PasskeysViewManager)
 class PasskeysViewManager: RCTViewManager {
@@ -56,6 +120,14 @@ class PasskeysViewManager: RCTViewManager {
 
   override func view() -> UIView! {
     return PasskeysView()
+  }
+
+  func customDirectEventTypes() -> [String]! {
+    return ["onLoadingUpdate"]
+  }
+
+  @objc override func constantsToExport() -> [AnyHashable: Any]! {
+    return ["onLoadingUpdate": "onLoadingUpdate"]
   }
 
   @objc(callMethod:method:data:resolver:rejecter:)
@@ -93,5 +165,9 @@ class PasskeysViewManager: RCTViewManager {
         }
       }
     }
+  }
+
+  override static func requiresMainQueueSetup() -> Bool {
+    return true
   }
 }
