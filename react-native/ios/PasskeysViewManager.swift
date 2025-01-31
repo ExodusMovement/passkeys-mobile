@@ -1,20 +1,36 @@
 import SwiftUI
 import Passkeys
 
+// todo remove in next iOS bump, made it public in the iOS lib
+enum CustomError: Error, LocalizedError {
+    case message(String)
+
+    public var errorDescription: String? {
+        switch self {
+        case .message(let msg):
+            return msg
+        }
+    }
+}
+
 class HostingAwareView<T: View>: UIView {
     var hostingController: UIHostingController<T>?
 }
 
 @objc(PasskeysView)
 class PasskeysView: UIView {
+  let viewModel = WebViewModel()
+
   @objc var appId: String? = nil {
     didSet {
-      hostingController?.rootView.viewModel.appId = appId
+      viewModel.appId = appId
+      updateHostingController()
     }
   }
   @objc var url: String? = nil {
     didSet {
-      hostingController?.rootView.viewModel.url = url
+      viewModel.url = url
+      updateHostingController()
     }
   }
 
@@ -31,7 +47,7 @@ class PasskeysView: UIView {
   }
 
   private func setupHostingController() {
-    let passkeysView = Passkeys(appId: appId, url: url)
+    let passkeysView = Passkeys(appId: appId, url: url, viewModel: viewModel)
     hostingController = UIHostingController(rootView: passkeysView)
 
     if let hostedView = hostingController?.view {
@@ -45,6 +61,11 @@ class PasskeysView: UIView {
         hostedView.bottomAnchor.constraint(equalTo: bottomAnchor)
       ])
     }
+  }
+
+  private func updateHostingController() {
+    guard let hostingController = hostingController else { return }
+    hostingController.rootView = Passkeys(appId: appId, url: url, viewModel: viewModel)
   }
 }
 
