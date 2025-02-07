@@ -151,7 +151,7 @@ class Passkeys @JvmOverloads constructor(
             window.nativeBridge.onLoadingEnd = function(loading, error) {
                 AndroidBridge.onLoadingEnd(loading, error ? String(error) : null);
             };
-            window.nativeBridge.onLoadingEnd(window.loading === false ? false : true, window.loadingError ? window.loadingError : null )
+            window.nativeBridge.onLoadingEnd(window.passkeys && window.passkeys.loading === false ? false : true, window.passkeys && window.passkeys.loadingError ? window.passkeys.loadingError : null )
             window.nativeBridge.openSigner = function(url) {
                 if (typeof url !== 'string') throw new Error('url is not a string');
                 AndroidBridge.openSigner(url);
@@ -275,8 +275,8 @@ class Passkeys @JvmOverloads constructor(
 
         val dataJSON = data?.toString() ?: "{}"
 
-        val script = """if (!window.$method) return 'no-method';
-        else return window.$method($dataJSON);"""
+        val script = """if (!window.passkeys || !window.passkeys.$method) return 'no-method';
+        else return window.passkeys.$method($dataJSON);"""
 
         coroutineScope.launch {
             val result = runCatching { callAsyncJavaScript(script).await() }
