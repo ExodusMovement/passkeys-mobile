@@ -113,6 +113,8 @@ signing.gnupg.executable=gpg
 signing.gnupg.useAgent=true
 ```
 
+Publish command: `cd android && ./gradlew publishToMavenCentral --no-configuration-cache`
+
 ## License
 
 MIT
