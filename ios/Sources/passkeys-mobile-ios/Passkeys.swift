@@ -125,10 +125,10 @@ public struct Passkeys: View {
         }
 
         let script = """
-        if (!window.\(method)) return JSON.stringify({noMethod: true});
+        if (!window.passkeys || !window.passkeys.\(method)) return JSON.stringify({noMethod: true});
         let result;
         try {
-            result = window.\(method)(\(dataJSON));
+            result = window.passkeys.\(method)(\(dataJSON));
         }
         catch (error) {
             return JSON.stringify({isError: true, error: error && (error.message || String(error))})
