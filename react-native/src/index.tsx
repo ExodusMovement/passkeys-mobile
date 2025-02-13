@@ -35,14 +35,16 @@ type PasskeysProps = {
   onLoadingUpdate: (event: LoadingEvent) => void;
 };
 
+type AnyObject = Record<string, unknown>;
+
 // Simplified version of the EIP-712 message type.
 // See: https://eips.ethereum.org/EIPS/eip-712.
-interface EIP712Message {
+interface EIP712Message extends AnyObject {
   domain: EIP712Domain;
-  message: Record<string, unknown>;
+  message: AnyObject;
 }
 
-interface EIP712Domain {
+interface EIP712Domain extends AnyObject {
   name?: string;
 }
 
