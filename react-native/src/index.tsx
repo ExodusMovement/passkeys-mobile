@@ -127,7 +127,7 @@ export const connect = async (): Promise<
   | {
       addresses: any;
       publicKeys: any;
-      credentialId: String;
+      credentialId: string;
     }
   | ErrorResponse
 > => {
@@ -144,8 +144,8 @@ export const signTransaction = async (
   data: SignTransactionParams
 ): Promise<
   | {
-      rawTx: String;
-      txId: String;
+      rawTx: string;
+      txId: string;
       broadcasted?: boolean;
       broadcastError?: string;
     }
