@@ -49,12 +49,6 @@ class Passkeys @JvmOverloads constructor(
         fun clearInstance() {
             instance = null
         }
-
-        private var customTabCallback: (() -> Unit)? = null
-
-        fun setOnCloseSignerCallback(callback: () -> Unit) {
-            customTabCallback = callback
-        }
     }
 
     private val coroutineScope = MainScope()
@@ -161,7 +155,14 @@ class Passkeys @JvmOverloads constructor(
     }
 
     private fun onCloseSigner() {
-        customTabCallback?.invoke()
+        val context = context
+        val activity = getActivity(context)
+
+        if (activity != null) {
+            val intent = Intent(context, activity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            context.startActivity(intent)
+        }
     }
 
     private fun onLoadingEnd(loading: Boolean, error: String?) {
