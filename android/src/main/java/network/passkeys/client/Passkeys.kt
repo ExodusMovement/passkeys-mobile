@@ -49,12 +49,6 @@ class Passkeys @JvmOverloads constructor(
         fun clearInstance() {
             instance = null
         }
-
-        private var customTabCallback: (() -> Unit)? = null
-
-        fun setOnCloseSignerCallback(callback: () -> Unit) {
-            customTabCallback = callback
-        }
     }
 
     private val coroutineScope = MainScope()
