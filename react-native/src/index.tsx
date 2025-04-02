@@ -50,7 +50,7 @@ export default bufferize;
 
 const ComponentName = 'PasskeysView';
 
-const _PasskeysView =
+const PasskeysView =
   UIManager.getViewManagerConfig(ComponentName) != null
     ? requireNativeComponent<PasskeysProps>(ComponentName)
     : () => {
@@ -64,81 +64,40 @@ export const Passkeys = (props: PasskeysProps) => {
   useEffect(() => {
     componentRef = ref;
   }, []);
-  return <_PasskeysView {...props} ref={ref} />;
+  return <PasskeysView {...props} ref={ref} />;
 };
 
-export const connect = async (): Promise<ConnectResponse | ErrorResponse> => {
-  if (!componentRef) throw new Error('Passkeys is not rendered');
+const callMethod = async <T,>(name: string, params?: object): Promise<T> => {
+  if (!componentRef) {
+    throw new Error(`Cannot call ${name}. Passkeys is not rendered`);
+  }
+
+  const payload = params ? JSON.parse(JSON.stringify(params)) : {};
+
   const args = Platform.select({
-    ios: [findNodeHandle(componentRef.current), 'connect', {}],
-    default: ['connect', {}],
+    ios: [findNodeHandle(componentRef.current), name, payload],
+    default: [name, payload],
   });
-  // @ts-ignore
-  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
+
+  const response = await NativeModules.PasskeysViewManager.callMethod(...args);
+
+  return bufferize(response) as T;
 };
 
-export const signTransaction = async (
-  data: SignTransactionParams
-): Promise<SignTransactionResponse | ErrorResponse> => {
-  if (!componentRef) throw new Error('Passkeys is not rendered');
-  const args = Platform.select({
-    ios: [
-      findNodeHandle(componentRef.current),
-      'signTransaction',
-      JSON.parse(JSON.stringify(data)),
-    ],
-    default: ['signTransaction', JSON.parse(JSON.stringify(data))],
-  });
-  // @ts-ignore
-  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
+export const connect = async () => {
+  return callMethod<ConnectResponse | ErrorResponse>('connect');
 };
 
-export const signMessage = async (
-  data: SignMessageParams
-): Promise<Buffer | ErrorResponse> => {
-  if (!componentRef) throw new Error('Passkeys is not rendered');
-  const args = Platform.select({
-    ios: [
-      findNodeHandle(componentRef.current),
-      'signMessage',
-      JSON.parse(JSON.stringify(data)),
-    ],
-    default: ['signMessage', JSON.parse(JSON.stringify(data))],
-  });
-  // @ts-ignore
-  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
-};
+export const signTransaction = async (data: SignTransactionParams) =>
+  callMethod<SignTransactionResponse | ErrorResponse>('signTransaction', data);
 
-export const exportPrivateKey = async (
-  data: ExportPrivateKeyParams
-): Promise<undefined | ErrorResponse> => {
-  if (!componentRef) throw new Error('Passkeys is not rendered');
-  const args = Platform.select({
-    ios: [
-      findNodeHandle(componentRef.current),
-      'exportPrivateKey',
-      JSON.parse(JSON.stringify(data)),
-    ],
-    default: ['exportPrivateKey', JSON.parse(JSON.stringify(data))],
-  });
-  // @ts-ignore
-  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
-};
+export const signMessage = async (data: SignMessageParams) =>
+  callMethod<Buffer | ErrorResponse>('signMessage', data);
 
-export const shareWallet = async (
-  data: AuthenticatedRequestParams
-): Promise<undefined | ErrorResponse> => {
-  if (!componentRef) throw new Error('Passkeys is not rendered');
-  const args = Platform.select({
-    ios: [
-      findNodeHandle(componentRef.current),
-      'shareWallet',
-      JSON.parse(JSON.stringify(data)),
-    ],
-    default: ['shareWallet', JSON.parse(JSON.stringify(data))],
-  });
-  // @ts-ignore
-  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
-};
+export const exportPrivateKey = async (data: ExportPrivateKeyParams) =>
+  callMethod<undefined | ErrorResponse>('exportPrivateKey', data);
+
+export const shareWallet = async (data: AuthenticatedRequestParams) =>
+  callMethod<undefined | ErrorResponse>('shareWallet', data);
 
 export type * from './types';
