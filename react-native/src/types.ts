@@ -80,7 +80,7 @@ export type SignTransactionResponse = {
   broadcastError?: string;
 };
 
-type SignInInput = {
+export type SignInInput = {
   assetName: string;
   domain?: string;
   chainId?: string;
@@ -92,7 +92,7 @@ export type SignInParams = {
   inputs: SignInInput[];
 };
 
-type Base64 = string;
+export type Base64 = string;
 
 export type SignedMessage = {
   assetName: string;
