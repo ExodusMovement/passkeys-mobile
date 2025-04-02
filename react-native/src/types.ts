@@ -79,3 +79,28 @@ export type SignTransactionResponse = {
   broadcasted?: boolean;
   broadcastError?: string;
 };
+
+export type SignInInput = {
+  assetName: string;
+  domain?: string;
+  chainId?: string;
+  nonce?: string;
+  issuedAt?: string;
+};
+
+export type SignInParams = {
+  inputs: SignInInput[];
+};
+
+export type Base64 = string;
+
+export type SignedMessage = {
+  assetName: string;
+  address: string;
+  signedMessage: Base64;
+  signature: Base64;
+};
+
+export type SignInResponse = ConnectResponse & {
+  signatures: SignedMessage[];
+};

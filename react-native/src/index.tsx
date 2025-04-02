@@ -15,6 +15,8 @@ import type {
   ErrorResponse,
   ExportPrivateKeyParams,
   PasskeysProps,
+  SignInParams,
+  SignInResponse,
   SignMessageParams,
   SignTransactionParams,
   SignTransactionResponse,
@@ -86,6 +88,10 @@ const callMethod = async <T,>(name: string, params?: object): Promise<T> => {
 
 export const connect = async () => {
   return callMethod<ConnectResponse | ErrorResponse>('connect');
+};
+
+export const signIn = async (data: SignInParams) => {
+  return callMethod<SignInResponse | ErrorResponse>('signIn', data);
 };
 
 export const signTransaction = async (data: SignTransactionParams) =>
