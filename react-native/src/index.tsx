@@ -1,14 +1,24 @@
-import { useRef, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import traverse from 'traverse';
 import { Buffer } from 'buffer';
 import {
-  requireNativeComponent,
   findNodeHandle,
-  UIManager,
-  Platform,
   NativeModules,
-  type ViewStyle,
+  Platform,
+  requireNativeComponent,
+  UIManager,
 } from 'react-native';
+
+import type {
+  AuthenticatedRequestParams,
+  ConnectResponse,
+  ErrorResponse,
+  ExportPrivateKeyParams,
+  PasskeysProps,
+  SignMessageParams,
+  SignTransactionParams,
+  SignTransactionResponse,
+} from './types';
 
 if (!global.Buffer) global.Buffer = Buffer;
 
@@ -17,73 +27,6 @@ const LINKING_ERROR =
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
-
-type LoadingData = {
-  isLoading: boolean | undefined;
-  loadingErrorMessage: String | undefined;
-};
-
-type LoadingEvent = {
-  nativeEvent: LoadingData | undefined;
-};
-
-type PasskeysProps = {
-  appId: string;
-  url?: string;
-  style?: ViewStyle;
-  ref?: any;
-  onLoadingUpdate: (event: LoadingEvent) => void;
-};
-
-type AnyObject = Record<string, unknown>;
-
-// Simplified version of the EIP-712 message type.
-// See: https://eips.ethereum.org/EIPS/eip-712.
-interface EIP712Message extends AnyObject {
-  domain: EIP712Domain;
-  message: AnyObject;
-}
-
-interface EIP712Domain extends AnyObject {
-  name?: string;
-}
-
-interface Message {
-  rawMessage?: Buffer;
-  EIP712Message?: EIP712Message;
-}
-
-interface RequestParams {}
-
-interface AuthenticatedRequestParams extends RequestParams {
-  credentialId: string | Uint8Array;
-}
-
-interface SignRequestParams extends AuthenticatedRequestParams {
-  baseAssetName: string;
-}
-
-interface SignTransactionParams extends SignRequestParams {
-  transaction: {
-    txData: { transactionBuffer: Buffer };
-    txMeta: object;
-  };
-  broadcast?: boolean;
-  expiresAt?: number;
-}
-
-interface SignMessageParams extends SignRequestParams {
-  message: Message;
-  address?: string;
-}
-
-interface ExportPrivateKeyParams extends AuthenticatedRequestParams {
-  assetName: string;
-}
-
-type ErrorResponse = {
-  error: string;
-};
 
 // possibly mutating
 const bufferize = (object: { type?: string; data?: any }) => {
@@ -115,6 +58,7 @@ const _PasskeysView =
       };
 
 let componentRef: any;
+
 export const Passkeys = (props: PasskeysProps) => {
   const ref = useRef();
   useEffect(() => {
@@ -123,14 +67,7 @@ export const Passkeys = (props: PasskeysProps) => {
   return <_PasskeysView {...props} ref={ref} />;
 };
 
-export const connect = async (): Promise<
-  | {
-      addresses: any;
-      publicKeys: any;
-      credentialId: string;
-    }
-  | ErrorResponse
-> => {
+export const connect = async (): Promise<ConnectResponse | ErrorResponse> => {
   if (!componentRef) throw new Error('Passkeys is not rendered');
   const args = Platform.select({
     ios: [findNodeHandle(componentRef.current), 'connect', {}],
@@ -142,15 +79,7 @@ export const connect = async (): Promise<
 
 export const signTransaction = async (
   data: SignTransactionParams
-): Promise<
-  | {
-      rawTx: string;
-      txId: string;
-      broadcasted?: boolean;
-      broadcastError?: string;
-    }
-  | ErrorResponse
-> => {
+): Promise<SignTransactionResponse | ErrorResponse> => {
   if (!componentRef) throw new Error('Passkeys is not rendered');
   const args = Platform.select({
     ios: [
@@ -211,3 +140,5 @@ export const shareWallet = async (
   // @ts-ignore
   return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
 };
+
+export type * from './types';
