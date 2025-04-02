@@ -1,6 +1,6 @@
 {
   "name": "@passkeys/react-native",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "@passkeys/react-native",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
