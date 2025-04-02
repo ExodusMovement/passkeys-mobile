@@ -1,11 +1,11 @@
 import type { ViewStyle } from 'react-native';
 
-type LoadingData = {
+export type LoadingData = {
   isLoading: boolean | undefined;
   loadingErrorMessage: String | undefined;
 };
 
-type LoadingEvent = {
+export type LoadingEvent = {
   nativeEvent: LoadingData | undefined;
 };
 
@@ -17,31 +17,31 @@ export type PasskeysProps = {
   onLoadingUpdate: (event: LoadingEvent) => void;
 };
 
-type AnyObject = Record<string, unknown>;
+export type AnyObject = Record<string, unknown>;
 
 // Simplified version of the EIP-712 message type.
 // See: https://eips.ethereum.org/EIPS/eip-712.
-interface EIP712Message extends AnyObject {
+export interface EIP712Message extends AnyObject {
   domain: EIP712Domain;
   message: AnyObject;
 }
 
-interface EIP712Domain extends AnyObject {
+export interface EIP712Domain extends AnyObject {
   name?: string;
 }
 
-interface Message {
+export interface Message {
   rawMessage?: Buffer;
   EIP712Message?: EIP712Message;
 }
 
-interface RequestParams {}
+export interface RequestParams {}
 
 export interface AuthenticatedRequestParams extends RequestParams {
   credentialId: string | Uint8Array;
 }
 
-interface SignRequestParams extends AuthenticatedRequestParams {
+export interface SignRequestParams extends AuthenticatedRequestParams {
   baseAssetName: string;
 }
 
