@@ -30,10 +30,27 @@ export interface EIP712Domain extends AnyObject {
   name?: string;
 }
 
-export interface Message {
-  rawMessage?: Buffer;
-  EIP712Message?: EIP712Message;
-}
+export type RawMessagePayload = {
+  rawMessage: Buffer;
+};
+
+export type EIP712MessagePayload = {
+  EIP712Message: EIP712Message;
+};
+
+export type Hex = string;
+
+export type BIP322MessagePayload = {
+  bip322Message: {
+    message: Buffer | Hex;
+    address: string;
+  };
+};
+
+export type Message =
+  | RawMessagePayload
+  | EIP712MessagePayload
+  | BIP322MessagePayload;
 
 export interface RequestParams {}
 
