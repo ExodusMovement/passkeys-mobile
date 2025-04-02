@@ -31,7 +31,7 @@ const LINKING_ERROR =
   '- You are not using Expo Go\n';
 
 // possibly mutating
-const bufferize = (object: { type?: string; data?: any }) => {
+export const bufferize = (object: { type?: string; data?: any }) => {
   if (!object) return;
   if (object.type === 'Buffer' && object.data) return Buffer.from(object.data);
 
@@ -48,7 +48,11 @@ const bufferize = (object: { type?: string; data?: any }) => {
   return object;
 };
 
-export default bufferize;
+export const isErrorResponse = <R extends object>(
+  response: R | ErrorResponse
+): response is ErrorResponse => {
+  return Object.hasOwn(response, 'error');
+};
 
 const ComponentName = 'PasskeysView';
 
