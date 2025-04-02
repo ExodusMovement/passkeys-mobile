@@ -84,9 +84,29 @@ export type ErrorResponse = {
   error: string;
 };
 
+export type CachedPublicKey = {
+  key: string;
+  publicKey: any;
+};
+
+export type CachedAddress = {
+  key: string;
+  address: {
+    address: string;
+    meta: {
+      path: string;
+      purpose: number;
+      [key: string]: any;
+    };
+  };
+};
+
 export type ConnectResponse = {
-  addresses: any;
-  publicKeys: any;
+  backedUp?: boolean;
+  telemetryId: string;
+  shareActivity: boolean;
+  addresses: CachedAddress[];
+  publicKeys: CachedPublicKey[];
   credentialId: string;
 };
 
