@@ -1,14 +1,24 @@
-import { useRef, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import traverse from 'traverse';
 import { Buffer } from 'buffer';
 import {
-  requireNativeComponent,
   findNodeHandle,
-  UIManager,
-  Platform,
   NativeModules,
-  type ViewStyle,
+  Platform,
+  requireNativeComponent,
+  UIManager,
 } from 'react-native';
+
+import type {
+  AuthenticatedRequestParams,
+  ConnectResponse,
+  ErrorResponse,
+  ExportPrivateKeyParams,
+  PasskeysProps,
+  SignMessageParams,
+  SignTransactionParams,
+  SignTransactionResponse,
+} from './types';
 
 if (!global.Buffer) global.Buffer = Buffer;
 
@@ -17,73 +27,6 @@ const LINKING_ERROR =
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
-
-type LoadingData = {
-  isLoading: boolean | undefined;
-  loadingErrorMessage: String | undefined;
-};
-
-type LoadingEvent = {
-  nativeEvent: LoadingData | undefined;
-};
-
-type PasskeysProps = {
-  appId: string;
-  url?: string;
-  style?: ViewStyle;
-  ref?: any;
-  onLoadingUpdate: (event: LoadingEvent) => void;
-};
-
-type AnyObject = Record<string, unknown>;
-
-// Simplified version of the EIP-712 message type.
-// See: https://eips.ethereum.org/EIPS/eip-712.
-interface EIP712Message extends AnyObject {
-  domain: EIP712Domain;
-  message: AnyObject;
-}
-
-interface EIP712Domain extends AnyObject {
-  name?: string;
-}
-
-interface Message {
-  rawMessage?: Buffer;
-  EIP712Message?: EIP712Message;
-}
-
-interface RequestParams {}
-
-interface AuthenticatedRequestParams extends RequestParams {
-  credentialId: string | Uint8Array;
-}
-
-interface SignRequestParams extends AuthenticatedRequestParams {
-  baseAssetName: string;
-}
-
-interface SignTransactionParams extends SignRequestParams {
-  transaction: {
-    txData: { transactionBuffer: Buffer };
-    txMeta: object;
-  };
-  broadcast?: boolean;
-  expiresAt?: number;
-}
-
-interface SignMessageParams extends SignRequestParams {
-  message: Message;
-  address?: string;
-}
-
-interface ExportPrivateKeyParams extends AuthenticatedRequestParams {
-  assetName: string;
-}
-
-type ErrorResponse = {
-  error: string;
-};
 
 // possibly mutating
 const bufferize = (object: { type?: string; data?: any }) => {
@@ -107,7 +50,7 @@ export default bufferize;
 
 const ComponentName = 'PasskeysView';
 
-const _PasskeysView =
+const PasskeysView =
   UIManager.getViewManagerConfig(ComponentName) != null
     ? requireNativeComponent<PasskeysProps>(ComponentName)
     : () => {
@@ -115,99 +58,46 @@ const _PasskeysView =
       };
 
 let componentRef: any;
+
 export const Passkeys = (props: PasskeysProps) => {
   const ref = useRef();
   useEffect(() => {
     componentRef = ref;
   }, []);
-  return <_PasskeysView {...props} ref={ref} />;
+  return <PasskeysView {...props} ref={ref} />;
 };
 
-export const connect = async (): Promise<
-  | {
-      addresses: any;
-      publicKeys: any;
-      credentialId: string;
-    }
-  | ErrorResponse
-> => {
-  if (!componentRef) throw new Error('Passkeys is not rendered');
+const callMethod = async <T,>(name: string, params?: object): Promise<T> => {
+  if (!componentRef) {
+    throw new Error(`Cannot call ${name}. Passkeys is not rendered`);
+  }
+
+  const payload = params ? JSON.parse(JSON.stringify(params)) : {};
+
   const args = Platform.select({
-    ios: [findNodeHandle(componentRef.current), 'connect', {}],
-    default: ['connect', {}],
+    ios: [findNodeHandle(componentRef.current), name, payload],
+    default: [name, payload],
   });
-  // @ts-ignore
-  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
+
+  const response = await NativeModules.PasskeysViewManager.callMethod(...args);
+
+  return bufferize(response) as T;
 };
 
-export const signTransaction = async (
-  data: SignTransactionParams
-): Promise<
-  | {
-      rawTx: string;
-      txId: string;
-      broadcasted?: boolean;
-      broadcastError?: string;
-    }
-  | ErrorResponse
-> => {
-  if (!componentRef) throw new Error('Passkeys is not rendered');
-  const args = Platform.select({
-    ios: [
-      findNodeHandle(componentRef.current),
-      'signTransaction',
-      JSON.parse(JSON.stringify(data)),
-    ],
-    default: ['signTransaction', JSON.parse(JSON.stringify(data))],
-  });
-  // @ts-ignore
-  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
+export const connect = async () => {
+  return callMethod<ConnectResponse | ErrorResponse>('connect');
 };
 
-export const signMessage = async (
-  data: SignMessageParams
-): Promise<Buffer | ErrorResponse> => {
-  if (!componentRef) throw new Error('Passkeys is not rendered');
-  const args = Platform.select({
-    ios: [
-      findNodeHandle(componentRef.current),
-      'signMessage',
-      JSON.parse(JSON.stringify(data)),
-    ],
-    default: ['signMessage', JSON.parse(JSON.stringify(data))],
-  });
-  // @ts-ignore
-  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
-};
+export const signTransaction = async (data: SignTransactionParams) =>
+  callMethod<SignTransactionResponse | ErrorResponse>('signTransaction', data);
 
-export const exportPrivateKey = async (
-  data: ExportPrivateKeyParams
-): Promise<undefined | ErrorResponse> => {
-  if (!componentRef) throw new Error('Passkeys is not rendered');
-  const args = Platform.select({
-    ios: [
-      findNodeHandle(componentRef.current),
-      'exportPrivateKey',
-      JSON.parse(JSON.stringify(data)),
-    ],
-    default: ['exportPrivateKey', JSON.parse(JSON.stringify(data))],
-  });
-  // @ts-ignore
-  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
-};
+export const signMessage = async (data: SignMessageParams) =>
+  callMethod<Buffer | ErrorResponse>('signMessage', data);
 
-export const shareWallet = async (
-  data: AuthenticatedRequestParams
-): Promise<undefined | ErrorResponse> => {
-  if (!componentRef) throw new Error('Passkeys is not rendered');
-  const args = Platform.select({
-    ios: [
-      findNodeHandle(componentRef.current),
-      'shareWallet',
-      JSON.parse(JSON.stringify(data)),
-    ],
-    default: ['shareWallet', JSON.parse(JSON.stringify(data))],
-  });
-  // @ts-ignore
-  return bufferize(await NativeModules.PasskeysViewManager.callMethod(...args));
-};
+export const exportPrivateKey = async (data: ExportPrivateKeyParams) =>
+  callMethod<undefined | ErrorResponse>('exportPrivateKey', data);
+
+export const shareWallet = async (data: AuthenticatedRequestParams) =>
+  callMethod<undefined | ErrorResponse>('shareWallet', data);
+
+export type * from './types';
